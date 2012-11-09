@@ -41,4 +41,4 @@ alias lst="ls -al --full-time"
 alias rdesktop="rdesktop -g 1440x1080"
 alias o="gnome-open"
 
-. ${HOME}/bin/.bash_tricks
+. ${HOME}/.bash_tricks
