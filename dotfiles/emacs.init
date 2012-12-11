@@ -1,0 +1,9 @@
+
+;
+; load additional modules
+;
+(setq modules (file-expand-wildcards "~/dotfiles/emacs/*.el"))
+(message "Loading modules: %s" modules) ; logged in *Messages* buffer
+(dolist (module modules)
+  (load-file module)
+)
