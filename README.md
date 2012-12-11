@@ -40,4 +40,4 @@ Then append the following to your `~/.profile` file:
 ## screen
 If you don't already have a screen configuration file, use the provided one by running:
 
-    ln -s ~/dotfiles/screenrc ~/.screenrc
+    ln -s ~/dotfiles/screen/screenrc ~/.screenrc
