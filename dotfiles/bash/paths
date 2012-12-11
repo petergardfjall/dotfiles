@@ -1,0 +1,11 @@
+# sets up various path variables
+
+export JAVA_HOME=/opt/jdk1.6.0_37
+export JAVA_OPTS="-Xmx1024m -XX:MaxPermSize=128m"
+export MAVEN_HOME=/opt/apache-maven-3.0.4
+export MAVEN_OPTS="-Xmx1024m -XX:MaxPermSize=128m"
+export ECLIPSE_HOME=/opt/eclipse-4.2
+export PATH=${ECLIPSE_HOME}:${JAVA_HOME}/bin:${MAVEN_HOME}/bin:${HOME}/bin:/opt/bin:${PATH}
+
+export SVN_URL=svn://svn.cs.umu.se/2011/cloud/cloud
+export GIT_URL=ssh://peppar/Home/projects/elastisys-dev/cloud.git

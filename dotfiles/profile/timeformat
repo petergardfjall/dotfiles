@@ -1,0 +1,2 @@
+# Needed to get proper time format in Thunderbird
+export LC_TIME="sv_SE.utf8"
