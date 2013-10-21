@@ -1,0 +1,4 @@
+#!/bin/bash
+
+export JAVA_HOME="/opt/java1.6"
+export PATH="/opt/java1.6/bin:${PATH}"
