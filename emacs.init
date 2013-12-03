@@ -1,9 +1,11 @@
 
 ;
-; load additional modules
+; load additional modules from module directory in lexicographical order
 ;
 (setq modules (file-expand-wildcards "~/dotfiles/emacs/*.el"))
-(message "Loading modules: %s" modules) ; logged in *Messages* buffer
-(dolist (module modules)
+(setq sortedmodules (sort (copy-sequence modules) #'string-lessp))
+;; Note: messages are logged in *Messages* buffer
+(message "Loading modules: %s" sortedmodules) 
+(dolist (module sortedmodules)
   (load-file module)
 )

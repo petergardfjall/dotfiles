@@ -4,7 +4,7 @@
 ; For more details on its use, refer to:
 ;   http://www.emacswiki.org/emacs/ProgrammingWithPythonDotEl
 ;
-(add-to-list 'load-path "~/dotfiles/emacs/python.el")
+(add-to-list 'load-path "~/dotfiles/emacs/python/")
 (require 'python)
 ; bind RETURN to "newline followed by indent", rather than "newline only".
 (add-hook 'python-mode-hook '(lambda () (define-key python-mode-map "\C-m" 'newline-and-indent)))
