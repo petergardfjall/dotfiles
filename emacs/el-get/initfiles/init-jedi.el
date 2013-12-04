@@ -8,6 +8,8 @@
 
 ;; Set up recommended keybinds for Jedi.el (optional)
 (setq jedi:setup-keys t)
+;; Avoid collision with ropemacs's show doc (uses 'C-c d')
+(setq jedi:key-show-doc (kbd "C-c D"))
 
 ;; Automatically start completion when entering a '.' (optional)
 (setq jedi:complete-on-dot t)
