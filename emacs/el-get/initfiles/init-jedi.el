@@ -1,4 +1,13 @@
 ;; Jedi.el is a Python auto-completion package for Emacs.
+
+;; Fully set up jedi.el for the current buffer:
+;; it sets up ac-sources (calls jedi:ac-setup) and turns jedi-mode on.
 (add-hook 'python-mode-hook 'jedi:setup)
-(setq jedi:setup-keys t)                      ; optional
-(setq jedi:complete-on-dot t)                 ; optional
+;; If auto-completion is all you need, use jedi:ac-setup instead:
+;; (add-hook 'python-mode-hook 'jedi:ac-setup)
+
+;; Set up recommended keybinds for Jedi.el (optional)
+(setq jedi:setup-keys t)
+
+;; Automatically start completion when entering a '.' (optional)
+(setq jedi:complete-on-dot t)
