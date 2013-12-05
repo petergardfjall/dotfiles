@@ -12,4 +12,5 @@
 (setq jedi:key-show-doc (kbd "C-c D"))
 
 ;; Automatically start completion when entering a '.' (optional)
-(setq jedi:complete-on-dot t)
+;(setq jedi:complete-on-dot t)
+
