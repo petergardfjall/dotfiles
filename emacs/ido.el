@@ -2,5 +2,7 @@
 ;;  http://www.emacswiki.org/emacs/InteractivelyDoThings
 ;; Interactive help when selecting opening files (C-x C-f), switching 
 ;; buffers (C-x b), etc.
-(require 'ido)
-(ido-mode t)
+
+;; enable
+;(require 'ido)
+;(ido-mode t)
