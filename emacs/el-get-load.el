@@ -36,6 +36,10 @@
 ;; that are to be loaded to initialize a given package.
 (setq el-get-user-package-directory "~/dotfiles/emacs/el-get/initfiles")
 
+;; On emacs 23, ~/.emacs.d/elpa directory needs to be created
+(make-directory (expand-file-name "~/.emacs.d/elpa") t)
+
+
 ;; The packages to be installed by el-get.
 ;; Their init files (if needed) are in the 'el-get-user-package-directory'
 (setq installed_packages 
