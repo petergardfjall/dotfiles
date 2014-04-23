@@ -23,3 +23,4 @@
 ;
 (add-to-list 'default-frame-alist
              '(font . "DejaVu Sans Mono-10"))
+(set-face-attribute 'default nil :font  "DejaVu Sans Mono-10")
