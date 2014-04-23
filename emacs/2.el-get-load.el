@@ -43,7 +43,7 @@
 ;; The packages to be installed by el-get.
 ;; Their init files (if needed) are in the 'el-get-user-package-directory'
 (setq installed_packages 
-      '(cl-lib auto-complete jedi pymacs ropemacs)
+      '(cl-lib auto-complete pymacs ropemacs jedi)
 )
 ;; Go through packages and install the ones missing (including dependencies)
 ;; and look for init-<package>.el initialization code to set up each package.
