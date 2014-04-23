@@ -21,4 +21,5 @@
 ;
 ; set the default font to use
 ;
-(set-frame-font "DejaVu Sans Mono-10" nil t)
+(add-to-list 'default-frame-alist
+             '(font . "DejaVu Sans Mono-10"))
