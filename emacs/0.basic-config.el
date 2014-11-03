@@ -24,3 +24,10 @@
 (add-to-list 'default-frame-alist
              '(font . "DejaVu Sans Mono-10"))
 (set-face-attribute 'default nil :font  "DejaVu Sans Mono-10")
+
+;
+; Set up some global keyboard mappings
+;
+; Make sure backtick can be written
+(global-set-key [S-dead-grave] "`")
+(global-set-key [dead-tilde] "~")
