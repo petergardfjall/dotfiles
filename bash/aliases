@@ -8,4 +8,5 @@ alias java7="source ~/dotfiles/bash/java7.source"
 alias java6="source ~/dotfiles/bash/java6.source"
 alias screen="screen -c ~/dotfiles/screen/screenrc"
 
-alias citycloudenv='export OS_AUTH_URL="https://identity1.citycloud.com:5000/v3/"; export OS_PROJECT_ID="5acfdc28c79440bbbad61187999edd1f"; export OS_USER_ID="fd33b32bc6424bc491947b3a88e67f71"; export OS_PASSWORD="ahweeY9e"; export OS_REGION_NAME="Kna1"; unset OS_USERNAME OS_COMPUTE_API_VERSION OS_REGION_NAME OS_TENANT_NAME'
+alias citycloudenv='source ~/dotfiles/bash/citycloud'
+alias openstackcsenv='source ~/dotfiles/bash/openstack'

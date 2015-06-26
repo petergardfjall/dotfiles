@@ -13,7 +13,9 @@ export ANT_HOME=/opt/ant
 export JMETER_HOME=/opt/jmeter
 export PACKER_HOME=/opt/packer
 
-export PATH=${MYSCRIPTS}:${MYBIN}:${ECLIPSE_HOME}:${JAVA_HOME}/bin:${MAVEN_HOME}/bin:${ANT_HOME}/bin:/opt/bin:${MAVE_HOME}/bin:${JMETER_HOME}/bin:${PACKER_HOME}:${PATH}
+export GO_HOME=/usr/local/go
+
+export PATH=${MYSCRIPTS}:${MYBIN}:${ECLIPSE_HOME}:${JAVA_HOME}/bin:${MAVEN_HOME}/bin:${ANT_HOME}/bin:/opt/bin:${MAVE_HOME}/bin:${JMETER_HOME}/bin:${PACKER_HOME}:${PATH}:${GO_HOME}/bin
 
 # Amazon auto-scaling command-line tools
 export AWS_AUTO_SCALING_HOME=/opt/amazon/AutoScaling
