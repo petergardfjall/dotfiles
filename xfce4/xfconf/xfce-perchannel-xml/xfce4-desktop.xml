@@ -111,7 +111,7 @@
     </property>
   </property>
   <property name="last" type="empty">
-    <property name="window-width" type="int" value="609"/>
-    <property name="window-height" type="int" value="526"/>
+    <property name="window-width" type="int" value="851"/>
+    <property name="window-height" type="int" value="691"/>
   </property>
 </channel>

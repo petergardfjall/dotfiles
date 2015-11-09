@@ -46,6 +46,7 @@
         <value type="string" value="networkmanager applet"/>
         <value type="string" value="xfce4-power-manager"/>
         <value type="string" value="blueman-applet"/>
+        <value type="string" value="chromium-browser"/>
       </property>
     </property>
     <property name="plugin-5" type="string" value="power-manager-plugin"/>
@@ -57,6 +58,12 @@
         <value type="string" value="libapplication.so"/>
         <value type="string" value="com.canonical.indicator.sound"/>
         <value type="string" value="com.canonical.indicator.messages"/>
+        <value type="string" value="libprintersmenu.so"/>
+        <value type="string" value="com.canonical.indicator.bluetooth"/>
+        <value type="string" value="com.canonical.indicator.datetime"/>
+        <value type="string" value="com.canonical.indicator.session"/>
+        <value type="string" value="com.canonical.indicator.power"/>
+        <value type="string" value="com.canonical.indicator.keyboard"/>
       </property>
     </property>
     <property name="plugin-7" type="string" value="separator">
