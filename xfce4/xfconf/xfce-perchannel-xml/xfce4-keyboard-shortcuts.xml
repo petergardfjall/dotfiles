@@ -72,7 +72,7 @@
       <property name="XF86Music" type="string" value="gmusicbrowser"/>
       <property name="XF86HomePage" type="string" value="exo-open --launch WebBrowser"/>
       <property name="override" type="bool" value="true"/>
-      <property name="Super_L" type="string" value="xfrun4"/>
+      <property name="Super_L" type="string" value="xfce4-appfinder"/>
     </property>
   </property>
   <property name="xfwm4" type="empty">
