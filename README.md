@@ -9,6 +9,11 @@ Feel free to use them.
 
 You now have the dotfiles directory/git repository in your home folder.
 
+## xfce window manager
+
+    ln -s ~/dotfiles/xfce4 ~/.config/xfce4
+
+
 ## emacs
 
 Assuming no prior emacs configuration, you can simply run the following command:
