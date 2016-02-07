@@ -1,0 +1,23 @@
+" ### START: Vundle plugin manager ###
+set nocompatible              " be iMproved, required
+filetype off                  " required
+" set the runtime path to include Vundle and initialize
+set rtp+=~/.vim/bundle/Vundle.vim
+
+" NOTE: Keep plugin declarations between vundle#begin/end
+call vundle#begin()
+
+" let Vundle manage Vundle, required
+Plugin 'VundleVim/Vundle.vim'
+
+" Status line at bottom of screen
+Plugin 'bling/vim-airline'
+
+call vundle#end()            " required
+filetype plugin indent on    " required
+" ### END: Vundle plugin manager ###
+
+
+" prefer utf-8 file encoding
+set encoding=utf-8      " The encoding displayed
+set fileencoding=utf-8  " The encoding written to 

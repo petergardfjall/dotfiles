@@ -47,6 +47,7 @@
         <value type="string" value="xfce4-power-manager"/>
         <value type="string" value="scp-dbus-service.py"/>
         <value type="string" value="blueman-applet"/>
+        <value type="string" value="thunar"/>
         <value type="string" value="chromium-browser"/>
       </property>
     </property>
@@ -72,7 +73,7 @@
       <property name="expand" type="bool" value="false"/>
     </property>
     <property name="plugin-8" type="string" value="clock">
-      <property name="digital-format" type="string" value="%d %b, %H:%M:%S"/>
+      <property name="digital-format" type="string" value="%a %d %b, %H:%M:%S"/>
     </property>
     <property name="plugin-10" type="string" value="actions"/>
     <property name="plugin-11" type="string" value="weather"/>

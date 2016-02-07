@@ -12,10 +12,12 @@ export ECLIPSE_HOME=/opt/eclipse
 export ANT_HOME=/opt/ant
 export JMETER_HOME=/opt/jmeter
 export PACKER_HOME=/opt/packer
+export LITEIDE_HOME=/opt/liteide
 
-export GO_HOME=/usr/local/go
+export GOROOT=/opt/go
+export GOPATH=${HOME}/dev/go
 
-export PATH=${MYSCRIPTS}:${MYBIN}:${ECLIPSE_HOME}:${JAVA_HOME}/bin:${MAVEN_HOME}/bin:${ANT_HOME}/bin:/opt/bin:${MAVE_HOME}/bin:${JMETER_HOME}/bin:${PACKER_HOME}:${PATH}:${GO_HOME}/bin
+export PATH=${MYSCRIPTS}:${MYBIN}:${ECLIPSE_HOME}:${JAVA_HOME}/bin:${MAVEN_HOME}/bin:${ANT_HOME}/bin:/opt/bin:${MAVE_HOME}/bin:${JMETER_HOME}/bin:${PACKER_HOME}:${PATH}:${GOROOT}/bin:${LITEIDE_HOME}/bin
 
 # Amazon auto-scaling command-line tools
 export AWS_AUTO_SCALING_HOME=/opt/amazon/AutoScaling
