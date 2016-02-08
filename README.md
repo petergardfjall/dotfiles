@@ -22,6 +22,21 @@ Assuming no prior emacs configuration, you can simply run the following command:
 
 If you have prior emacs configuration, simply append the code in `~/dotfiles/emacs.init` to your `~/.emacs` file.
 
+
+
+## vim
+
+Install the [Vundle](https://github.com/VundleVim/Vundle.vim) plugin manager
+and make use of the `.vimrc` provided in this directory.
+
+    git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
+    ln -s ~/dotfiles/vim/vimrc ~/.vimrc
+
+NOTE: on first launch of `vim`, run `:PluginInstall` to have Vundle install
+the plugins configured in `vimrc`.
+
+
+
 ## bash
 
 The `~/dotfiles/bash/` directory contains additional files to load
