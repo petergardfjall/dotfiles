@@ -1,0 +1,2 @@
+# ignore bash.local (supposed to contain host-specific settings)
+bash.local/*

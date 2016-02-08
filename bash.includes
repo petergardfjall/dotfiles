@@ -1,0 +1,17 @@
+#!/bin/bash
+
+#
+# source all files in ~/dotfiles/bash
+#
+for f in $(ls -B ~/dotfiles/bash/); do
+    [[ -f ~/dotfiles/bash/${f} ]] && source ~/dotfiles/bash/${f}
+done
+
+#
+# source all files in ~/dotfiles/bash/bash.local
+#
+for f in $(ls -B ~/dotfiles/bash/bash.local/); do
+    [[ -f ~/dotfiles/bash/bash.local/${f} ]] && source ~/dotfiles/bash/bash.local/${f}
+done
+
+

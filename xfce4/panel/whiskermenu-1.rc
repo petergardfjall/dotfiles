@@ -1,5 +1,5 @@
 favorites=exo-web-browser.desktop,exo-mail-reader.desktop,exo-file-manager.desktop,libreoffice-writer.desktop,libreoffice-calc.desktop,pidgin.desktop,gmusicbrowser.desktop,ubuntu-software-center.desktop,exo-terminal-emulator.desktop,xfhelp4.desktop
-recent=xfce-settings-manager.desktop,xfce-wm-settings.desktop,xfce-keyboard-settings.desktop,update-manager.desktop,gtk-theme-config.desktop,xfce-backdrop-settings.desktop
+recent=pidgin.desktop,xfce-wm-settings.desktop,gtk-theme-config.desktop,xfce4-settings-editor.desktop,xfce-ui-settings.desktop,xfce-settings-manager.desktop,xfce-keyboard-settings.desktop,update-manager.desktop,xfce-backdrop-settings.desktop
 button-title=Applications Menu
 button-icon=xubuntu-logo-menu
 button-single-row=false

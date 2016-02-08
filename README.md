@@ -24,23 +24,24 @@ If you have prior emacs configuration, simply append the code in `~/dotfiles/ema
 
 ## bash
 
-Append the following to your `~/.bashrc` file
+The `~/dotfiles/bash/` directory contains additional files to load
+into your shell environment. Any secrets/host-specific settings should 
+be placed under the `~/dotfiles/bash/bash.local/` directory and are
+ignored by this git repo.
 
+Append the following to your `~/.bashrc` file
+    
     #
     # source additional configuration modules
     #
-    for f in $(ls ~/dotfiles/bash/*); do
-        source $f
-    done
+    source ~/dotfiles/bash.includes
 
 Then append the following to your `~/.profile` file:
 
     #
     # source additional configuration modules
     #
-    for f in $(ls ~/dotfiles/profile/*); do
-        source $f
-    done
+    source ~/dotfiles/bash.includes
 
 ## screen
 If you don't already have a screen configuration file, use the provided one by running:

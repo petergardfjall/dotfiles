@@ -2,9 +2,16 @@
 M = Meta (or Alt)
 C = Ctrl
 
+
 # General
 Help:				C-h (or F1)
 Exit: 			    	C-x C-c
+
+
+# Major Mode:
+Describe:			M-x describe-mode # describe current major mode
+Set:				M-x <mode>  # e.g., js-mode or python-mode
+
 
 # File
 Open:				C-x C-f

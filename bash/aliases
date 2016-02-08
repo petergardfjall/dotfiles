@@ -2,11 +2,8 @@ alias o="gnome-open"
 alias mvnci="mvn clean install"
 alias mvnnt="mvn clean install -Dmaven.test.skip"
 alias lst="ls -al --full-time"
-alias rdesktop="rdesktop -g 1440x1080"
 # alias emacs="emacs -fn 8x13"
 alias java7="source ~/dotfiles/bash/java7.source"
 alias java6="source ~/dotfiles/bash/java6.source"
 alias screen="screen -c ~/dotfiles/screen/screenrc"
 
-alias citycloudenv='source ~/dotfiles/bash/citycloud'
-alias openstackcsenv='source ~/dotfiles/bash/openstack'
