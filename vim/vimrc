@@ -32,10 +32,14 @@ set fileencoding=utf-8  " The encoding written to
 " copy/paste to/from system clipboard
 "set clipboard=unnamedplus
 
-" Required by solarized
+" enable syntax highlighting
 syntax enable
-set background=dark
-colorscheme solarized
+
+" Enable Solarized theme only in graphical mode
+if has('gui_running')
+  set background=dark
+  colorscheme solarized
+endif
 
 " always display status line (for airline to be displayed at all times)
 set laststatus=2
