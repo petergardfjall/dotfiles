@@ -19,5 +19,5 @@ export MAT_HOME=/opt/mat
 export GOROOT=/opt/go
 export GOPATH=${HOME}/dev/go
 
-export PATH=${MYSCRIPTS}:${MYBIN}:${ECLIPSE_HOME}:${JAVA_HOME}/bin:${MAVEN_HOME}/bin:${ANT_HOME}/bin:/opt/bin:${MAVE_HOME}/bin:${JMETER_HOME}/bin:${PACKER_HOME}:${PATH}:${GO_HOME}/bin:${CASSANDRA_HOME}/bin:${MAT_HOME}
+export PATH=${MYSCRIPTS}:${MYBIN}:${ECLIPSE_HOME}:${JAVA_HOME}/bin:${MAVEN_HOME}/bin:${ANT_HOME}/bin:/opt/bin:${MAVE_HOME}/bin:${JMETER_HOME}/bin:${PACKER_HOME}:${PATH}:${GOROOT}/bin:${GOPATH}/bin:${CASSANDRA_HOME}/bin:${MAT_HOME}
 
