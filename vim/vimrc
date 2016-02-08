@@ -1,4 +1,4 @@
-" ### START: Vundle plugin manager ###
+" Vundle plugin manager {
 set nocompatible              " be iMproved, required
 filetype off                  " required
 " set the runtime path to include Vundle and initialize
@@ -10,19 +10,37 @@ call vundle#begin()
 " let Vundle manage Vundle, required
 Plugin 'VundleVim/Vundle.vim'
 
-" Solarized theme
+" Color schemes
 Plugin 'altercation/vim-colors-solarized'
+Plugin 'jnurmine/Zenburn'
 
 " Status line at bottom of screen
 Plugin 'bling/vim-airline'
 Plugin 'vim-airline/vim-airline-themes'
 
-" file navigation panel
+" file navigation panel, enable via ':NERDTree'
 Plugin 'scrooloose/nerdtree'
 
+" Ctrl-P to search for just about anything (files, tags, etc)
+Plugin 'kien/ctrlp.vim'
+
+" TODO: fix broken python autoindent
+"Plugin 'vim-scripts/indentpython.vim'
+
+" TODO: Code completion engine with several completion engines for different
+" languages. Install as local plugin? 
+" https://realpython.com/blog/python/vim-and-python-a-match-made-in-heaven/ 
+"Plugin 'Valloric/YouCompleteMe'
+
+" TODO: Syntax checking for a variety of languages
+" https://github.com/scrooloose/syntastic
+" Plugin 'scrooloose/syntastic'
+" TODO: PEP8 checking
+" Plugin 'nvie/vim-flake8'
 call vundle#end()            " required
 filetype plugin indent on    " required
-" ### END: Vundle plugin manager ###
+" } Vundle plugin manager
+
 
 
 " prefer utf-8 file encoding
@@ -30,7 +48,7 @@ set encoding=utf-8      " The encoding displayed
 set fileencoding=utf-8  " The encoding written to 
 
 " copy/paste to/from system clipboard
-"set clipboard=unnamedplus
+set clipboard=unnamed
 
 " enable syntax highlighting
 syntax enable
@@ -48,9 +66,32 @@ nnoremap <C-H> <C-W><C-H>
 if has('gui_running')
   set background=dark
   colorscheme solarized
+else
+  " you *may* need to set 'export TERM=xterm-256color' for this to work
+  set t_Co=256
+  colorscheme zenburn
 endif
 
 " always display status line (for airline to be displayed at all times)
 set laststatus=2
 set ttimeoutlen=50
 
+" Python {
+" TODO: proper PEP8 indentation
+"au BufNewFile,BufRead *.py
+"    \ set tabstop=4
+"    \ set softtabstop=4
+"    \ set shiftwidth=4
+"    \ set textwidth=79
+"    \ set expandtab
+"    \ set autoindent
+"    \ set fileformat=unix
+" 
+" } Python 
+"
+" Web {
+" au BufNewFile,BufRead *.js, *.html, *.css
+"    \ set tabstop=2
+"    \ set softtabstop=2
+"    \ set shiftwidth=2
+" } Web
