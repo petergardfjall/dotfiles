@@ -16,7 +16,8 @@ export CASSANDRA_HOME=/opt/cassandra
 # Eclipse Memory Analyzer Tool
 export MAT_HOME=/opt/mat
 
-export GO_HOME=/usr/local/go
+export GOROOT=/opt/go
+export GOPATH=${HOME}/dev/go
 
 export PATH=${MYSCRIPTS}:${MYBIN}:${ECLIPSE_HOME}:${JAVA_HOME}/bin:${MAVEN_HOME}/bin:${ANT_HOME}/bin:/opt/bin:${MAVE_HOME}/bin:${JMETER_HOME}/bin:${PACKER_HOME}:${PATH}:${GO_HOME}/bin:${CASSANDRA_HOME}/bin:${MAT_HOME}
 
