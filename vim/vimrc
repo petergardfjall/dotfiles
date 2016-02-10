@@ -76,6 +76,16 @@ endif
 set laststatus=2
 set ttimeoutlen=50
 
+" Insert mode remappings:
+" Alt-d: delete word forward
+" Alt-f: jump one word forward
+"if not has('gui_running')
+execute "set <M-d>=\ed"
+execute "set <M-f>=\ef"
+"endif
+inoremap <M-d> <C-o>dw
+inoremap <M-f> <C-o>w
+
 " Python {
 " TODO: proper PEP8 indentation
 "au BufNewFile,BufRead *.py
