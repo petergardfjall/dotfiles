@@ -9,8 +9,6 @@
 
 ;; add package archives
 (add-to-list 'package-archives
-	     '("marmalade" . "https://marmalade-repo.org/packages/"))
-(add-to-list 'package-archives
 	     '("melpa" . "https://melpa.org/packages/"))
 (add-to-list 'package-archives
 	     '("org" . "http://orgmode.org/elpa/") t)
@@ -20,7 +18,7 @@
 (require 'cl)
  
 (defvar my-packages
-  '(ack-and-a-half markdown-mode python zenburn-theme)
+  '(markdown-mode python zenburn-theme jbeans-theme afternoon-theme)
   "A list of packages to ensure are installed at launch.")
  
 (defun my-packages-installed-p ()
@@ -44,16 +42,12 @@
 ;; been loaded (loading happens on exit of init.el).
 ;;
 
-;; Set up solarized theme
-;; NOTE: for the theme to work in terminal mode you may need to set
-;;   export TERM=xterm-256color
-;; (eval-after-load "solarized-theme"
-;;   (if (require 'solarized nil t)
-;;       (progn
-;; 	(setq solarized-termcolors '256)
-;; 	(load-theme 'solarized-dark t)
-;; 	)
-;;     (warn "solarized-theme package not found.")))
 
-(eval-after-load "zenburn-theme"
-  (load-theme 'zenburn t))
+;; (eval-after-load "zenburn-theme"
+;;   (load-theme 'zenburn t))
+
+;; (eval-after-load "jbeans-theme"
+;;   (load-theme 'jbeans t))
+
+(eval-after-load "afternoon-theme"
+ (load-theme 'afternoon t))
