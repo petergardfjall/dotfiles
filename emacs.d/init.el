@@ -5,6 +5,8 @@
 (require 'package)
 (package-initialize)
 
+(message "Loading init.el ...")
+
 ;; add package archives
 (add-to-list 'package-archives
 	     '("marmalade" . "https://marmalade-repo.org/packages/"))
@@ -18,7 +20,7 @@
 (require 'cl)
  
 (defvar my-packages
-  '(ack-and-a-half markdown-mode python solarized-theme)
+  '(ack-and-a-half markdown-mode python zenburn-theme)
   "A list of packages to ensure are installed at launch.")
  
 (defun my-packages-installed-p ()
@@ -28,7 +30,9 @@
  
 (unless (my-packages-installed-p)
   ;; check for new packages (package versions)
+  (message "%s" "Emacs Prelude is now refreshing its package database...")
   (package-refresh-contents)
+  (message "%s" " done.")
   ;; install the missing packages
   (dolist (p my-packages)
     (when (not (package-installed-p p))
@@ -43,10 +47,13 @@
 ;; Set up solarized theme
 ;; NOTE: for the theme to work in terminal mode you may need to set
 ;;   export TERM=xterm-256color
-(eval-after-load "solarized-theme"
-  (if (require 'solarized nil t)
-      (progn
-	(setq solarized-termcolors '256)
-	(load-theme 'solarized-dark t)
-	)
-    (warn "solarized-theme package not found.")))
+;; (eval-after-load "solarized-theme"
+;;   (if (require 'solarized nil t)
+;;       (progn
+;; 	(setq solarized-termcolors '256)
+;; 	(load-theme 'solarized-dark t)
+;; 	)
+;;     (warn "solarized-theme package not found.")))
+
+(eval-after-load "zenburn-theme"
+  (load-theme 'zenburn t))
