@@ -18,7 +18,7 @@
 (require 'cl)
  
 (defvar my-packages
-  '(markdown-mode python zenburn-theme jbeans-theme afternoon-theme)
+  '(markdown-mode python jbeans-theme)
   "A list of packages to ensure are installed at launch.")
  
 (defun my-packages-installed-p ()
@@ -42,12 +42,5 @@
 ;; been loaded (loading happens on exit of init.el).
 ;;
 
-
-;; (eval-after-load "zenburn-theme"
-;;   (load-theme 'zenburn t))
-
-;; (eval-after-load "jbeans-theme"
-;;   (load-theme 'jbeans t))
-
-(eval-after-load "afternoon-theme"
- (load-theme 'afternoon t))
+(eval-after-load "jbeans-theme"
+  (load-theme 'jbeans t))
