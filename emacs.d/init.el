@@ -18,7 +18,7 @@
 (require 'cl)
  
 (defvar my-packages
-  '(markdown-mode python jbeans-theme)
+  '(markdown-mode python jbeans-theme auto-complete)
   "A list of packages to ensure are installed at launch.")
  
 (defun my-packages-installed-p ()
@@ -44,3 +44,8 @@
 
 (eval-after-load "jbeans-theme"
   (load-theme 'jbeans t))
+
+;; Enable auto-complete
+;;   http://www.emacswiki.org/emacs/AutoComplete
+(eval-after-load "auto-complete"
+  (ac-config-default))
