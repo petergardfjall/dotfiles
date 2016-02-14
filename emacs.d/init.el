@@ -22,8 +22,7 @@
     python
     jbeans-theme
     auto-complete
-    smart-mode-line
-    smart-mode-line-powerline-theme
+    powerline
     )
   "A list of packages to ensure are installed at launch.")
  
@@ -42,7 +41,7 @@
     (when (not (package-installed-p p))
       (package-install p))))
 
-(message "%s" "Applying general settings ...")
+
 ;;
 ;; General settings
 ;;
@@ -54,6 +53,8 @@
 ;; Middle mouse button inserts the clipboard (rather than emacs primary)
 (global-set-key (kbd "<mouse-2>") 'x-clipboard-yank)
 
+
+
 ;;
 ;; Package configurations that can be set before the packages have been loaded
 ;; (happens on exit of init.el)
@@ -64,47 +65,31 @@
  	  '(lambda()(setq indent-tabs-mode nil js-indent-level 4)))
 
 
-
-
-
 ;;
 ;; Set up hooks for configuration that is to take place after packages have
 ;; been loaded (loading happens on exit of init.el).
 ;;
 
-(eval-after-load "jbeans-theme"
-  (load-theme 'jbeans t))
-
-;; Enable auto-complete
-(eval-after-load "auto-complete"
-  (ac-config-default))
-
-(eval-after-load "python"
-  (add-hook 'python-mode-hook
-	    '(lambda () (define-key python-mode-map
-			  "\C-m" 'newline-and-indent)))
-  )
-
-;; (with-eval-after-load 'smart-mode-line
-;;   (require 'smart-mode-line)
-;;   (message "after load of smart-mode-line ...")
-;;   (setq sml/theme 'light)
-;;   ;;(setq sml/apply-theme 'powerline)
-;;   ;;(setq sml/hidden-modes '(" Fly" " hl-p" " SP" " ws" " yas"))
-;;   (sml/setup)
-;;   (message "sml/setup called.")
-;;   )
-
-
 (add-hook 'after-init-hook 'package-setup-hook)
 (defun package-setup-hook ()
   ;; do things after package initialization
-  (message "package-setup-hook ...")
+  (message "running package-setup-hook ...")
 
-  (require 'smart-mode-line)
-  (setq sml/no-confirm-load-theme t)  
-  (setq sml/theme 'dark)
-  (sml/setup t)
+  (require 'jbeans-theme)
+  (load-theme 'jbeans t)
+
+  (require 'powerline)
+  (powerline-default-theme)
+  ;;(powerline-vim-theme)
+
+  (require 'auto-complete)
+  (ac-config-default)
+
+  (require 'python)
+  (add-hook 'python-mode-hook
+	    '(lambda () (define-key python-mode-map
+			  "\C-m" 'newline-and-indent)))
+
   )
 
 (message "%s" "init.el done.")
