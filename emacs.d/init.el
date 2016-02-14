@@ -23,6 +23,7 @@
     jbeans-theme
     auto-complete
     powerline
+    neotree
     )
   "A list of packages to ensure are installed at launch.")
  
@@ -90,6 +91,8 @@
 	    '(lambda () (define-key python-mode-map
 			  "\C-m" 'newline-and-indent)))
 
+  (require 'neotree)
+  (global-set-key [f8] 'neotree-toggle)
   )
 
 (message "%s" "init.el done.")
