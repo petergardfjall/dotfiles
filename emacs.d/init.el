@@ -49,6 +49,10 @@
 (set-language-environment "UTF-8")
 (setq inhibit-startup-screen t)
 (setq column-number-mode t)
+; set the default font to use
+(add-to-list 'default-frame-alist
+             '(font . "DejaVu Sans Mono-10"))
+(set-face-attribute 'default nil :font  "DejaVu Sans Mono-10")
 ;; Allow copy/paste to/from system clipboard
 (setq x-select-enable-clipboard t) 
 ;; Middle mouse button inserts the clipboard (rather than emacs primary)
