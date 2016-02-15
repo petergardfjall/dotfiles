@@ -19,6 +19,7 @@
  
 (defvar my-packages
   '(markdown-mode
+    yaml-mode
     python
     jbeans-theme
     auto-complete
@@ -69,6 +70,10 @@
 (add-hook 'js-mode-hook
  	  '(lambda()(setq indent-tabs-mode nil js-indent-level 4)))
 
+;; RETURN should start indented on the next line.
+(add-hook 'yaml-mode-hook
+	  (lambda ()	    
+	    (define-key yaml-mode-map "\C-m" 'newline-and-indent)))
 
 ;;
 ;; Set up hooks for configuration that is to take place after packages have
