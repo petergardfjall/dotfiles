@@ -1,6 +1,7 @@
 ;; Main entry-point for emacs configuration.
 ;; See http://wikemacs.org/wiki/Package.el
 
+
 ;; Use the package.el package manager that comes bundled with Emacs24
 (require 'package)
 (package-initialize)
@@ -14,13 +15,13 @@
 	     '("org" . "http://orgmode.org/elpa/") t)
 
 
-;; Common Lisp for Emacs. TODO: should be cl-lib?
-(require 'cl)
+;; Common Lisp for Emacs
+(require 'cl-lib)
  
 (defvar my-packages
   '(markdown-mode
     yaml-mode
-    python
+    python         ;; Python mode
     jbeans-theme   ;; Color theme
     auto-complete  ;; Generic auto-completion functionality
     powerline      ;; Prettier mode line at bottom of screen
@@ -31,9 +32,9 @@
   "A list of packages to ensure are installed at launch.")
  
 (defun my-packages-installed-p ()
-  (loop for p in my-packages
-        when (not (package-installed-p p)) do (return nil)
-        finally (return t)))
+  (cl-loop for p in my-packages
+	   when (not (package-installed-p p))  do (cl-return nil)
+	   finally (cl-return t)))
  
 (unless (my-packages-installed-p)
   ;; check for new packages (package versions)
@@ -74,7 +75,7 @@
 
 ;; RETURN should start indented on the next line.
 (add-hook 'yaml-mode-hook
-	  (lambda ()	    
+	  (lambda ()
 	    (define-key yaml-mode-map "\C-m" 'newline-and-indent)))
 
 
