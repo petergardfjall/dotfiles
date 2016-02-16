@@ -25,7 +25,6 @@
     auto-complete  ;; Generic auto-completion functionality
     powerline      ;; Prettier mode line at bottom of screen
     neotree        ;; File navigator on the left via F8
-    ido            ;; Interactively Do Things
     flycheck       ;; on-the-fly syntax checking
     jedi           ;; Python auto-completion
     )
@@ -108,11 +107,6 @@
 
   (require 'neotree)
   (global-set-key [f8] 'neotree-toggle)
-
-  ;; Interactive help when selecting files to open (C-x C-f), switching
-  ;; buffers (C-x b), etc.
-  (require 'ido)
-  (ido-mode t)
 
   ;; On-the-fly syntax checking (support for different languages)
   (require 'flycheck)
