@@ -21,10 +21,13 @@
   '(markdown-mode
     yaml-mode
     python
-    jbeans-theme
-    auto-complete
-    powerline
-    neotree
+    jbeans-theme   ;; Color theme
+    auto-complete  ;; Generic auto-completion functionality
+    powerline      ;; Prettier mode line at bottom of screen
+    neotree        ;; File navigator on the left via F8
+    ido            ;; Interactively Do Things
+    flycheck       ;; on-the-fly syntax checking
+    jedi           ;; Python auto-completion
     )
   "A list of packages to ensure are installed at launch.")
  
@@ -75,6 +78,8 @@
 	  (lambda ()	    
 	    (define-key yaml-mode-map "\C-m" 'newline-and-indent)))
 
+
+
 ;;
 ;; Set up hooks for configuration that is to take place after packages have
 ;; been loaded (loading happens on exit of init.el).
@@ -95,6 +100,7 @@
   (require 'auto-complete)
   (ac-config-default)
 
+  ;; Bind RETURN to "newline followed by indent"
   (require 'python)
   (add-hook 'python-mode-hook
 	    '(lambda () (define-key python-mode-map
@@ -102,6 +108,25 @@
 
   (require 'neotree)
   (global-set-key [f8] 'neotree-toggle)
+
+  ;; Interactive help when selecting files to open (C-x C-f), switching
+  ;; buffers (C-x b), etc.
+  (require 'ido)
+  (ido-mode t)
+
+  ;; On-the-fly syntax checking (support for different languages)
+  (require 'flycheck)
+  (global-flycheck-mode)
+
+  ;; Python auto-completion
+  (add-hook 'python-mode-hook 'jedi:setup)
+  ;; Set up recommended key bindings (optional)
+  (setq jedi:setup-keys t)
+  ;; Automatically start completion when entering a '.' (optional)
+  (setq jedi:complete-on-dot t)  
+  ;; Avoid collision with ropemacs's show doc (uses 'C-c d')
+  ;; (setq jedi:key-show-doc (kbd "C-c D"))
   )
+
 
 (message "%s" "init.el done.")
