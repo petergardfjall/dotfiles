@@ -18,10 +18,7 @@ You now have the dotfiles directory/git repository in your home folder.
 
 Assuming no prior emacs configuration, you can simply run the following command:
     
-    ln -s ~/dotfiles/emacs.init ~/.emacs
-
-If you have prior emacs configuration, simply append the code in `~/dotfiles/emacs.init` to your `~/.emacs` file.
-
+    ln -s ~/dotfiles/emacs.d/init.el ~/.emacs
 
 
 ## vim
