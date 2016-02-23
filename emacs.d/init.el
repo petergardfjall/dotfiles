@@ -22,6 +22,8 @@
   '(markdown-mode
     yaml-mode
     python         ;; Python mode
+    go-mode        ;; Golang mode
+    go-autocomplete
     jbeans-theme   ;; Color theme
     auto-complete  ;; Generic auto-completion functionality
     powerline      ;; Prettier mode line at bottom of screen
@@ -97,6 +99,7 @@
   (powerline-default-theme)
   ;;(powerline-vim-theme)
 
+  (require 'go-autocomplete)
   (require 'auto-complete)
   (ac-config-default)
 
@@ -121,6 +124,18 @@
   (setq jedi:complete-on-dot t)  
   ;; Avoid collision with ropemacs's show doc (uses 'C-c d')
   ;; (setq jedi:key-show-doc (kbd "C-c D"))
+
+  ;;
+  ;; http://yousefourabi.com/blog/2014/05/emacs-for-go/
+  (require 'go-mode)
+  (add-hook 'before-save-hook 'gofmt-before-save)
+  (add-hook 'go-mode-hook
+	    '(lambda ()
+	       (local-set-key (kbd "C-c C-r") 'go-remove-unused-imports)
+	       (local-set-key (kbd "C-c C-g") 'go-goto-imports)
+	       (local-set-key (kbd "C-c C-f") 'gofmt)
+	       ))
+  (add-hook 'go-mode-hook 'auto-complete-mode)
   )
 
 
