@@ -64,6 +64,11 @@ Search backward: 		C-r
 Query replace:			M-%
 Replace with regexp:		M-x query-replace-regexp
 
+# Indentation
+Indent rigidly (marked rows):	C-u C-x TAB
+Mode-aware indent:		M-x indent-region
+
+
 # Multiple windows
 Split window:			C-x 2
 Switch window:			C-x o
