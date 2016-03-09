@@ -66,7 +66,9 @@ Replace with regexp:		M-x query-replace-regexp
 
 # Indentation
 Indent rigidly (marked rows):	C-u C-x TAB
+Decrease indent:       		C-u -4 C-x TAB
 Mode-aware indent:		M-x indent-region
+
 
 
 # Multiple windows
