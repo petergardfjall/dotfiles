@@ -11,7 +11,10 @@ You now have the dotfiles directory/git repository in your home folder.
 
 ## xfce window manager
 
-    ln -s ~/dotfiles/xfce4 ~/.config/xfce4
+Run the following script to create symlinks to these xfce4 settings file
+from the `~/.config/xfce4/` directory:
+
+    ~/dotfiles/setup-xfce4.sh
 
 
 ## emacs
