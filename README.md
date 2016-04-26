@@ -16,6 +16,7 @@ from the `~/.config/xfce4/` directory:
 
     ~/dotfiles/setup-xfce4.sh
 
+You need to log out and log back in for all changes to take effect.
 
 ## emacs
 

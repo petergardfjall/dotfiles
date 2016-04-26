@@ -12,11 +12,16 @@ backup=~/.config/xfce4/backup
 mkdir -p ${dest}
 
 for file in $(ls -1 ~/dotfiles/xfce4); do
-    if [ -f ${dest}/${file} ]; then
+    if [ -h ${dest}/${file} ]; then
+	echo "[WARN] symlink already exists for ${dest}/${file}. Ignoring ..."
+	continue
+    fi
+    
+    if [ -e ${dest}/${file} ]; then
 	# destination exists => take backup
-	echo "[INFO] ${file} exists in ${dest}. Backing up to ${backup} ..."
+	echo "[INFO] ${file} exists in ${dest}. Moving to ${backup} ..."
 	mkdir -p ${backup}
-	cp -r ${dest}/${file} ${backup}/${file}
+	mv ${dest}/${file} ${backup}/${file}
     fi
 
     echo "[INFO] linking ${dest}/${file} => ${src}/${file} ..."
