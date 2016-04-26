@@ -10,5 +10,12 @@
   <property name="last-window-height" type="int" value="482"/>
   <property name="last-window-maximized" type="bool" value="false"/>
   <property name="last-details-view-zoom-level" type="string" value="THUNAR_ZOOM_LEVEL_SMALLER"/>
-  <property name="last-details-view-column-widths" type="string" value="50,459,50,50,112,50,50,70,130"/>
+  <property name="last-details-view-column-widths" type="string" value="50,225,50,50,196,50,50,70,280"/>
+  <property name="misc-single-click" type="bool" value="false"/>
+  <property name="default-view" type="string" value="ThunarDetailsView"/>
+  <property name="misc-date-style" type="string" value="THUNAR_DATE_STYLE_ISO"/>
+  <property name="shortcuts-icon-emblems" type="bool" value="true"/>
+  <property name="last-sort-column" type="string" value="THUNAR_COLUMN_NAME"/>
+  <property name="last-sort-order" type="string" value="GTK_SORT_ASCENDING"/>
+  <property name="last-show-hidden" type="bool" value="true"/>
 </channel>
