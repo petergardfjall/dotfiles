@@ -22,7 +22,7 @@ You need to log out and log back in for all changes to take effect.
 
 Assuming no prior emacs configuration, you can simply run the following command:
     
-    ln -s ~/dotfiles/emacs.d/init.el ~/.emacs
+    ln -s ~/dotfiles/emacs.init ~/.emacs
 
 
 ## vim
