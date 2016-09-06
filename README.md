@@ -11,8 +11,8 @@ You now have the dotfiles directory/git repository in your home folder.
 
 ## xfce window manager
 
-Run the following script to create symlinks to these xfce4 settings file
-from the `~/.config/xfce4/` directory:
+Run the following script to populate the `~/config/xfce4` directory with
+symlinks to the xfce4 settings files in this repo:
 
     ~/dotfiles/setup-xfce4.sh
 
