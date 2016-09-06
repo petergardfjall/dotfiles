@@ -32,3 +32,6 @@ C-a w			show window bar (if you don't have window bar)
 C-a k			kill current window (not recommended)
 C-a \			kill all windows (not recommended)
 C-a A			rename current window
+
+# Navigation
+C-a <esc>		Enter copy/scrollback buffer mode
