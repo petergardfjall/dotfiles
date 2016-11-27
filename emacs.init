@@ -19,19 +19,23 @@
 (require 'cl-lib)
  
 (defvar my-packages
-  '(markdown-mode
-    yaml-mode
-    python         ;; Python mode
-    go-mode        ;; Golang mode
-    go-autocomplete
-    jbeans-theme   ;; Color theme
+  '(jbeans-theme   ;; Color theme
     auto-complete  ;; Generic auto-completion functionality
     powerline      ;; Prettier mode line at bottom of screen
     neotree        ;; File navigator on the left via F8
-    flycheck       ;; on-the-fly syntax checking
+    flycheck       ;; pluggable on-the-fly syntax checking
+    ;; Markdown (.md) editing
+    markdown-mode
+    ;; Yaml editing
+    yaml-mode
+    ;; Python editing
+    python         ;; Python mode
     jedi           ;; Python auto-completion
+    ;; Go editing
+    go-mode        ;; Golang mode
+    go-autocomplete
     )
-  "A list of packages to ensure are installed at launch.")
+  "A list of packages that are to be installed at launch (unless present).")
  
 (defun my-packages-installed-p ()
   (cl-loop for p in my-packages
