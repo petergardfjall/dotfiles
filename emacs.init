@@ -21,6 +21,7 @@
 (defvar my-packages
   '(jbeans-theme   ;; Color theme
     auto-complete  ;; Generic auto-completion functionality
+    pos-tip        ;; used by auto-complete to render nicer popups 
     powerline      ;; Prettier mode line at bottom of screen
     neotree        ;; File navigator on the left via F8
     flycheck       ;; pluggable on-the-fly syntax checking
@@ -67,7 +68,8 @@
 (setq x-select-enable-clipboard t) 
 ;; Middle mouse button inserts the clipboard (rather than emacs primary)
 (global-set-key (kbd "<mouse-2>") 'x-clipboard-yank)
-
+;; No vertical scrollbar on right
+(scroll-bar-mode -1)
 
 
 ;;
@@ -103,9 +105,11 @@
   (powerline-default-theme)
   ;;(powerline-vim-theme)
 
-  (require 'go-autocomplete)
+  ;; if available, pos-tip is used by auto-complete to render a nicer popup 
+  (require 'pos-tip)
   (require 'auto-complete)
   (ac-config-default)
+  (require 'go-autocomplete)
 
   ;; Bind RETURN to "newline followed by indent"
   (require 'python)
@@ -125,9 +129,7 @@
   ;; Set up recommended key bindings (optional)
   (setq jedi:setup-keys t)
   ;; Automatically start completion when entering a '.' (optional)
-  (setq jedi:complete-on-dot t)  
-  ;; Avoid collision with ropemacs's show doc (uses 'C-c d')
-  ;; (setq jedi:key-show-doc (kbd "C-c D"))
+  (setq jedi:complete-on-dot t)
 
   ;;
   ;; http://yousefourabi.com/blog/2014/05/emacs-for-go/
