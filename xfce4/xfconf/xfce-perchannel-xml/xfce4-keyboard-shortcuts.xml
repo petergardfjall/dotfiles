@@ -77,6 +77,8 @@
       <property name="&lt;Shift&gt;&lt;Alt&gt;Right" type="string" value="xdotool mousemove_relative -- 100 0"/>
       <property name="&lt;Shift&gt;&lt;Alt&gt;Up" type="string" value="xdotool mousemove_relative -- -0 -100"/>
       <property name="&lt;Shift&gt;&lt;Alt&gt;Down" type="string" value="xdotool mousemove_relative -- 0 100"/>
+      <property name="&lt;Shift&gt;&lt;Alt&gt;Return" type="string" value="xdotool keyup alt+Shift_L click 1"/>
+      <property name="&lt;Shift&gt;&lt;Alt&gt;BackSpace" type="string" value="xdotool keyup alt+Shift_L click 3"/>
     </property>
   </property>
   <property name="xfwm4" type="empty">
