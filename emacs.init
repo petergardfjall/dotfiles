@@ -19,8 +19,9 @@
 (require 'cl-lib)
  
 (defvar my-packages
-  '(jbeans-theme   ;; Color theme
-    auto-complete  ;; Generic auto-completion functionality
+  '(material-theme ;; color theme
+    jbeans-theme   ;; color theme
+    auto-complete  ;; generic auto-completion functionality
     pos-tip        ;; used by auto-complete to render nicer popups 
     powerline      ;; Prettier mode line at bottom of screen
     neotree        ;; File navigator on the left via F8
@@ -63,14 +64,16 @@
 ; set the default font to use
 (add-to-list 'default-frame-alist
              '(font . "DejaVu Sans Mono-10"))
-(set-face-attribute 'default nil :font  "DejaVu Sans Mono-10")
 ;; Allow copy/paste to/from system clipboard
 (setq x-select-enable-clipboard t) 
 ;; Middle mouse button inserts the clipboard (rather than emacs primary)
 (global-set-key (kbd "<mouse-2>") 'x-clipboard-yank)
-;; No vertical scrollbar on right
+;; Hide vertical scrollbar on right
 (scroll-bar-mode -1)
-
+;; Hide tool-bar (icons, such as open file, cut, paste, etc)
+(tool-bar-mode -1)
+;; Display line numbers (toggle with M-x linum-mode)
+(global-linum-mode t)
 
 ;;
 ;; Package configurations that can be set before the packages have been loaded
@@ -98,12 +101,13 @@
   ;; do things after package initialization
   (message "running package-setup-hook ...")
 
-  (require 'jbeans-theme)
-  (load-theme 'jbeans t)
+  ;;(require 'jbeans-theme)
+  ;;(load-theme 'jbeans t)
+  (require 'material-theme)
+  (load-theme 'material t)
 
   (require 'powerline)
   (powerline-default-theme)
-  ;;(powerline-vim-theme)
 
   ;; if available, pos-tip is used by auto-complete to render a nicer popup 
   (require 'pos-tip)

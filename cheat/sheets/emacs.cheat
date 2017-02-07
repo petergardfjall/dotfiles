@@ -83,6 +83,9 @@ Close this window:		C-x 0
 Execute a shell command:	M-!
 Open shell in *shell* buffer:	M-x shell
 
+# Programming
+Toggle line numbers:		M-x linum-mode
+
 # Python (Ropemacs: refactorings and code assist)
 Rope code assist:   		M-/
 Goto definition	:		C-c g or C-c r a g
