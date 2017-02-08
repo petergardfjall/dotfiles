@@ -21,7 +21,6 @@
 (defvar my-packages
   '(material-theme ;; color theme
     auto-complete  ;; generic auto-completion functionality
-    pos-tip        ;; used by auto-complete to render nicer popups
     powerline      ;; Prettier mode line at bottom of screen
     neotree        ;; File navigator on the left via F8
     flycheck       ;; pluggable on-the-fly syntax checking
@@ -102,11 +101,9 @@
   (require 'neotree)
   (global-set-key [f8] 'neotree-toggle)
 
-  ;; when available, auto-complete uses pos-tip to render nicer popups
-  (require 'pos-tip)
   (require 'auto-complete)
   (ac-config-default)
-
+  
   ;; On-the-fly syntax checking (support for different languages)
   ;;(require 'flycheck)
   ;;(global-flycheck-mode)
@@ -117,22 +114,16 @@
   (message "python-setup-hook ...")
   (require 'python)
 
-  ;; after-load is only evaluated once after the given file has been loaded
-  ;; (python-mode is loaded by python.el according to M-x describe-mode)
-  (eval-after-load 'python
-    '(progn
-       (message "python eval-after-load hook ...")
-       ;; use minibuffer instead of pop-up to display method signature
-       ;;(setq jedi:tooltip-method nil)
-       ;; Set up recommended key bindings (optional)
-       (setq jedi:setup-keys t)
-       ;; Start auto-completion when entering a '.' (optional)
-       (setq jedi:complete-on-dot t)
-       ))
   ;; mode hooks are evaluated once per buffer
   (defun py-buffer-setup ()
     (message "python buffer setup hook ...")
     (linum-mode t)
+    ;; use minibuffer instead of pop-up to display method signature
+    (setq jedi:tooltip-method nil)
+    ;; Set up recommended key bindings (optional)
+    (setq jedi:setup-keys t)
+    ;; Start auto-completion when entering a '.' (optional)
+    (setq jedi:complete-on-dot t)
     ;; enable auto-completion and method signature help
     (jedi:setup)
     (local-set-key (kbd "C-c C-d")  'jedi:show-doc)
