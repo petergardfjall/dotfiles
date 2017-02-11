@@ -36,6 +36,7 @@
     go-mode        ;; Golang mode
     company-go     ;; auto-complete
     go-eldoc       ;; shows type info for var/func/curr arg position.
+    ;; TODO: install YAsnippet for template support (see https://dominik.honnef.co/posts/2013/03/emacs-go-1/)
     )
   "A list of packages that are to be installed at launch (unless present).")
 
@@ -101,7 +102,9 @@
 
   (require 'neotree)
   (global-set-key [f8] 'neotree-toggle)
-
+  ;; when tree is opened, find current file and jump to tree node
+  (setq neo-smart-open t)
+  
   (require 'company)
   (global-company-mode)
   (require 'company-quickhelp)
@@ -156,6 +159,7 @@
     (require 'company)
     (require 'company-go)
     (add-to-list 'company-backends 'company-go)
+    ;(setq company-go-show-annotation t)
     ;; type information in minibuffer
     (require 'go-eldoc)
     (go-eldoc-setup)
