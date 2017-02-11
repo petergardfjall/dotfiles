@@ -19,21 +19,22 @@
 (require 'cl-lib)
 
 (defvar my-packages
-  '(material-theme ;; color theme
-    auto-complete  ;; generic auto-completion functionality
-    powerline      ;; Prettier mode line at bottom of screen
-    neotree        ;; File navigator on the left via F8
-    flycheck       ;; pluggable on-the-fly syntax checking
+  '(material-theme    ;; color theme
+    company           ;; generic auto-completion functionality
+    company-quickhelp ;; show auto-completion candidates in popup
+    powerline         ;; Prettier mode line at bottom of screen
+    neotree           ;; File navigator on the left via F8
+    flycheck          ;; pluggable on-the-fly syntax checking
     ;; Markdown (.md) editing
     markdown-mode
     ;; Yaml editing
     yaml-mode
     ;; Python editing
     python         ;; Python mode
-    jedi           ;; Python auto-completion and method signature help
+    company-jedi           ;; Python auto-completion and method signature help
     ;; Go editing
     go-mode        ;; Golang mode
-    go-autocomplete
+    company-go     ;; auto-complete
     go-eldoc
     )
   "A list of packages that are to be installed at launch (unless present).")
@@ -101,8 +102,15 @@
   (require 'neotree)
   (global-set-key [f8] 'neotree-toggle)
 
-  (require 'auto-complete)
-  (ac-config-default)
+  (require 'company)
+  (global-company-mode)
+  (require 'company-quickhelp)
+  (company-quickhelp-mode 1)
+  (setq company-tooltip-limit 20) ; bigger popup window
+  (setq company-idle-delay .2)    ; decrease delay before autocompletion popup shows
+  (setq company-echo-delay 0)     ; remove annoying blinking
+  (setq company-begin-commands '(self-insert-command)) ; start autocompletion only after typing
+
   
   ;; On-the-fly syntax checking (support for different languages)
   ;;(require 'flycheck)
@@ -118,6 +126,7 @@
   (defun py-buffer-setup ()
     (message "python buffer setup hook ...")
     (linum-mode t)
+    (add-to-list 'company-backends 'company-jedi)
     ;; use minibuffer instead of pop-up to display method signature
     (setq jedi:tooltip-method nil)
     ;; Set up recommended key bindings (optional)
@@ -138,25 +147,20 @@
   (message "go-setup-hook ...")
   (require 'go-mode)
 
-  ;; after-load is only evaluated once after the given file has been loaded
-  ;; (go-mode is loaded by go-mode.el according to M-x describe-mode)
-  (eval-after-load 'go-mode
-    '(progn
-       (message "go eval-after-load hook ...")
-       (require 'go-autocomplete)
-       (require 'go-eldoc)
-       ))
-
   ;; mode hooks are evaluated once per buffer
   (defun go-buffer-setup ()
     (message "go buffer setup hook ...")
     (linum-mode t)
 
+    (require 'company)
+    (require 'company-go)
+    (require 'go-eldoc)
+    (add-to-list 'company-backends 'company-go)
+
     (add-hook 'before-save-hook 'gofmt-before-save)
     (local-set-key (kbd "C-c C-r") 'go-remove-unused-imports)
     (local-set-key (kbd "C-c C-g") 'go-goto-imports)
     (local-set-key (kbd "C-c C-f") 'gofmt)
-    (auto-complete-mode 1)
     )
   (add-hook 'go-mode-hook 'go-buffer-setup))
 
