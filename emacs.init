@@ -35,7 +35,7 @@
     ;; Go editing
     go-mode        ;; Golang mode
     company-go     ;; auto-complete
-    go-eldoc
+    go-eldoc       ;; shows type info for var/func/curr arg position.
     )
   "A list of packages that are to be installed at launch (unless present).")
 
@@ -152,15 +152,22 @@
     (message "go buffer setup hook ...")
     (linum-mode t)
 
+    ;; auto-completion
     (require 'company)
     (require 'company-go)
-    (require 'go-eldoc)
     (add-to-list 'company-backends 'company-go)
+    ;; type information in minibuffer
+    (require 'go-eldoc)
+    (go-eldoc-setup)
+    
 
     (add-hook 'before-save-hook 'gofmt-before-save)
-    (local-set-key (kbd "C-c C-r") 'go-remove-unused-imports)
-    (local-set-key (kbd "C-c C-g") 'go-goto-imports)
-    (local-set-key (kbd "C-c C-f") 'gofmt)
+    (local-set-key (kbd "C-c C-d")  'godoc-at-point)
+    (local-set-key (kbd "<M-down>") 'godef-jump)
+    (local-set-key (kbd "<M-up>")   'pop-tag-mark)
+    (local-set-key (kbd "C-c C-r")  'go-remove-unused-imports)
+    (local-set-key (kbd "C-c C-g")  'go-goto-imports)
+    (local-set-key (kbd "C-c C-f")  'gofmt)
     )
   (add-hook 'go-mode-hook 'go-buffer-setup))
 
