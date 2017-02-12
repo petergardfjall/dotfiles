@@ -126,7 +126,7 @@
                 (neotree-dir project-dir)
                 (neotree-find file-name)))
         (message "Could not find git project root."))))
-  (global-set-key [f8] 'neotree-toggle-project-aware)
+  (global-set-key [f8] 'neotree-toogle-project-aware)
   ;; set neotree position to current buffer
   (global-set-key [f9] 'neotree-show)
 
