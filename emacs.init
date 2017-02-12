@@ -114,21 +114,31 @@
   ;; fix for https://github.com/jaypei/emacs-neotree/issues/209
   ;; for example, godoc-at-point would open in new frame
   (setq split-window-preferred-function 'neotree-split-window-sensibly)
-  (defun neotree-toogle-project-aware ()
-    "make neotree project-aware => open neotree at git/VCS root"
+  (defun neotree-show-project-aware ()
+    "make neotree project-aware => open neotree at git/VCS root."
     (interactive)
     (let ((project-dir (projectile-project-root))
-          (file-name (buffer-file-name)))
-      (neotree-toggle)
+          (file-name (buffer-file-name))
+	  (cw (selected-window)))
+      (neotree-show)
       (if project-dir
-          (if (neo-global--window-exists-p)
-              (progn
-                (neotree-dir project-dir)
-                (neotree-find file-name)))
-        (message "Could not find git project root."))))
-  (global-set-key [f8] 'neotree-toogle-project-aware)
-  ;; set neotree position to current buffer
-  (global-set-key [f9] 'neotree-show)
+	  (progn
+	    (neotree-dir project-dir)
+	    (neotree-find file-name))
+	(message "Could not find git project root."))
+      ;; keep focus in buffer
+      (when neo-toggle-window-keep-p
+	(select-window cw))))
+  (defun neotree-toggle-project-aware ()
+    "Toggle show the NeoTree window."
+    (interactive)
+    (if (neo-global--window-exists-p)
+	(neotree-hide)
+      (neotree-show-project-aware)))
+  ;; hide/show neotree
+  (global-set-key [f8] 'neotree-toggle-project-aware)
+  ;; refresh neotree: show entire project, set position to current buffer
+  (global-set-key [f9] 'neotree-show-project-aware)
 
   
   (require 'company)
