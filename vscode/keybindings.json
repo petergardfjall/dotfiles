@@ -1,0 +1,129 @@
+// Place your key bindings in this file to overwrite the defaults
+[
+    ////
+    // navigation
+    ////
+    // quick open 
+    {
+        "key": "ctrl+p",
+        "command": "workbench.action.quickOpen"
+    },
+    // open resource
+    {
+        "key": "ctrl+shift+r",
+        "command": "workbench.action.quickOpen"
+    },
+    // open type
+    {
+        "key": "ctrl+shift+t",
+        "command": "workbench.action.showAllSymbols"
+    },
+    // close active editor
+    {
+        "key": "ctrl+w",
+        "command": "workbench.action.closeActiveEditor"
+    },
+    // search 
+    {
+        "key": "ctrl+shift+g",
+        "command": "editor.action.referenceSearch.trigger",
+        "when": "editorHasReferenceProvider && editorTextFocus && !inReferenceSearchEditor && !isInEmbeddedEditor"
+    },
+    // 
+    {
+        "key": "ctrl+f6",
+        "command": "workbench.action.openNextRecentlyUsedEditorInGroup"
+    },
+    {
+        "key": "ctrl+shift+f6",
+        "command": "workbench.action.openPreviousRecentlyUsedEditorInGroup"
+    },
+    {
+        "key": "ctrl+f7",
+        "command": "workbench.action.focusNextGroup"
+    },
+    {
+        "key": "ctrl+shift+f7",
+        "command": "workbench.action.focusPreviousGroup"
+    },
+    ////
+    // General editing
+    //// 
+    // zoom in
+    {
+        "key": "ctrl++",
+        "command": "workbench.action.zoomIn"
+    },
+    // zoom out
+    {
+        "key": "ctrl+-",
+        "command": "workbench.action.zoomOut"
+    },
+    // format selection
+    {
+        "key": "ctrl+shift+f",
+        "command": "editor.action.formatSelection",
+        "when": "editorTextFocus && editorHasSelection"
+    },
+    // format entire document when no text selected
+    {
+        "key": "ctrl+shift+f",
+        "command": "editor.action.formatDocument",
+        "when": "editorTextFocus && !editorHasSelection"
+    },
+    // delete line(s)
+    {
+        "key": "ctrl+d",
+        "command": "editor.action.deleteLines",
+        "when": "editorTextFocus"
+    },
+    // move back
+    {
+        "key": "alt+left",
+        "command": "workbench.action.navigateBack"
+    },
+    // move forward
+    {
+        "key": "alt+right",
+        "command": "workbench.action.navigateForward"
+    },
+    ////
+    // rich editor commands
+    ////
+    // show doc/definition
+    {
+        "key": "f2",
+        "command": "editor.action.showHover",
+        "when": "editorTextFocus"
+    },
+    // peek declaration
+    {
+        "key": "ctrl+f2",
+        "command": "editor.action.previewDeclaration",
+        "when": "editorHasDefinitionProvider && editorTextFocus && !inReferenceSearchEditor && !isInEmbeddedEditor"
+    },
+    // go to declaration
+    {
+        "key": "f3",
+        "command": "editor.action.goToDeclaration",
+        "when": "editorHasDefinitionProvider && editorTextFocus && !isInEmbeddedEditor"
+    },
+    // rename symbol
+    {
+        "key": "alt+shift+r",
+        "command": "editor.action.rename",
+        "when": "editorHasRenameProvider && editorTextFocus && !editorReadonly"
+    },
+    // quick fix
+    {
+        "key": "ctrl+1",
+        "command": "editor.action.quickFix",
+        "when": "editorHasCodeActionsProvider && editorTextFocus && !editorReadonly"
+    },
+    // comment line
+    {
+        "key": "ctrl+7",
+        "command": "editor.action.commentLine",
+        "when": "editorTextFocus && !editorReadonly"
+    }
+]
