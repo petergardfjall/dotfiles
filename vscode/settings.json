@@ -1,7 +1,12 @@
 {
+    "files.encoding": "utf8",
+    
     "window.zoomLevel": 0,
     "workbench.iconTheme": "material-icon-theme"
 
+    "editor.tabSize": 4,
+    "editor.insertSpaces": true,
+    
     {
         "go.buildOnSave": true,
         "go.lintOnSave": true,
@@ -18,7 +23,7 @@
         "go.formatTool": "goreturns",
         "go.formatFlags": [],
         "go.goroot": "/opt/go",
-        "go.gopath": "~/dev/go",
+        //"go.gopath": "~/dev/go",
         "go.inferGopath": false,
         "go.gocodeAutoBuild": false
     }    

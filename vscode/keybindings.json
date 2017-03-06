@@ -29,19 +29,37 @@
         "command": "editor.action.referenceSearch.trigger",
         "when": "editorHasReferenceProvider && editorTextFocus && !inReferenceSearchEditor && !isInEmbeddedEditor"
     },
-    // 
+    // split editor
+    {
+        "key": "ctrl+x 2",
+        "command": "workbench.action.splitEditor"
+    },
+    // go through editors: most recent first
     {
         "key": "ctrl+f6",
         "command": "workbench.action.openNextRecentlyUsedEditorInGroup"
     },
+    // go through editors: least recent first
     {
         "key": "ctrl+shift+f6",
         "command": "workbench.action.openPreviousRecentlyUsedEditorInGroup"
     },
+    // go to editor tab right
+    {
+        "key": "ctrl+pagedown",
+        "command": "workbench.action.nextEditor"
+    },
+    // go to editor tab left
+    {
+        "key": "ctrl+pageup",
+        "command": "workbench.action.previousEditor"
+    },
+    // go to editor group to the right
     {
         "key": "ctrl+f7",
         "command": "workbench.action.focusNextGroup"
     },
+    // go to editor group to the left
     {
         "key": "ctrl+shift+f7",
         "command": "workbench.action.focusPreviousGroup"
