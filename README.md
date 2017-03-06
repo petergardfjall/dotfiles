@@ -37,6 +37,15 @@ NOTE: on first launch of `vim`, run `:PluginInstall` to have Vundle install
 the plugins configured in `vimrc`.
 
 
+## Visual Studio Code
+
+    mkdir -p ~/.config/Code/User/
+    sudo ln -sfn ~/dotfiles/vscode/settings.json ~/.config/Code/User/settings.json
+    sudo ln -sfn ~/dotfiles/vscode/keybindings.json ~/.config/Code/User/keybindings.json
+    # install extensions
+    ~/dotfiles/vscode/install-extensions.sh
+
+
 
 ## bash
 
