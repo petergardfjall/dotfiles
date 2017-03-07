@@ -116,7 +116,7 @@
     },
     // peek declaration
     {
-        "key": "ctrl+f2",
+        "key": "ctrl+c ctrl+d",
         "command": "editor.action.previewDeclaration",
         "when": "editorHasDefinitionProvider && editorTextFocus && !inReferenceSearchEditor && !isInEmbeddedEditor"
     },

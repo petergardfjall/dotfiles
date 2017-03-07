@@ -1,30 +1,29 @@
 {
     "files.encoding": "utf8",
-    
     "window.zoomLevel": 0,
-    "workbench.iconTheme": "material-icon-theme"
-
+    "workbench.iconTheme": "material-icon-theme",
     "editor.tabSize": 4,
     "editor.insertSpaces": true,
-    
-    {
-        "go.buildOnSave": true,
-        "go.lintOnSave": true,
-        "go.vetOnSave": true,
-        "go.buildTags": "",
-        "go.buildFlags": [],
-        "go.lintTool": "golint",
-        "go.lintFlags": [],
-        "go.vetFlags": [],
-        "go.testOnSave": false,
-        "go.coverOnSave": false,
-        "go.useCodeSnippetsOnFunctionSuggest": false,
-        "go.formatOnSave": true, 
-        "go.formatTool": "goreturns",
-        "go.formatFlags": [],
-        "go.goroot": "/opt/go",
-        //"go.gopath": "~/dev/go",
-        "go.inferGopath": false,
-        "go.gocodeAutoBuild": false
-    }    
+    // normally, a file opened with RETURN in quick open or explorer only opens
+    // in "preview-mode" and not as a new tab. we always want it opened proper.
+    "workbench.editor.enablePreview": false,
+
+    "go.buildOnSave": true,
+    "go.lintOnSave": true,
+    "go.vetOnSave": true,
+    "go.buildTags": "",
+    "go.buildFlags": [],
+    "go.lintTool": "golint",
+    "go.lintFlags": [],
+    "go.vetFlags": [],
+    "go.testOnSave": false,
+    "go.coverOnSave": false,
+    "go.useCodeSnippetsOnFunctionSuggest": false,
+    "go.formatOnSave": true,
+    "go.formatTool": "goreturns",
+    "go.formatFlags": [],
+    "go.goroot": "/opt/go",
+    //"go.gopath": "~/dev/go",
+    "go.inferGopath": false,
+    "go.gocodeAutoBuild": false
 }
