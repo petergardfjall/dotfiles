@@ -38,6 +38,7 @@
     company-go     ;; auto-complete
     go-eldoc       ;; shows type info for var/func/curr arg position.
     ;; TODO: install YAsnippet for template support (see https://dominik.honnef.co/posts/2013/03/emacs-go-1/)
+    terraform-mode
     )
   "A list of packages that are to be installed at launch (unless present).")
 
@@ -92,6 +93,7 @@
 (add-hook 'after-init-hook 'go-setup-hook)
 (add-hook 'after-init-hook 'js-setup-hook)
 (add-hook 'after-init-hook 'yaml-setup-hook)
+(add-hook 'after-init-hook 'terraform-setup-hook)
 
 (defun theme-setup-hook ()
   (message "theme-setup-hook ...")
@@ -230,6 +232,14 @@
     (linum-mode t))
   (add-hook 'yaml-mode-hook 'yaml-buffer-setup))
 
+(defun terraform-setup-hook ()
+  (message "terraform-setup-hook ...")
+  (custom-set-variables '(terraform-indent-level 4))  
+  (defun terraform-buffer-setup ()
+    (message "terraform buffer setup hook ...")
+    ;; show line numbers
+    (linum-mode t))
+  (add-hook 'terraform-mode-hook 'terraform-buffer-setup))
 
 ;
 ; load any local modules from module directory in lexicographical order
