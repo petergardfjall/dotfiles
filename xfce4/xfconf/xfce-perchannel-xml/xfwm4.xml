@@ -4,7 +4,7 @@
   <property name="general" type="empty">
     <property name="activate_action" type="string" value="switch"/>
     <property name="box_move" type="empty"/>
-    <property name="box_resize" type="empty"/>
+    <property name="box_resize" type="bool" value="false"/>
     <property name="button_layout" type="empty"/>
     <property name="button_offset" type="empty"/>
     <property name="button_spacing" type="empty"/>
@@ -35,7 +35,7 @@
     <property name="show_frame_shadow" type="empty"/>
     <property name="show_popup_shadow" type="empty"/>
     <property name="snap_to_border" type="empty"/>
-    <property name="snap_to_windows" type="empty"/>
+    <property name="snap_to_windows" type="bool" value="true"/>
     <property name="snap_width" type="empty"/>
     <property name="theme" type="string" value="Greybird"/>
     <property name="title_alignment" type="empty"/>
