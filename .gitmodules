@@ -1,0 +1,3 @@
+[submodule "emacs.modules/dockerfile-mode"]
+	path = emacs.modules/dockerfile-mode
+	url = https://github.com/spotify/dockerfile-mode
