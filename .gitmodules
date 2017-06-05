@@ -1,3 +1,6 @@
 [submodule "emacs.modules/dockerfile-mode"]
 	path = emacs.modules/dockerfile-mode
 	url = https://github.com/spotify/dockerfile-mode
+[submodule "emacs.modules/emacs-vcl-mode"]
+	path = emacs.modules/emacs-vcl-mode
+	url = https://github.com/mrpatrick/emacs-vcl-mode

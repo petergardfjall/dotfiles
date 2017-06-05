@@ -5,7 +5,7 @@ Feel free to use them.
 # Installation instructions
 
 1. Install git
-2. Run the following in a terminal `cd ~ && git clone https://github.com/petergardfjall/dotfiles.git`
+2. Run the following in a terminal `cd ~ && git clone --recursive https://github.com/petergardfjall/dotfiles.git`
 
 You now have the dotfiles directory/git repository in your home folder.
 
