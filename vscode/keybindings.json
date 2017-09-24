@@ -3,7 +3,7 @@
     ////
     // navigation
     ////
-    // quick open 
+    // quick open
     {
         "key": "ctrl+p",
         "command": "workbench.action.quickOpen"
@@ -23,7 +23,7 @@
         "key": "ctrl+w",
         "command": "workbench.action.closeActiveEditor"
     },
-    // search 
+    // search
     {
         "key": "ctrl+shift+g",
         "command": "editor.action.referenceSearch.trigger",
@@ -66,7 +66,7 @@
     },
     ////
     // General editing
-    //// 
+    ////
     // zoom in
     {
         "key": "ctrl++",
@@ -131,6 +131,12 @@
         "key": "alt+shift+r",
         "command": "editor.action.rename",
         "when": "editorHasRenameProvider && editorTextFocus && !editorReadonly"
+    },
+    // trigger suggest
+    {
+        "key": "ctrl+space",
+        "command": "editor.action.triggerSuggest",
+        "when": "editorTextFocus"
     },
     // quick fix
     {
