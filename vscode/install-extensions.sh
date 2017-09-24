@@ -10,4 +10,4 @@ code --install-extension PeterJausovec.vscode-docker
 code --install-extension redhat.java
 
 # icon theme
-code --install-extension PKief.material-icon-theme
+#code --install-extension PKief.material-icon-theme
