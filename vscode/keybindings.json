@@ -30,10 +30,10 @@
         "when": "editorHasReferenceProvider && editorTextFocus && !inReferenceSearchEditor && !isInEmbeddedEditor"
     },
     // split editor
-    {
+/*    {
         "key": "ctrl+x 2",
         "command": "workbench.action.splitEditor"
-    },
+    },*/
     // go through editors: most recent first
     {
         "key": "ctrl+f6",
@@ -95,9 +95,14 @@
         "command": "editor.action.deleteLines",
         "when": "editorTextFocus"
     },
-    // move back
+    // move back (1)
     {
         "key": "alt+left",
+        "command": "workbench.action.navigateBack"
+    },
+    // move back (2)
+    {
+        "key": "alt+up",
         "command": "workbench.action.navigateBack"
     },
     // move forward
@@ -116,13 +121,19 @@
     },
     // peek declaration
     {
-        "key": "ctrl+c ctrl+d",
+        "key": "ctrl+down",
         "command": "editor.action.previewDeclaration",
         "when": "editorHasDefinitionProvider && editorTextFocus && !inReferenceSearchEditor && !isInEmbeddedEditor"
     },
-    // go to declaration
+    // go to declaration (1)
     {
         "key": "f3",
+        "command": "editor.action.goToDeclaration",
+        "when": "editorHasDefinitionProvider && editorTextFocus && !isInEmbeddedEditor"
+    },
+    // go to declaration (2)
+    {
+        "key": "alt+down",
         "command": "editor.action.goToDeclaration",
         "when": "editorHasDefinitionProvider && editorTextFocus && !isInEmbeddedEditor"
     },
