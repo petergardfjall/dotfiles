@@ -111,6 +111,15 @@
         "command": "workbench.action.navigateForward"
     },
     ////
+    // terminal
+    ////
+    // shift focus to active terminal
+    {
+        "key": "ctrl+shift+t",
+        "command": "workbench.action.terminal.focus",
+        "when": ""
+    },
+    ////
     // rich editor commands
     ////
     // show doc/definition

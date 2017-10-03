@@ -1,15 +1,27 @@
 {
     "files.encoding": "utf8",
     "window.zoomLevel": 0,
-    "workbench.iconTheme": "vscode-icons",
+    "workbench.iconTheme": "material-icon-theme",
     "editor.tabSize": 4,
     "editor.insertSpaces": true,
-    // normally, a file opened with RETURN in quick open or explorer only opens
-    // in "preview-mode" and not as a new tab. we always want it opened proper.
+    // normally, a file opened with RETURN in quick open or explorer only
+    // opens in "preview-mode" and not as a new tab. we always want it
+    // opened proper.
     "workbench.editor.enablePreview": false,
     // no minimap decoration on scrollbar to show high-level file layout
     "editor.minimap.enabled": false,
-
+    // columns at which to show vertical rulers
+    "editor.rulers": [80],
+    // controls whether the editor has code folding enabled
+    // (the ability to fold/unfold e.g. code in methods)
+    "editor.folding": false,
+    // Control the cursor animation style, possible values are 'blink',
+    // 'smooth', 'phase', 'expand' and 'solid'
+    "editor.cursorBlinking": "blink",
+    // Control the cursor style, accepted values are 'block',
+    // 'block-outline', 'line', 'line-thin', 'underline' and 'underline-thin'
+    "editor.cursorStyle": "line",
+    
     "go.buildOnSave": true,
     "go.lintOnSave": true,
     "go.vetOnSave": true,
