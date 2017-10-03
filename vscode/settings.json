@@ -1,7 +1,12 @@
 {
     "files.encoding": "utf8",
     "window.zoomLevel": 0,
+
+    "workbench.colorTheme": "Solarized Light",
     "workbench.iconTheme": "material-icon-theme",
+
+    "editor.fontSize": 14,
+    "editor.fontFamily": "'DejaVu Sans Mono', 'Droid Sans Mono', 'Courier New', monospace, 'Droid Sans Fallback'",
     "editor.tabSize": 4,
     "editor.insertSpaces": true,
     // normally, a file opened with RETURN in quick open or explorer only
@@ -21,7 +26,7 @@
     // Control the cursor style, accepted values are 'block',
     // 'block-outline', 'line', 'line-thin', 'underline' and 'underline-thin'
     "editor.cursorStyle": "line",
-    
+
     "go.buildOnSave": true,
     "go.lintOnSave": true,
     "go.vetOnSave": true,
@@ -40,6 +45,4 @@
     //"go.gopath": "~/dev/go",
     "go.inferGopath": false,
     "go.gocodeAutoBuild": false,
-    
-    "workbench.colorTheme": "Solarized Light"
 }
