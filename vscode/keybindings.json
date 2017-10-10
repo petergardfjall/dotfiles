@@ -64,6 +64,27 @@
         "key": "ctrl+shift+f7",
         "command": "workbench.action.focusPreviousGroup"
     },
+    // subword navigation (jump between upcase letters in camel-case words)
+    {
+        "key": "ctrl+left",
+        "command": "subwordNavigation.cursorSubwordLeft",
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "ctrl+right",
+        "command": "subwordNavigation.cursorSubwordRight",
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "ctrl+shift+left",
+        "command": "subwordNavigation.cursorSubwordLeftSelect",
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "ctrl+shift+right",
+        "command": "subwordNavigation.cursorSubwordRightSelect",
+        "when": "editorTextFocus"
+    },
     ////
     // General editing
     ////
