@@ -115,7 +115,7 @@
     ////
     // shift focus to active terminal
     {
-        "key": "ctrl+shift+t",
+        "key": "ctrl+t",
         "command": "workbench.action.terminal.focus",
         "when": ""
     },
