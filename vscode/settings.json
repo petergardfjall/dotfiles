@@ -16,7 +16,7 @@
     // no minimap decoration on scrollbar to show high-level file layout
     "editor.minimap.enabled": false,
     // columns at which to show vertical rulers
-    "editor.rulers": [80],
+    //"editor.rulers": [80],
     // controls whether the editor has code folding enabled
     // (the ability to fold/unfold e.g. code in methods)
     "editor.folding": false,
