@@ -57,8 +57,11 @@
     "go.goroot": "/opt/go",
     "go.inferGopath": false,
     // compiles on file save using 'go build -i' or 'go test -c -i'.
-    // Options are 'workspace', 'package or 'off'.
-    "go.buildOnSave": "package",
+    // options are 'workspace', 'package or 'off'.
+    // setting 'workspace' will always have all compilation errors listed in
+    // 'Problems' but may be expensive performance-wise. 'package' can be a
+    // decent middle-ground.
+    "go.buildOnSave": "workspace",
     "go.buildTags": "",
     "go.buildFlags": [],
     // Lints code on file save: 'workspace', 'package or 'off'.
@@ -86,5 +89,5 @@
     // complete functions with their parameter signature, excluding types
     "go.useCodeSnippetsOnFunctionSuggestWithoutType": false,
     // include (not yet) imported packages in auto-complete suggestions
-    "go.autocompleteUnimportedPackages": true,
+    "go.autocompleteUnimportedPackages": true
 }
