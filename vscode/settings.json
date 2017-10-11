@@ -18,15 +18,14 @@
         "**/.hg": true,
         "**/CVS": true,
         "**/.DS_Store": true
-    },    
+    },
 
-
-    // 
+    //
     // Appearance
     //
-    "workbench.colorTheme": "Solarized Light",
+    "workbench.colorTheme": "Visual Studio Dark",
     "workbench.iconTheme": "material-icon-theme",
-    "window.zoomLevel": 0,    
+    "window.zoomLevel": 0,
     "editor.fontSize": 14,
     "editor.fontFamily": "'DejaVu Sans Mono', 'Droid Sans Mono', 'Courier New', monospace, 'Droid Sans Fallback'",
     "editor.tabSize": 4,
@@ -76,8 +75,8 @@
     // run 'go test' on save for current package. not advised with files.autoSave
     "go.testOnSave": false,
     // If true, runs 'go test -coverprofile' on save and shows test coverage.
-    "go.coverOnSave": false,    
-    // enable gocode's autobuild feature to provide fresh completion lists 
+    "go.coverOnSave": false,
+    // enable gocode's autobuild feature to provide fresh completion lists
     // as you type (including against not-yet-built dependencies)
     // using gocode's autobuild=true setting.  consider turning it off if
     // performance appears to be suffering.
@@ -87,5 +86,5 @@
     // complete functions with their parameter signature, excluding types
     "go.useCodeSnippetsOnFunctionSuggestWithoutType": false,
     // include (not yet) imported packages in auto-complete suggestions
-    "go.autocompleteUnimportedPackages": true,    
+    "go.autocompleteUnimportedPackages": true,
 }
