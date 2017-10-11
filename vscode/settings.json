@@ -1,10 +1,32 @@
 {
+    //
+    // Files
+    //
     "files.encoding": "utf8",
-    "window.zoomLevel": 0,
+    // controls auto save of dirty files. Accepted values:
+    // 'off', 'afterDelay', 'onFocusChange' (editor loses focus),
+    // 'onWindowChange' (window loses focus). If set to 'afterDelay', you can configure the delay in 'files.autoSaveDelay'.
+    "files.autoSave": "off",
+    // delay (in ms) after which a dirty file is auto-saved when
+    // 'files.autoSave' is set to 'afterDelay'
+    "files.autoSaveDelay": 1000,
+    // glob patterns for excluding files and folders. the file explorer
+    // decides which files and folders to show or hide based on this setting.
+    "files.exclude": {
+        "**/.git": true,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/CVS": true,
+        "**/.DS_Store": true
+    },    
 
+
+    // 
+    // Appearance
+    //
     "workbench.colorTheme": "Solarized Light",
     "workbench.iconTheme": "material-icon-theme",
-
+    "window.zoomLevel": 0,    
     "editor.fontSize": 14,
     "editor.fontFamily": "'DejaVu Sans Mono', 'Droid Sans Mono', 'Courier New', monospace, 'Droid Sans Fallback'",
     "editor.tabSize": 4,
@@ -27,22 +49,43 @@
     // 'block-outline', 'line', 'line-thin', 'underline' and 'underline-thin'
     "editor.cursorStyle": "line",
 
-    "go.buildOnSave": true,
-    "go.lintOnSave": true,
-    "go.vetOnSave": true,
+    //
+    // Go
+    //
+    // Note: remember to run: ctrl+shift+p > Go:Install/Update Tools once in a while
+    //       to make sure that the necessary tool dependencies are up-to-date.
+    //
+    "go.goroot": "/opt/go",
+    "go.inferGopath": false,
+    // compiles on file save using 'go build -i' or 'go test -c -i'.
+    // Options are 'workspace', 'package or 'off'.
+    "go.buildOnSave": "package",
     "go.buildTags": "",
     "go.buildFlags": [],
+    // Lints code on file save: 'workspace', 'package or 'off'.
+    "go.lintOnSave": "package",
     "go.lintTool": "golint",
     "go.lintFlags": [],
+    // Vets code on file save using 'go tool vet': 'workspace', 'package or 'off'.
+    "go.vetOnSave": "package",
     "go.vetFlags": [],
-    "go.testOnSave": false,
-    "go.coverOnSave": false,
-    "go.useCodeSnippetsOnFunctionSuggest": false,
+    // run formatting tool on save
     "go.formatOnSave": true,
     "go.formatTool": "goreturns",
     "go.formatFlags": [],
-    "go.goroot": "/opt/go",
-    //"go.gopath": "~/dev/go",
-    "go.inferGopath": false,
-    "go.gocodeAutoBuild": false,
+    // run 'go test' on save for current package. not advised with files.autoSave
+    "go.testOnSave": false,
+    // If true, runs 'go test -coverprofile' on save and shows test coverage.
+    "go.coverOnSave": false,    
+    // enable gocode's autobuild feature to provide fresh completion lists 
+    // as you type (including against not-yet-built dependencies)
+    // using gocode's autobuild=true setting.  consider turning it off if
+    // performance appears to be suffering.
+    "go.gocodeAutoBuild": true,
+    // complete functions with their parameter signature, including types
+    "go.useCodeSnippetsOnFunctionSuggest": true,
+    // complete functions with their parameter signature, excluding types
+    "go.useCodeSnippetsOnFunctionSuggestWithoutType": false,
+    // include (not yet) imported packages in auto-complete suggestions
+    "go.autocompleteUnimportedPackages": true,    
 }
