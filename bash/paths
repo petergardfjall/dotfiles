@@ -26,3 +26,7 @@ export KUBECONFIG=~/.kube/config
 for conf_file in $(find  ~/.kube/ -name '*.conf'); do
     export KUBECONFIG=${KUBECONFIG}:${conf_file}
 done
+
+# installed rust version
+rust_version=$(rustc --version | awk '{ print $2 }')
+export RUST_SRC=/usr/src/rustc-${rust_version}/src/
