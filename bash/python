@@ -1,0 +1,3 @@
+# make 'pipenv --three/two' create virtualenv under <project-dir>/.venv
+# rather than under ~/.local/share/virtualenvs/<project>-hash
+export PIPENV_VENV_IN_PROJECT=true
