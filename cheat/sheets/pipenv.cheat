@@ -1,0 +1,18 @@
+PIPENV_VENV_IN_PROJECT=true    Make pipenv create virtualenvs in the project dir
+                               instead of under ~/.local/share/virtualenvs/.
+
+
+pipenv --three                 Create a venv for python3. Creates an empty
+                               Pipfile if none exists.
+			       
+pipenv install Jinja2          Add dependency to Pipfile.
+pipenv install requests==2.10  Add dependency with specific version to Pipfile.
+pipenv install '-e .'          Add local project dir (as editable) to Pipfile.
+                               Adding project dir itself ("editable") to
+			       PYTHONPATH is useful during development.
+			       Also, for a pipenv client of the package, this
+			       means that `pipenv install <project-dir>` will
+			       also include what's specified in setup.py (if
+			       anything), such as console_scripts.
+
+pipenv shell                   Enter sub-shell for the virtualenv.
