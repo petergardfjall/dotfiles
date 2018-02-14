@@ -1,4 +1,4 @@
-# ufw - uncomplicated firewall
+### ufw - uncomplicated firewall
 
 ufw enable                    Enable firewall.
 ufw disable                   Disable firewall.

@@ -1,4 +1,5 @@
-# Creating a repo
+### Creating a repo
+
 git init --bare --shared=group repo.git   Create a git repo that is to be
                                           shared and written by different
                                           group members. This sets the
@@ -8,7 +9,8 @@ git init --bare --shared=group repo.git   Create a git repo that is to be
                                           owns the repository are given write
                                           permission.
 
-# A simple Git workflow
+
+### A simple Git workflow
 
 git clone <repo-path> repo.git            Get repo.
 cd repo.git
@@ -30,10 +32,10 @@ git push origin ticket123:ticket1234      Push local branch to remote origin
 
 git checkout master                       Merge with master branch and push
 git merge ticket123                       to remote origin server.
-git push origin master:master             
+git push origin master:master
 
 
-# Patching
+### Patching
 git add --patch <file>                    Divide a large changeset into smaller
 git add --patch                           commits. Git will now ask you, for
                                           each hunk, if you want to stage it
@@ -68,7 +70,7 @@ git am -3 < patchfile                      OR apply patch using three-way
 					   manually or using git mergetool.
 
 
-# Branches
+### Branches
 
 git branch                                List local branches.
 git branch -r                             List remote branches.
@@ -92,8 +94,7 @@ git log <branch> -p --not origin/master   Show all changes introduced on a
 
 
 
-
-# Tags
+### Tags
 
 git tag                                   Show tags (on current local branch).
 
@@ -118,7 +119,7 @@ git tag -d v1.0.0                         Remove a tag (for example, to re-do
 
 
 
-# Submodules
+### Submodules
 
 git submodule add <repo-url> <path>       Add a remote repo as a submodule.
 
@@ -135,7 +136,7 @@ git submodule init && \
 git submodule update
 
 
-cd <submodule-dir> && git fetch \         Bring in upstream (and optionally 
+cd <submodule-dir> && git fetch \         Bring in upstream (and optionally
   [&& git merge origin/master]            keep) changes in a particular
                                           submodule.
 
@@ -143,11 +144,12 @@ git submodule update --remote             Fetch and merge upstream changes
                                           (from origin/master) for _all_
                                           submodules.
 
-# Miscellaneous
+### Miscellaneous
 git remote -v                             Show infor about remote repository.
 
 
-# Remov sensitive files
+### Remove sensitive files
+
 If a file containing sensitive data has been mistakenly added (and pushed)
 history can be rewritten to exclude the file as described here:
 

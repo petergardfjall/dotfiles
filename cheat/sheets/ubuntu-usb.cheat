@@ -1,4 +1,5 @@
-# make bootable usb
+### make bootable usb
+
 1. find out device name of usb (e.g., /dev/sdh)
 
       lsblk
