@@ -10,6 +10,18 @@ git init --bare --shared=group repo.git   Create a git repo that is to be
                                           permission.
 
 
+### Setup user for one or more git repos
+
+git config --global user.name "Foo Bar"            # Set user globally.
+git config --global user.email "foo@bar.com"
+
+git config user.name "Foo Bar"                     # Set user for a single repo.
+git config user.email "foo@bar.com"
+
+git config --global credential.helper 'cache --timeout=3600'  # Set password
+                                                              # cache timeout
+
+
 ### A simple Git workflow
 
 git clone <repo-path> repo.git            Get repo.
@@ -39,25 +51,25 @@ git push origin master:master
 git add --patch <file>                    Divide a large changeset into smaller
 git add --patch                           commits. Git will now ask you, for
                                           each hunk, if you want to stage it
-					  for the next commit. Answer `n` to
-					  all hunks you don’t want to be part
-					  of the commit and `y` to hunks that
-					  you want to include. Should a
-					  particular hunk contain both code
-					  that you want to include and code
-					  that you don’t want to include, you
-					  can split it by selecting `s`. Git
-					  will then split the hunk into smaller
-					  hunks and ask what to do with each of
-					  them. Hunks for which you answered `n`
-					  will still be left as changes in
-					  non-staged files. To see, what
-					  changes you staged for commit, run
-					  `git diff --staged`.
+                                          for the next commit. Answer `n` to
+                                          all hunks you don’t want to be part
+                                          of the commit and `y` to hunks that
+                                          you want to include. Should a
+                                          particular hunk contain both code
+                                          that you want to include and code
+                                          that you don’t want to include, you
+                                          can split it by selecting `s`. Git
+                                          will then split the hunk into smaller
+                                          hunks and ask what to do with each of
+                                          them. Hunks for which you answered `n`
+                                          will still be left as changes in
+                                          non-staged files. To see, what
+                                          changes you staged for commit, run
+                                          `git diff --staged`.
 
 git diff HEAD --no-prefix > patchfile      Produce an old-school patch with
                                            both staged and unstaged changes
-					   compared to HEAD.
+                                           compared to HEAD.
 patch -p0 < patchfile                      Apply patch.
 
 
@@ -67,7 +79,7 @@ git apply --check patchfile                Check for errors before applying.
 git am < patchfile                         Apply patch
 git am -3 < patchfile                      OR apply patch using three-way
                                            merge (lets you resolve conflicts
-					   manually or using git mergetool.
+                                           manually or using git mergetool.
 
 
 ### Branches
@@ -104,15 +116,15 @@ git tag -a v1.0.0 -m 'version 1.0.0'      Tag the latest commit (on current
 
 git push origin v1.0.0                    Share the tag by pushing it to the
                                           remote repository (by default the
-					  git push command doesn’t transfer
-					  tags to remote servers, you have to
-					  explicitly push tags to a shared
-					  server after you have created them).
+                                          git push command doesn’t transfer
+                                          tags to remote servers, you have to
+                                          explicitly push tags to a shared
+                                          server after you have created them).
 
 
 git push origin :v1.0.0                   Remove a tag (for example, to re-do
                                           a broken release) in the remote
-					  repository.
+                                          repository.
 
 git tag -d v1.0.0                         Remove a tag (for example, to re-do
                                           a broken release) in the local repo.
