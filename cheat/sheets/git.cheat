@@ -22,6 +22,51 @@ git config --global credential.helper 'cache --timeout=3600'  # Set password
                                                               # cache timeout
 
 
+### Basic commands
+
+git fetch && git merge origin/master     # on master: same as git pull
+git fetch && git rebase origin/master    # on master: same as git pull --rebase
+
+
+git pull origin master --rebase          # avoids a merge commit if there are
+                                         # changes on master
+
+
+### Modifying global history
+
+git revert <sha>                   # Revert a given commit. This adds a new
+                                   # "anti-commit" to the commit history.
+
+
+### Modifying local history
+
+git reset <sha> [--hard]           # undo some local (non-pushed) commits.
+                                   # reset rewinds your repository's history
+                                   # all the way back to the specified SHA. By
+                                   # default, git reset preserves the working
+                                   # directory. The commits are gone, but the
+                                   # content/modifications are still on disk.
+                                   # If you want to undo the commits _and_ the
+                                   # changes in one go: use --hard.
+
+git reflog                         # while 'git log' shows the commit history,
+                                   # reflog shows when the tip of HEAD changed.
+                                   # It contains entries like
+                                   #  8409289 HEAD@{0}: commit: ufw cheat sheet
+                                   #  94d334e HEAD@{1}: commit: skubectl alias
+                                   #
+                                   # Reflog can be used to restore your local
+                                   # HEAD to a certain point in time.
+                                   #
+git reset --hard <sha>             # restore the project's history as it was at
+                                   # that moment in time
+git checkout <sha> -- <filename>   # recreate one or more files in your working
+                                   # directory as they were at that moment in
+                                   # time, without altering history
+
+
+
+
 ### A simple Git workflow
 
 git clone <repo-path> repo.git            Get repo.
@@ -34,7 +79,7 @@ git checkout -b ticket123                 Create a local branch.
 git checkout master                       Rebase from most recent master remote.
 git pull origin master
 git checkout ticket123
-git rebase -i master                      `-i` allows to squash branch commits
+git rebase [-i] master                      `-i` allows to squash branch commits
                                           into a single commit for a cleaner
                                           commit history and/or change commit
                                           messages.
@@ -45,6 +90,8 @@ git push origin ticket123:ticket1234      Push local branch to remote origin
 git checkout master                       Merge with master branch and push
 git merge ticket123                       to remote origin server.
 git push origin master:master
+
+
 
 
 ### Patching
