@@ -153,6 +153,16 @@ git log <branch> -p --not origin/master   Show all changes introduced on a
 
 
 
+
+### Rebasing
+git rebase --onto master server client    Rebase the `client` branch on
+                                          `master`, only replaying the patches
+                                          from the `client` since it diverged
+                                          from the `server` branch. So, this
+                                          rebases `client` on the `master`
+                                          branch with commits "client - server".
+
+
 ### Tags
 
 git tag                                   Show tags (on current local branch).
