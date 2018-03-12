@@ -10,9 +10,9 @@
 
       sudo m-a prepare
 
-4. install guest additions
+4. install guest additions, for example
 
-      sudo sh /media/cdrom/VBoxLinuxAdditions.run
+      sudo sh /media/cdrom0/VBoxLinuxAdditions.run
 
 5. now you can, for instance, set up a shared machine folder `seed`
    from the host's `~/dev/git/seed/`. Mount it using
