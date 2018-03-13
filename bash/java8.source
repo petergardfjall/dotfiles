@@ -1,4 +1,0 @@
-#!/bin/bash
-
-export JAVA_HOME="/opt/java1.8"
-export PATH="/opt/java1.8/bin:${PATH}"

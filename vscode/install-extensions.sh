@@ -3,13 +3,15 @@
 # Go mode
 code --install-extension lukehoban.Go
 # Python mode
-code --install-extension donjayamanne.python
+code --install-extension ms-python.python
 # Dockerfile mode
 code --install-extension PeterJausovec.vscode-docker
 # Java language support
 code --install-extension redhat.java
 # TOML support
 code --install-extension bungcip.better-toml
+# Rust mode
+code --install-extension saviorisdead.RustyCode
 
 # icon theme
 code --install-extension PKief.material-icon-theme

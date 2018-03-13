@@ -1,25 +1,14 @@
 # sets up various path variables
 
-export MYBIN=${HOME}/bin
-export MYSCRIPTS=${HOME}/bin/scripts
-
 export JAVA_HOME=/opt/java
-export OPENJDK_HOME=/opt/openjdk
 export JAVA_OPTS="-Xmx1024m -XX:MaxPermSize=128m"
 export MAVEN_HOME=/opt/maven
 export MAVEN_OPTS="-Xmx1024m -XX:MaxPermSize=128m"
-export ECLIPSE_HOME=/opt/eclipse
-export ANT_HOME=/opt/ant
-export JMETER_HOME=/opt/jmeter
-export PACKER_HOME=/opt/packer
-export CASSANDRA_HOME=/opt/cassandra
-# Eclipse Memory Analyzer Tool
-export MAT_HOME=/opt/mat
 
 export GOROOT=/opt/go
 export GOPATH=${HOME}/dev/go
 
-export PATH=${MYSCRIPTS}:${MYBIN}:${ECLIPSE_HOME}:${JAVA_HOME}/bin:${MAVEN_HOME}/bin:${ANT_HOME}/bin:/opt/bin:${MAVE_HOME}/bin:${JMETER_HOME}/bin:${PACKER_HOME}:${PATH}:${GOROOT}/bin:${GOPATH}/bin:${CASSANDRA_HOME}/bin:${MAT_HOME}
+export PATH=${HOME}/bin:${HOME}/bin/scripts:/opt/bin:${GOROOT}/bin:${GOPATH}/bin:${PATH}
 
 # installed rust version
 rust_version=$(rustc --version | awk '{ print $2 }')
