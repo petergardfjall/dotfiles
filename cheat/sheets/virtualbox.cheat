@@ -14,6 +14,10 @@
 
       sudo sh /media/cdrom0/VBoxLinuxAdditions.run
 
+   note: sometimes you'll need to mound the guest additions image, e.g.:
+
+      sudo mount /dev/sr0 /media/cdrom0
+
 5. now you can, for instance, set up a shared machine folder `seed`
    from the host's `~/dev/git/seed/`. Mount it using
 
