@@ -140,6 +140,7 @@ git push origin :ticket123                Delete remote branch.
 
 
 git fetch && git checkout ticket123       Checkout a remote branch.
+git fetch && git checkout -b x origin/x
 
 
 git pull origin ticket123                 Merge in branch updates from remote
