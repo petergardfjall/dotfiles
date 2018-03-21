@@ -1,0 +1,44 @@
+# Command-line
+Ctrl+r                               Search command history
+
+
+# Coloring output
+echo -e "NORMAL \e[32m GREEN \e[0m NORMAL"
+
+# Scripting
+
+(command; command)                   Run commands in a sub-shell. Variables set
+                                     in the sub-shell are not visible to the
+                                     calling process.
+$(command_list)                      Return the *value* of the commands run in
+                                     `command_list`. Just like `$VAR` gives
+                                     the value of `VAR`.
+
+cmd <(command_list)                  Pass output of `command_list` as stdin to
+                                     `cmd`.
+grep root <(cat /etc/passwd)
+comm <(ls -l) <(ls -al)              Pass output of multiple commands as stdin
+                                     to a command.
+
+
+test -f /etc/passwd                  `test` is a conditional test with multiple
+                                     possible comparisons. `-f` tests file
+                                     existence.
+                                     `-z`: string length is zero.
+                                     `-n`: string length is non-zero.
+                                     Integer comparisons: `-eq`, `-gt`, `-ge`,
+                                     `-lt`, `-le`, `-ne`.
+[ EXPR ]                             Shorthand for `test` command.
+
+while command; do cmd; done          Repeat until `command` gives non-zero exit.
+
+if command; then cmd; else cmd; fi
+
+$(( 4 + 5 ))                         Arithmetic.
+
+cat <<EOF                            Multi-line "here-document".
+A B C
+1 2 3
+EOF
+
+cat file | while read line; do echo $line; done      Line-by-line processing.
