@@ -6,7 +6,7 @@
 
 # backup existing shortcuts
 ts=$(date +%Y%m%d-%H%M%S)
-cp ~/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml ~/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts-${ts}.xml
+cp ~/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml ~/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml.${ts}
 
 #
 # Shortcuts to clear
