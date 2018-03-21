@@ -84,7 +84,7 @@ done
 #
 
 (cat <<EOF
-<Control><Alt>t       |  exo-open --launch TerminalEmulator
+<Control><Alt>t       |  xfce4-terminal
 Super_L               |  xfce4-appfinder
 <Shift><Alt>Left      |  xdotool mousemove_relative -- -100 0
 <Shift><Alt>Right     |  xdotool mousemove_relative -- 100 0
