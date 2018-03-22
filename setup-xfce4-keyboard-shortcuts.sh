@@ -1,12 +1,16 @@
 #!/bin/bash
 
+set -e
 #
 # A script that sets up keyboard shortcuts in XFCE/XFWM.
 #
 
 # backup existing shortcuts
 ts=$(date +%Y%m%d-%H%M%S)
-cp ~/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml ~/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml.${ts}
+if [ -f ~/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml ]; then
+    # make a backup of existing shortcuts
+    cp ~/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml ~/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml.${ts}
+fi
 
 #
 # Shortcuts to clear

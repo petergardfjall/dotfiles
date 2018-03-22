@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 #
 # Links xfce4 settings files from ~/.config/xfce4/
 # Any existing files are backed up under ~/.config/xfce4/backup.
