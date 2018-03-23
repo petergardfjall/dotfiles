@@ -1,7 +1,7 @@
 loc_name=Umeå, Sweden
-lat=63.833302
-lon=20.250000
-msl=0
+lat=59.349998
+lon=17.916700
+msl=19
 timezone=Europe/Stockholm
 cache_file_max_age=172800
 power_saving=true
