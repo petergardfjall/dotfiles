@@ -43,6 +43,10 @@ cat file | while read line; do echo $line; done      Line-by-line processing.
 
 
 
+## Scripting: executing commands over ssh
+ssh <host> bash -s < /my/script.sh
+
+
 
 ## Scripting: coloring output
 echo -e "NORMAL \e[32m GREEN \e[0m NORMAL"
