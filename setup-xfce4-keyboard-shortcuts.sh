@@ -16,6 +16,36 @@ fi
 # Shortcuts to clear
 #
 (cat <<EOF
+# remove default shortcuts for weird buttons
+XF86Display
+XF86Music
+XF86WWW
+XF86HomePage
+XF86Mail
+XF86Calculator
+XF86Messenger
+XF86Explorer
+# remove mousepad shortcut
+<Super>e
+# remove email shortcut
+<Super>m
+# remove terminal shortcut
+<Super>t
+# remove web browser shortcut
+<Super>w
+# remove display settings shortcut
+<Super>p
+# remove various default application shortcuts (libreoffice, etc)
+<Super>1
+<Super>2
+<Super>3
+<Super>4
+<Super>r
+<Super>f
+# remove xfce4-appfinder shortcut
+<Alt>F3
+# remove whisker menu shortcut
+<Primary>Escape
 # remove 'move window to workspace 1..9'
 <Primary><Alt>1
 <Primary><Alt>2
@@ -47,7 +77,7 @@ EOF
     fi
     shortcut=$(echo ${row} | awk -F'|' '{print $1}' | xargs)
     echo "clearing xfce keyboard shortcut: \"${shortcut}\""
-    xfconf-query --reset  --channel xfce4-keyboard-shortcuts --property "/command/default/${shortcut}"
+    xfconf-query --reset  --channel xfce4-keyboard-shortcuts --property "/commands/default/${shortcut}"
     xfconf-query --reset  --channel xfce4-keyboard-shortcuts --property "/commands/custom/${shortcut}"
     xfconf-query --reset  --channel xfce4-keyboard-shortcuts --property "/xfwm4/default/${shortcut}"
     xfconf-query --reset  --channel xfce4-keyboard-shortcuts --property "/xfwm4/custom/${shortcut}"
@@ -78,6 +108,7 @@ EOF
     shortcut=$(echo ${row} | awk -F'|' '{print $1}' | xargs)
     command=$(echo ${row}  | awk -F'|' '{print $2}' | xargs)
     echo "adding xfce keyboard shortcut: \"${shortcut}\" => \"${command}\""
+    xfconf-query --reset  --channel xfce4-keyboard-shortcuts --property "/commands/default/${shortcut}"
     xfconf-query --reset  --channel xfce4-keyboard-shortcuts --property "/commands/custom/${shortcut}"
     xfconf-query --reset  --channel xfce4-keyboard-shortcuts --property "/xfwm4/custom/${shortcut}"
     xfconf-query --create --channel xfce4-keyboard-shortcuts --property "/xfwm4/custom/${shortcut}" --type string --set "${command}"
@@ -88,7 +119,7 @@ done
 #
 
 (cat <<EOF
-<Control><Alt>t       |  xfce4-terminal
+<Primary><Alt>t       |  xfce4-terminal
 Super_L               |  xfce4-appfinder
 <Shift><Alt>Left      |  xdotool mousemove_relative -- -100 0
 <Shift><Alt>Right     |  xdotool mousemove_relative -- 100 0
@@ -107,6 +138,7 @@ EOF
     shortcut=$(echo ${row} | awk -F'|' '{print $1}' | xargs)
     command=$(echo ${row}  | awk -F'|' '{print $2}' | xargs)
     echo "adding xfce keyboard shortcut: \"${shortcut}\" => \"${command}\""
+    xfconf-query --reset  --channel xfce4-keyboard-shortcuts --property "/commands/default/${shortcut}"
     xfconf-query --reset  --channel xfce4-keyboard-shortcuts --property "/commands/custom/${shortcut}"
     xfconf-query --reset  --channel xfce4-keyboard-shortcuts --property "/xfwm4/custom/${shortcut}"
     xfconf-query --create --channel xfce4-keyboard-shortcuts --property "/commands/custom/${shortcut}" --type string --set "${command}"
