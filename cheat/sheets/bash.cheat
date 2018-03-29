@@ -40,6 +40,7 @@ A B C
 EOF
 
 cat file | while read line; do echo $line; done      Line-by-line processing.
+while read line; do echo $line; done < /dev/stdin
 
 
 
