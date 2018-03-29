@@ -44,6 +44,7 @@
         <value type="string" value="networkmanager applet"/>
         <value type="string" value="task manager"/>
       </property>
+      <property name="show-frame" type="bool" value="false"/>
     </property>
     <property name="plugin-7" type="string" value="whiskermenu"/>
     <property name="plugin-8" type="string" value="weather"/>
