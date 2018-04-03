@@ -156,6 +156,20 @@ git log <branch> -p --not origin/master   Show all changes introduced on a
 
 
 ### Rebasing
+git rebase master                         Rebases current branch onto the
+                                          current head commit of the `master`
+					  branch. The commits on this branch are
+					  replayed on top of `master`. NOTE: be
+					  careful, this creates new commits
+					  (with new sha-1 hashes). So if you
+git push origin <mybr> --force-with-lease have pushed your branch to remote you
+					  you will be warned that you're behind
+					  your remote (since your commits have
+					  new ids). Run push with `--force` to
+					  force an overwrite of the remote
+					  branch (and ensure your colleagues do
+					  git pull origin <mybr> --rebase).
+
 git rebase --onto master server client    Rebase the `client` branch on
                                           `master`, only replaying the patches
                                           from the `client` since it diverged
