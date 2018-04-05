@@ -121,10 +121,10 @@ done
 (cat <<EOF
 <Primary><Alt>t       |  xfce4-terminal
 Super_L               |  xfce4-appfinder
-<Shift><Alt>Left      |  xdotool mousemove_relative -- -100 0
-<Shift><Alt>Right     |  xdotool mousemove_relative -- 100 0
-<Shift><Alt>Up        |  xdotool mousemove_relative -- -0 -100
-<Shift><Alt>Down      |  xdotool mousemove_relative -- 0 100
+<Shift><Alt>Left      |  xdotool mousemove_relative -- -20 0
+<Shift><Alt>Right     |  xdotool mousemove_relative -- 20 0
+<Shift><Alt>Up        |  xdotool mousemove_relative -- -0 -20
+<Shift><Alt>Down      |  xdotool mousemove_relative -- 0 20
 # Left mouse click
 <Shift><Alt>Return    |  xdotool keyup alt+Shift_L click 1
 # Right mouse click
