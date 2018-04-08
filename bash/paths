@@ -11,9 +11,5 @@ export GOPATH=${HOME}/dev/go
 export PATH=${HOME}/bin:${HOME}/bin/scripts:/opt/bin:${GOROOT}/bin:${GOPATH}/bin:${PATH}
 export PATH=${HOME}/bin/scripts/docker:${PATH}
 export PATH=${HOME}/bin/scripts/kubernetes:${PATH}
-
-# installed rust version
-if which rustc > /dev/null; then
-    rust_version=$(rustc --version | awk '{ print $2 }')
-    export RUST_SRC=/usr/src/rustc-${rust_version}/src/
-fi
+# add rust tools to path
+export PATH=${HOME}/.cargo/bin:${PATH}

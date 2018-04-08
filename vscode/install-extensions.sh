@@ -11,7 +11,9 @@ code --install-extension redhat.java
 # TOML support
 code --install-extension bungcip.better-toml
 # Rust mode
-code --install-extension saviorisdead.RustyCode
+code --install-extension rust-lang.rust
+# C/C++ mode
+code --install-extension ms-vscode.cpptools
 
 # icon theme
 code --install-extension PKief.material-icon-theme

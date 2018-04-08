@@ -51,8 +51,9 @@
     //
     // Go
     //
-    // Note: remember to run: ctrl+shift+p > Go:Install/Update Tools once in a while
-    //       to make sure that the necessary tool dependencies are up-to-date.
+    // Note: remember to run: ctrl+shift+p > Go:Install/Update Tools once
+    //       in a while to make sure that the necessary tool dependencies
+    //       are up-to-date.
     //
     "go.goroot": "/opt/go",
     "go.inferGopath": false,
@@ -71,8 +72,8 @@
     // Vets code on file save using 'go tool vet': 'workspace', 'package or 'off'.
     "go.vetOnSave": "package",
     "go.vetFlags": [],
-    // run formatting tool on save
-    "go.formatOnSave": true,
+    // run formatting tool on save (default)
+    //"go.formatOnSave": true,
     "go.formatTool": "goreturns",
     "go.formatFlags": [],
     // run 'go test' on save for current package. not advised with files.autoSave
@@ -89,5 +90,11 @@
     // complete functions with their parameter signature, excluding types
     "go.useCodeSnippetsOnFunctionSuggestWithoutType": false,
     // include (not yet) imported packages in auto-complete suggestions
-    "go.autocompleteUnimportedPackages": true
+    "go.autocompleteUnimportedPackages": true,
+
+    //
+    // Rust
+    //
+    // Rust Language Server (RLS) channel to install from (default: nightly)
+    //"rust-client.channel": "stable"
 }
