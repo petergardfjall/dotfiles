@@ -1,11 +1,11 @@
-# Installation
+## Installation
 pip install python-keystoneclient	auth service
 pip install python-novaclient		compute service
 pip install python-glanceclient		image service
 pip install python-neutronclient	network service
 
 
-# Environment variables for Keystone v2 authentication
+## Environment variables for Keystone v2 authentication
 export OS_REGION_NAME=RegionOne
 export OS_AUTH_URL=http://p11.ds.cs.umu.se:5000/v2.0
 export OS_USERNAME=...
@@ -14,7 +14,7 @@ export OS_TENANT_NAME=...
 export OS_COMPUTE_API_VERSION=1.1
 
 
-# Environment variables for Keystone v3 authentication
+## Environment variables for Keystone v3 authentication
 export OS_REGION_NAME=Kna1
 export OS_AUTH_URL=https://identity1.citycloud.com:5000/v3/
 export OS_PROJECT_ID=...
@@ -23,7 +23,7 @@ export OS_PASSWORD=...
 export OS_COMPUTE_API_VERSION=2
 
 
-# python-novaclient
+## python-novaclient
 nova help <subcommand>
 nova list
 nova delete <id/name>
@@ -44,12 +44,12 @@ nova image-create
 nova image-delete <name>
 
 
-# python-glanceclient
+## python-glanceclient
 glance image-create --file <path> --is-public False --min-ram 1024 --min-disk 10 --name autoscaling-server --disk-format qcow2 --container-format bare
 glance image-list
 
 
-# python development
+## python development
 Sample code for first authenticating with keystone, and then using
 the session with the neutronclient library:
 

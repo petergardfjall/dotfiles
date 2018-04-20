@@ -1,29 +1,29 @@
-# Legend
+## Legend
 M = Meta (or Alt)
 C = Ctrl
 
 
-# General
+## General
 Help:				C-h (or F1)
 Exit: 			    	C-x C-c
 
 
-# Major Mode:
+## Major Mode:
 Describe:			M-x describe-mode # describe current major mode
 Set:				M-x <mode>  # e.g., js-mode or python-mode
 
 
-# File
+## File
 Open:				C-x C-f
 Save:				C-x C-s
 Save all:			C-x s
 
-# Buffers (open files)
+## Buffers (open files)
 Switch buffer:			C-x b
 Kill/close buffer:		C-x k
 Restore buffer:			M-x revert-buffer
 
-# Navigation
+## Navigation
 One word forward:		M-f
 One word backward:		M-b
 Start of line:			C-a
@@ -32,23 +32,23 @@ Goto line:			M-g g
 Save point to register:		C-x r <SPC> <name>
 Jump to point in register:	C-x r j <name>
 
-# Bookmarks
+## Bookmarks
 Set bookmark at point:		C-x r m
 Jump to bookmark:		C-x r b
 List bookmarks:			C-x r l
 Delete bookmark:		M-x bookmark-delete
 
-# Deleting
+## Deleting
 Delete (rest of) row:		C-k
 Delete (next) word: 		M-d
 Delete (previous) word:		M-Backspace
 Delete selection/region:	C-w or M-x delete-region
 
-# Undoing
+## Undoing
 Undo:				C-x u
 Cancel/abort command:		C-g
 
-# Copy-paste
+## Copy-paste
 Start selection:		C-Space
 Select all:			C-x h
 Copy (region):			M-w
@@ -56,37 +56,37 @@ Cut (region): 			C-w
 Insert another file: 		C-x i
 Paste (yank):			C-y
 
-# Incremental search
+## Incremental search
 Search forward:			C-s
 Search backward: 		C-r
 
-# Replace
+## Replace
 Query replace:			M-%
 Replace with regexp:		M-x query-replace-regexp
 
-# Indentation
+## Indentation
 Indent rigidly (marked rows):	C-u C-x TAB
 Decrease indent:       		C-u -4 C-x TAB
 Mode-aware indent:		M-x indent-region
 
-# Rectangles
+## Rectangles
 Insert <string> on each line    M-x string-insert-rectangle RET <string> RET
 
 
-# Multiple windows
+## Multiple windows
 Split window:			C-x 2
 Switch window:			C-x o
 Close other windows:		C-x 1
 Close this window:		C-x 0
 
-# Shell commands
+## Shell commands
 Execute a shell command:	M-!
 Open shell in *shell* buffer:	M-x shell
 
-# Programming
+## Programming
 Toggle line numbers:		M-x linum-mode
 
-# Python (Ropemacs: refactorings and code assist)
+## Python (Ropemacs: refactorings and code assist)
 Rope code assist:   		M-/
 Goto definition	:		C-c g or C-c r a g
 Show doc:			C-c d or C-c r a d
@@ -95,14 +95,14 @@ Rename:				C-c r r
 Extract variable:		C-c r l
 Extract method:			C-c r m
 
-# Python (Jedi.el: auto-completion)
+## Python (Jedi.el: auto-completion)
 Complete code at point:		C-tab 	or M-x jedi:complete
 Goto definition of object:	C-. 	or M-x jedi:goto-definition
 Show documentation of object: 	C-c D 	or M-x jedi:show-doc
      		      		(note: C-c D is my override)
 
-# Key bindings
+## Key bindings
 List (command shortcuts):	M-x describe-bindings
 
-# Customization with Emacs Lisp
+## Customization with Emacs Lisp
 Global key bindings:		(global-set-key “\C-cg” ‘goto-line)

@@ -1,4 +1,4 @@
-# Install Guest Additions on a Debian box
+### Install Guest Additions on a Debian box
 
 1. `Devices` > `Insert Guest Additions CD Image ...`
 

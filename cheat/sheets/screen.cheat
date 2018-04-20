@@ -1,4 +1,4 @@
-# Getting in
+## Getting in
 screen -S <name>	start a new screen session with session name
 sceen -ls 		list running sessions/screens
 screen -x		attach to a running session
@@ -8,19 +8,19 @@ screen -dRR		"ultimate attach" (attach, detaching any
 			one is created)
 screen -d <name>	detach a running session	
 
-# Escape key
+## Escape key
 C-a			all comands are prefixed by Ctrl-a
 
-# Getting out
+## Getting out
 C-a d			detach
 C-a D D			detach and logout (quick exit)
 C-a \ 			exit screen (exit all of the programs in screen)
 C-a C-\			force-exit screen (not recommended)
 
-# Help
+## Help
 C-a ?			view help
 
-# Window Management
+## Window Management
 C-a c			create new window	
 C-a C-a			change to last-visited active window
 C-a <number>		change to window by number (only for windows 0 to 9)
@@ -33,5 +33,5 @@ C-a k			kill current window (not recommended)
 C-a \			kill all windows (not recommended)
 C-a A			rename current window
 
-# Navigation
+## Navigation
 C-a <esc>		Enter copy/scrollback buffer mode

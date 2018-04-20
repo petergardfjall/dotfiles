@@ -1,4 +1,4 @@
-## Set up an ssh tunnel
+### Set up an ssh tunnel
 ssh -C -L p:My:Py <user>@Mx -N   Set up an SSH tunnel, allowing connections to
                                  a port p on the local machine to be forwarded
                                  by machine Mx to port Py on machine My. Now
