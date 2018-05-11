@@ -14,6 +14,8 @@ code --install-extension bungcip.better-toml
 code --install-extension rust-lang.rust
 # C/C++ mode
 code --install-extension ms-vscode.cpptools
+code --install-extension vector-of-bool.cmake-tools
+code --install-extension hars.cppsnippets
 
 # icon theme
 code --install-extension PKief.material-icon-theme
