@@ -22,3 +22,6 @@ code --install-extension PKief.material-icon-theme
 
 # subword navigation (jumping between upcase letters in camel-case words)
 code --install-extension ow.vscode-subword-navigation
+
+# wrap comments/text with Alt+Q (toggle auto-wrap with Shift+Alt+Q)
+code --install-extension stkb.rewrap
