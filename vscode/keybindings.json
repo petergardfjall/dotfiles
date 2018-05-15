@@ -190,5 +190,16 @@
         "key": "ctrl+7",
         "command": "editor.action.commentLine",
         "when": "editorTextFocus && !editorReadonly"
+    },
+
+    // rewrap extension: wrap text block/comment according to rulers
+    {
+        "key": "alt+q",
+        "command": "rewrap.rewrapComment"
+    },
+    // rewrap extension: toggle auto line-wrap on/off
+    {
+        "key": "shift+alt+q",
+        "command": "rewrap.toggleAutoWrap"
     }
 ]
