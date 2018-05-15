@@ -1,5 +1,7 @@
 ## Data model
-Time-series: a sequence of data points identified by a metric and a set of
+Metric:      a single semantic measurement that may have many label dimensions.
+
+Time-series: a sequence of data points identified by a metric *and* a set of
              key-value pairs (labels). Each time-series is uniquely identified
              by its metric name and labels. Any given combination of labels for
 	     the same metric name identifies a particular dimensional
