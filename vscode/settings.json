@@ -37,7 +37,7 @@
     // no minimap decoration on scrollbar to show high-level file layout
     "editor.minimap.enabled": false,
     // columns at which to show vertical rulers
-    //"editor.rulers": [80],
+    "editor.rulers": [80, 100],
     // controls whether the editor has code folding enabled
     // (the ability to fold/unfold e.g. code in methods)
     "editor.folding": false,
@@ -97,4 +97,11 @@
     //
     // Rust Language Server (RLS) channel to install from (default: nightly)
     //"rust-client.channel": "stable"
+
+    // rewrap extension
+    // Wraps after 80 characters: if not set, uses editor.rulers
+    // "rewrap.wrappingColumn": 80,
+    // wrap a whole comment block when a text cursor is inside it
+    "rewrap.wholeComment": true,
 }
+
