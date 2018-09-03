@@ -1,27 +1,32 @@
 #!/bin/bash
 
+function install_or_update() {
+    # answer yes on question to update existing extension
+    yes Yes | code --install-extension ${1}
+}
+
 # Go mode
-code --install-extension lukehoban.Go
+install_or_update lukehoban.Go
 # Python mode
-code --install-extension ms-python.python
+install_or_update ms-python.python
 # Dockerfile mode
-code --install-extension PeterJausovec.vscode-docker
+install_or_update PeterJausovec.vscode-docker
 # Java language support
-code --install-extension redhat.java
+install_or_update redhat.java
 # TOML support
-code --install-extension bungcip.better-toml
+install_or_update bungcip.better-toml
 # Rust mode
-code --install-extension rust-lang.rust
+install_or_update rust-lang.rust
 # C/C++ mode
-code --install-extension ms-vscode.cpptools
-code --install-extension vector-of-bool.cmake-tools
-code --install-extension hars.cppsnippets
+install_or_update ms-vscode.cpptools
+install_or_update vector-of-bool.cmake-tools
+install_or_update hars.cppsnippets
 
 # icon theme
-code --install-extension PKief.material-icon-theme
+install_or_update PKief.material-icon-theme
 
 # subword navigation (jumping between upcase letters in camel-case words)
-code --install-extension ow.vscode-subword-navigation
+install_or_update ow.vscode-subword-navigation
 
 # wrap comments/text with Alt+Q (toggle auto-wrap with Shift+Alt+Q)
-code --install-extension stkb.rewrap
+install_or_update stkb.rewrap
