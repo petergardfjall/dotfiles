@@ -1,0 +1,4 @@
+# add bash completion for awscli if the aws_completer script is installed
+if which aws_completer > /dev/null 2>&1; then
+    complete -C $(which aws_completer) aws
+fi
