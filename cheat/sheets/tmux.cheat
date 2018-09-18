@@ -13,9 +13,14 @@ C-b <arrow>                     # move between window panes
 C-b <digit>                     # move between windows
 C-b <PgUp>                      # enter "scroll mode" ('q' to exit)
 
-# copy mode
+### copy mode
 C-b [                           # enter copy mode
 C-space                         # start selection
 <arrow keys>                    # move selection
 alt-w                           # copy
 C-b ]                           # paste/yank most recent selection
+
+
+### synchronize panes (send input to every pane)
+C-b :set synchronize-panes on   # turn sync on
+C-b :set synchronize-panes off  # turn sync off
