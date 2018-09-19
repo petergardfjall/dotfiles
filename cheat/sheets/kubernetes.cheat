@@ -14,6 +14,7 @@
 - monitoring and health-checking
 - service discovery
 
+### components
 - kubernetes control-plane ("master") components
   - apiserver: rest api
   - etcd: state store
@@ -29,7 +30,6 @@
     as it isn't on the data path. it just handles iptables rules:
     "if dest.ip:port == svc1.ip:port { pick endpoint backend at random; rewrite dest.ip }"
 
-
 - cluster communication
   - cluster -> master: all communication via apiserver (https, cert-auth)
   - master -> cluster:
@@ -40,8 +40,6 @@
     - apiserver -> node/pods/services
       - not safe, plain http. should not run over untrusted networks.
 
-
-
 - kube-controller-manager controllers
   - node controller (takes action when nodes go up/down)
   - replication controller
@@ -49,6 +47,7 @@
   - volume controller
 
 
+### concepts
 - pod: atomic unit of scheduling (runs in its entirety on a single node)
   - sandbox for one or more containers
   - tightly coupled: share network address space, volumes, memory space
@@ -87,9 +86,10 @@
 - pod presets: loosely coupled way of injecting data (secrets, volumes, volume
   mounts, env vars) into pods (selected by labels) at creation time
 
-- pod priorities: indicate importance to scheduler, allowing it to preempt/evict pods
+- pod priorities: indicate importance to scheduler, allowing it to
+  preempt/evict pods
   - use PriorityClass objects and reference from pod.spec.priorityClassName
-  - high-prio pod can skip ahead when multipled pods are Pending
+  - high-prio pod can skip ahead when multiple pods are Pending
   - when a high-prio pod cannot fit, low-prio pod(s) are pre-empted (deleted
     from node) to make room for the high-prio pod. preempted pod gets its
     terminationGracePeriod before being killed.
@@ -117,8 +117,8 @@
   - a service can expose multiple *named* ports
   - types
     - ClusterIP: a cluster-internal IP (default)
-    - NodePort: reachable by opening a port (30000-32767) on every cluster node.
-      requests to node:NodePort is relayed to ClusterIP:NodePort by kube-proxy
+    - NodePort: reachable by opening a port (30000-32767) on every cluster node
+      (request to node:NodePort is relayed to ClusterIP:NodePort by kube-proxy)
     - LoadBalancer: external cloud loadbalancer. NodePort and ClusterIP created
       under the hood. LoadBalancer -> NodePort -> ClusterIP -> Pod.
     - ExternalName: maps to a CNAME via kube-dns
@@ -127,12 +127,12 @@
   - DNS SRV records for named ports:
     port-name.port-protocol.my-svc.my-namespace.svc.cluster.local
   - headless service (clusterIP: None): a service without a ClusterIP.
-    - if you do not need ClusterIP nor load-balancing for your service. If a pod
-      selector is used, a DNS entry will be created for the service which will
-      resolve to *all* IP addresses of backend pods.
-  - can specify externalIPs on any type of service. if incoming traffic has this
-    address as its destination and arrives on the service port, the request is
-    routed to a service endpoint
+    - if you do not need ClusterIP nor load-balancing for your service. If a
+      pod selector is used, a DNS entry will be created for the service which
+      will resolve to *all* IP addresses of backend pods.
+  - can specify externalIPs on any type of service. if incoming traffic has
+    this address as its destination and arrives on the service port, the
+    request is routed to a service endpoint
 
 - Volumes: can be mounted to pods via .pod.spec.volumes.
   - different kinds: secret, configmap, emptyDir, hostPath, local, nfs,
@@ -156,7 +156,6 @@
     Delete (default for dynamically provisioned PVs -- specified in
     StorageClass), Recycle (scrubs disk).
 
-
 - NetworkPolicy: use podSelectors to specify which pods are allowed to
   send traffic to each other. Need to set the network policy to use DefaultDeny
   for the namespace first. Then apply NetworkPolicies to add "open paths".
@@ -168,7 +167,6 @@
   - associated storage must be provided as PersistentVolume; deleting or
     scaling a StatefulSet will not delete the volumes.
   - requires a headless service
-
 
 - Jobs: pods that run to completion. Commonly used for batch
   processing or CronJobs.
@@ -182,7 +180,8 @@
 
 
 - Taints: set on nodes to only allow pods with matching tolerations to run
-  - some taints are set by the node controller, e.g., node.kubernetes.io/disk-pressure
+  - some taints are set by the node controller, e.g.,
+    node.kubernetes.io/disk-pressure
 
 - Horizontal Pod Autoscaler (hpa): handles scaling in rc, rs, and deployments
   - cpu or custom metrics
@@ -190,16 +189,19 @@
 
 - Ingress: a HTTP reverse proxy that can multplex incoming traffic to multiple
   backends defined via ingress rules.
-  - requires an ingress-controller (can be cloud-native or set up as a deployment)
+  - requires an ingress-controller (can be cloud-native or set up as a
+    deployment)
   - can provide load-balancing, SSL termination, and name-based virtual hosting
   - allows a single external LoadBalancer service to lead traffic to multiple
-    backend services
+    backend services (the ingress-ctrler multiplexes traffic to its backends)
 
 - Role-based Access Control (RBAC):
   - Subjects/identities: User (for humans/procs outside cluster, CN=username),
     Group (cert O=groupname), ServiceAccount (for intra-cluster procs in pods)
-  - Roles (applies to specific namespace) vs ClusterRoles (across entire cluster)
-    - a role contains rules representing a set of permissions (resources + verbs)
+  - Roles (applies to specific namespace) vs ClusterRoles (across entire
+    cluster)
+    - a role contains rules representing a set of permissions (resources +
+      verbs)
   - Bindings to associate identities with Roles (of any type!):
     - RoleBinding: when used with a ClusterRole, its scope is narrowed to the
       RoleBinding's namespace
@@ -207,18 +209,21 @@
 
 
 - Multi-zone clusters: the scheduler tries to schedule pods evenly across zones
-  to reduce the impact of zone failure. When persistent volumes are used, a zone
-  label is added and the scheduler ensures that pods claiming a given volume are
-  only placed in the same zone as that volume.
+  to reduce the impact of zone failure. When persistent volumes are used, a
+  zone label is added and the scheduler ensures that pods claiming a given
+  volume are only placed in the same zone as that volume.
 
-- Clusters cannot span clouds or regions. For that, federation is needed.ku
+- Clusters cannot span clouds or regions. For that, federation is needed.
 
 - Cluster upgrades: typically control-plane first, kubelets second
   - kube-apiserver, kube-controller-manager, kube-scheduler, kube-dns
   - kube-proxy, kubelet
-  - additional stuff as needed for new release (etcd, flags, api objects)
-  - careful: e.g. avoid using packaged kubeadm (may update dependencies including
-    kubelet)
+  - additional stuff as needed for new release (etcd, flags, kube-dns,
+    api objects)
+  - careful: e.g. avoid using packaged kubeadm (may update dependencies,
+    including kubelet)
+
+
 
 ### kubectl
 # get bash tab-completion
@@ -274,7 +279,7 @@ kubectl rollout status deployment <name>
 
 # scaling
 kubectl scale deployment <name> --replicas=3
-kubectl autoscaler deployment <name> --min=3 --max=10 --cpu-percent=50
+kubectl autoscale deployment <name> --min=3 --max=10 --cpu-percent=50
 
 # troubleshooting; check logs for current container
 kubectl logs <pod> <container>
@@ -296,7 +301,6 @@ kubectl patch ...
 
 # view node capacity and cpu/mem requests
 kubectl describe nodes
-
 
 # delete deployment but keep pods
 kubectl delete deployment <name> --cascade=false
