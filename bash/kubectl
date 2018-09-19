@@ -1,13 +1,16 @@
-if ! [ -d ~/.kube ]; then
-    mkdir -p ~/.kube
-fi 
+if which kubectl > /dev/null; then
 
-# kubectl to pick up config file and any *.conf files placed under ~/.kube/
-export KUBECONFIG=~/.kube/config
-for conf_file in $(find  ~/.kube/ -name '*.conf'); do
-    export KUBECONFIG=${KUBECONFIG}:${conf_file}
-done
+    if ! [ -d ~/.kube ]; then
+	mkdir -p ~/.kube
+    fi
 
-# add tab completion for kubectl
-source <(kubectl completion bash)
+    # kubectl to pick up config file and any *.conf files placed under ~/.kube/
+    export KUBECONFIG=~/.kube/config
+    for conf_file in $(find  ~/.kube/ -name '*.conf'); do
+	export KUBECONFIG=${KUBECONFIG}:${conf_file}
+    done
 
+    # add tab completion for kubectl
+    source <(kubectl completion bash)
+
+fi
