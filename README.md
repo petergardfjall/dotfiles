@@ -68,7 +68,3 @@ Then append the following to your `~/.profile` file:
     #
     source ~/dotfiles/bash.includes
 
-## screen
-If you don't already have a screen configuration file, use the provided one by running:
-
-    ln -s ~/dotfiles/screen/screenrc ~/.screenrc
