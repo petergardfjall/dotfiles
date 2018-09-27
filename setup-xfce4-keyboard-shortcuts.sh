@@ -56,6 +56,16 @@ XF86Explorer
 <Primary><Alt>7
 <Primary><Alt>8
 <Primary><Alt>9
+# alternative forumalations for keypress 1-9 (maybe more recent xfce versions?)
+<Primary><Alt>KP_1
+<Primary><Alt>KP_2
+<Primary><Alt>KP_3
+<Primary><Alt>KP_4
+<Primary><Alt>KP_5
+<Primary><Alt>KP_6
+<Primary><Alt>KP_7
+<Primary><Alt>KP_8
+<Primary><Alt>KP_9
 # remove 'move window to previous/next workspace'
 <Primary><Alt>Home
 <Primary><Alt>End
@@ -69,6 +79,8 @@ XF86Explorer
 <Shift><Alt>Page_Up
 # remove 'lower window'
 <Shift><Alt>Page_Down
+# remove 'maximize window vertically'
+<Alt>F6
 EOF
 ) | while read row; do
     if echo ${row} | egrep -q '^[ ]*#'; then
@@ -81,24 +93,29 @@ EOF
     xfconf-query --reset  --channel xfce4-keyboard-shortcuts --property "/commands/custom/${shortcut}"
     xfconf-query --reset  --channel xfce4-keyboard-shortcuts --property "/xfwm4/default/${shortcut}"
     xfconf-query --reset  --channel xfce4-keyboard-shortcuts --property "/xfwm4/custom/${shortcut}"
-
 done
-
 
 
 #
 # xfwm window manager shortcuts
 #
 (cat <<EOF
+# Ctrl+Shift+arrow => move window to a different workspace
+<Primary><Shift><Alt>Right    | move_window_right_workspace_key
+<Primary><Shift><Alt>Left     | move_window_left_workspace_key
+<Primary><Shift><Alt>Up       | move_window_up_workspace_key
+<Primary><Shift><Alt>Down     | move_window_down_workspace_key
 # Ctrl+Shift+<keypad> => tile window in different directions
-<Primary><Shift>KP_Home       |  tile_up_left_key
-<Primary><Shift>KP_Left       |  tile_left_key
-<Primary><Shift>KP_Right      |  tile_right_key
-<Primary><Shift>KP_Down       |  tile_down_key
-<Primary><Shift>KP_Up         |  tile_up_key
-<Primary><Shift>KP_Page_Up    |  tile_up_right_key
-<Primary><Shift>KP_End        |  tile_down_left_key
-<Primary><Shift>KP_Page_Down  |  tile_down_right_key
+<Primary><Shift>7    |  tile_up_left_key
+<Primary><Shift>4    |  tile_left_key
+<Primary><Shift>6    |  tile_right_key
+<Primary><Shift>2    |  tile_down_key
+<Primary><Shift>8    |  tile_up_key
+<Primary><Shift>9    |  tile_up_right_key
+<Primary><Shift>1    |  tile_down_left_key
+<Primary><Shift>3    |  tile_down_right_key
+# Ctrl+Shift+<keypad5> twice will move a tiled window to its original position
+<Primary><Shift>5    |  maximize_vert_key
 EOF
 ) | while read row; do
     if echo ${row} | egrep -q '^[ ]*#'; then
