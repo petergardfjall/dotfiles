@@ -1,0 +1,4 @@
+if which helm > /dev/null; then
+    # add tab completion for helm
+    source <(helm completion bash)
+fi
