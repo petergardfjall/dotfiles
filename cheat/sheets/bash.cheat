@@ -56,7 +56,7 @@ echo -e "NORMAL \e[32m GREEN \e[0m NORMAL"
 
 
 ## Scripting: command-line parsing
-for ${arg} in ${@}; do
+for arg in ${@}; do
     case ${arg} in
         --opt1=*)
             opt1=${arg/*=/}
