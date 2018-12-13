@@ -13,93 +13,36 @@ if [ -f ~/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml 
 fi
 
 #
-# Shortcuts to clear
+# Clear any shortcuts in the "custom" category. And don't touch the "override"
+# property.
 #
-(cat <<EOF
-# remove default shortcuts for weird buttons
-XF86Display
-XF86Music
-XF86WWW
-XF86HomePage
-XF86Mail
-XF86Calculator
-XF86Messenger
-XF86Explorer
-# remove mousepad shortcut
-<Super>e
-# remove email shortcut
-<Super>m
-# remove terminal shortcut
-<Super>t
-# remove web browser shortcut
-<Super>w
-# remove display settings shortcut
-<Super>p
-# remove various default application shortcuts (libreoffice, etc)
-<Super>1
-<Super>2
-<Super>3
-<Super>4
-<Super>r
-<Super>f
-# remove xfce4-appfinder shortcut
-<Alt>F3
-# remove whisker menu shortcut
-<Primary>Escape
-# remove 'move window to workspace 1..9'
-<Primary><Alt>1
-<Primary><Alt>2
-<Primary><Alt>3
-<Primary><Alt>4
-<Primary><Alt>5
-<Primary><Alt>6
-<Primary><Alt>7
-<Primary><Alt>8
-<Primary><Alt>9
-# alternative forumalations for keypress 1-9 (maybe more recent xfce versions?)
-<Primary><Alt>KP_1
-<Primary><Alt>KP_2
-<Primary><Alt>KP_3
-<Primary><Alt>KP_4
-<Primary><Alt>KP_5
-<Primary><Alt>KP_6
-<Primary><Alt>KP_7
-<Primary><Alt>KP_8
-<Primary><Alt>KP_9
-# remove 'move window to previous/next workspace'
-<Primary><Alt>Home
-<Primary><Alt>End
-# remove 'show desktop'
-<Primary><Alt>d
-# remove 'switch window for same application'
-<Super>Tab
-# remove 'toggle above'
-<Alt>F12
-# remove 'raise window'
-<Shift><Alt>Page_Up
-# remove 'lower window'
-<Shift><Alt>Page_Down
-# remove 'maximize window vertically'
-<Alt>F6
-EOF
-) | while read row; do
-    if echo ${row} | egrep -q '^[ ]*#'; then
-	# skip comments
-	continue
-    fi
-    shortcut=$(echo ${row} | awk -F'|' '{print $1}' | xargs)
-    echo "clearing xfce keyboard shortcut: \"${shortcut}\""
-    xfconf-query --reset  --channel xfce4-keyboard-shortcuts --property "/commands/default/${shortcut}"
-    xfconf-query --reset  --channel xfce4-keyboard-shortcuts --property "/commands/custom/${shortcut}"
-    xfconf-query --reset  --channel xfce4-keyboard-shortcuts --property "/xfwm4/default/${shortcut}"
-    xfconf-query --reset  --channel xfce4-keyboard-shortcuts --property "/xfwm4/custom/${shortcut}"
+shortcut_properties=$(xfconf-query --list --channel xfce4-keyboard-shortcuts | grep custom | egrep -v 'override$')
+for shortcut_property in ${shortcut_properties}; do
+    echo "clearing xfce keyboard shortcut: ${shortcut_property}"
+    xfconf-query --reset  --channel xfce4-keyboard-shortcuts --property "${shortcut_property}"
 done
 
-
 #
-# xfwm window manager shortcuts
+# Set up xfwm window manager shortcuts
 #
 (cat <<EOF
+<Alt>F4            | close_window_key
+<Alt>F6            | stick_window_key
+<Alt>F7            | move_window_key
+<Alt>F8            | resize_window_key
+<Alt>F9            | hide_window_key
+<Alt>F10           | maximize_window_key
+<Alt>F12           | above_key
+Escape             | cancel_key
+<Alt><Space>       | popup_menu_key
+# Alt+Tab and Alt+Shift+Tab => cycle windows in workspace
+<Alt>Tab           | cycle_windows_key
+<Alt><Shift>Tab    | cycle_reverse_windows_key
+# Ctrl+Alt+arrow => move to a different workspace
+<Primary><Alt>Right    | right_workspace_key
+<Primary><Alt>Left     | left_workspace_key
+<Primary><Alt>Up       | up_workspace_key
+<Primary><Alt>Down     | down_workspace_key
 # Ctrl+Shift+arrow => move window to a different workspace
 <Primary><Shift><Alt>Right    | move_window_right_workspace_key
 <Primary><Shift><Alt>Left     | move_window_left_workspace_key
@@ -124,18 +67,23 @@ EOF
     fi
     shortcut=$(echo ${row} | awk -F'|' '{print $1}' | xargs)
     command=$(echo ${row}  | awk -F'|' '{print $2}' | xargs)
-    echo "adding xfce keyboard shortcut: \"${shortcut}\" => \"${command}\""
-    xfconf-query --reset  --channel xfce4-keyboard-shortcuts --property "/commands/default/${shortcut}"
-    xfconf-query --reset  --channel xfce4-keyboard-shortcuts --property "/commands/custom/${shortcut}"
-    xfconf-query --reset  --channel xfce4-keyboard-shortcuts --property "/xfwm4/custom/${shortcut}"
+    # echo "adding xfce keyboard shortcut: \"${shortcut}\" => \"${command}\""
+    # xfconf-query --reset  --channel xfce4-keyboard-shortcuts --property "/commands/default/${shortcut}"
+    # xfconf-query --reset  --channel xfce4-keyboard-shortcuts --property "/commands/custom/${shortcut}"
+    # xfconf-query --reset  --channel xfce4-keyboard-shortcuts --property "/xfwm4/custom/${shortcut}"
     xfconf-query --create --channel xfce4-keyboard-shortcuts --property "/xfwm4/custom/${shortcut}" --type string --set "${command}"
 done
 
 #
-# command shortcuts
+# Set up command shortcuts
 #
 
 (cat <<EOF
+<Alt>F1               |  xfce4-popup-applicationsmenu
+<Alt>F2               |  xfce4-appfinder --collapsed
+<Alt>F3               |  xfce4-appfinder
+<Primary><Alt>Delete  |  xflock4
+<Primary><Alt>l       |  xflock4
 <Primary><Alt>t       |  xfce4-terminal
 Super_L               |  xfce4-appfinder
 <Shift><Alt>Left      |  xdotool mousemove_relative -- -20 0
@@ -155,8 +103,5 @@ EOF
     shortcut=$(echo ${row} | awk -F'|' '{print $1}' | xargs)
     command=$(echo ${row}  | awk -F'|' '{print $2}' | xargs)
     echo "adding xfce keyboard shortcut: \"${shortcut}\" => \"${command}\""
-    xfconf-query --reset  --channel xfce4-keyboard-shortcuts --property "/commands/default/${shortcut}"
-    xfconf-query --reset  --channel xfce4-keyboard-shortcuts --property "/commands/custom/${shortcut}"
-    xfconf-query --reset  --channel xfce4-keyboard-shortcuts --property "/xfwm4/custom/${shortcut}"
     xfconf-query --create --channel xfce4-keyboard-shortcuts --property "/commands/custom/${shortcut}" --type string --set "${command}"
 done
