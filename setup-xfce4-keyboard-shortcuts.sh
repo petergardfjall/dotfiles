@@ -16,8 +16,8 @@ fi
 # Clear any shortcuts in the "custom" category. And don't touch the "override"
 # property.
 #
-shortcut_properties=$(xfconf-query --list --channel xfce4-keyboard-shortcuts | grep custom | egrep -v 'override$')
-for shortcut_property in ${shortcut_properties}; do
+shortcut_properties=$(xfconf-query --list --channel xfce4-keyboard-shortcuts | (grep custom || true) | (egrep -v 'override$' || true) )
+for shortcut_property in "${shortcut_properties}"; do
     echo "clearing xfce keyboard shortcut: ${shortcut_property}"
     xfconf-query --reset  --channel xfce4-keyboard-shortcuts --property "${shortcut_property}"
 done
