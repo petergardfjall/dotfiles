@@ -94,6 +94,10 @@ Super_L               |  xfce4-appfinder
 <Shift><Alt>Return    |  xdotool keyup alt+Shift_L click 1
 # Right mouse click
 <Shift><Alt>Backspace |  xdotool keyup alt+Shift_L click 3
+# Full screen screenshot
+<Alt>Insert           | xfce4-screenshooter -f
+# Focused window screenshot
+<Primary><Alt>Insert  | xfce4-screenshooter -w
 EOF
 ) | while read row; do
     if echo ${row} | egrep -q '^[ ]*#'; then
