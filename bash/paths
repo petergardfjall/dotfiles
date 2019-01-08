@@ -16,6 +16,8 @@ export PATH=${HOME}/.cargo/bin:${PATH}
 export PATH=${GOPATH}/bin:${PATH}
 # add go tools
 export PATH=${GOROOT}/bin:${PATH}
+# add bcc (eBPF) tools
+export PATH=${PATH}:/usr/share/bcc/tools/
 
 export PATH=${HOME}/bin:${PATH}
 export PATH=${HOME}/bin/scripts:${PATH}
