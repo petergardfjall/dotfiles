@@ -1,86 +1,105 @@
 ## Command-line
-Ctrl+r                               Search command history
+- `Ctrl+r`: search command history
 
 
 
 ## Scripting: basics
 
-(command; command)                   Run commands in a sub-shell. Variables set
-                                     in the sub-shell are not visible to the
-                                     calling process.
-$(command_list)                      Return the *value* of the commands run in
-                                     `command_list`. Just like `$VAR` gives
-                                     the value of `VAR`.
+Run commands in a sub-shell. Variables set in the sub-shell are not visible to
+the calling process.
 
-cmd <(command_list)                  Pass output of `command_list` as stdin to
-                                     `cmd`.
-grep root <(cat /etc/passwd)
-comm <(ls -l) <(ls -al)              Pass output of multiple commands as stdin
-                                     to a command.
+    (command; command)
+
+Return the *value* of the commands run in `command_list`. Just like `$VAR` gives
+the value of `VAR`.
+
+    $(command_list)
+
+Pass output of `command_list` as stdin to `cmd`.
+
+    cmd <(command_list)
+    grep root <(cat /etc/passwd)
+
+Pass output of multiple commands as stdin to a command.
+
+    comm <(ls -l) <(ls -al)
 
 
-test -f /etc/passwd                  `test` is a conditional test with multiple
-                                     possible comparisons. `-f` tests file
-                                     existence.
-                                     `-z`: string length is zero.
-                                     `-n`: string length is non-zero.
-                                     Integer comparisons: `-eq`, `-gt`, `-ge`,
-                                     `-lt`, `-le`, `-ne`.
-[ EXPR ]                             Shorthand for `test` command.
+`test` is a conditional test with multiple possible comparisons. `-f` tests file
+existence. `-z`: string length is zero. `-n`: string length is non-zero. Integer
+comparisons: `-eq`, `-gt`, `-ge`, `-lt`, `-le`, `-ne`.
 
-while command; do cmd; done          Repeat until `command` gives non-zero exit.
+    test -f /etc/passwd
 
-if command; then cmd; else cmd; fi
+Shorthand for `test` command.
 
-$(( 4 + 5 ))                         Arithmetic.
+    [ EXPR ]
 
-cat <<EOF                            Multi-line "here-document".
-A B C
-1 2 3
-EOF
+Repeat until `command` gives non-zero exit.
 
-cat file | while read line; do echo $line; done      Line-by-line processing.
-while read line; do echo $line; done < /dev/stdin
+    while command; do cmd; done
+
+Conditionals:
+
+    if command; then cmd; else cmd; fi
+
+Arithmetic:
+
+    $(( 4 + 5 ))
+
+Multi-line "here-document".
+
+    cat <<EOF
+    A B C
+    1 2 3
+    EOF
+
+Line-by-line processing.
+
+    cat file | while read line; do echo $line; done
+    while read line; do echo $line; done < /dev/stdin
 
 
 
 ## Scripting: executing commands over ssh
-ssh <host> bash -s < /my/script.sh
+
+    ssh <host> bash -s < /my/script.sh
 
 
 
 ## Scripting: coloring output
-echo -e "NORMAL \e[32m GREEN \e[0m NORMAL"
 
+    echo -e "NORMAL \e[32m GREEN \e[0m NORMAL"
 
 
 
 ## Scripting: command-line parsing
-for arg in ${@}; do
-    case ${arg} in
-        --opt1=*)
-            opt1=${arg/*=/}
-            ;;
-        --opt2=*)
-            opt2=${arg/*=/}
-            ;;
-	--enable-x)
-	    enable_x=true
-	    ;;
-        --help)
-            print_usage
-	    exit 0
-            ;;  
-        --*)
-            die_with_error "unrecognized option: ${arg}"
-            ;;
-        *)
-            # no option, assume only positional arguments left
-            break
-            ;;
-    esac
-    shift   
-done
-arg1=${1}
-arg2=${2}
-...
+
+    for arg in ${@}; do
+        case ${arg} in
+            --opt1=*)
+                opt1=${arg/*=/}
+                ;;
+            --opt2=*)
+                opt2=${arg/*=/}
+                ;;
+            --enable-x)
+                enable_x=true
+                ;;
+            --help)
+                print_usage
+                exit 0
+                ;;
+            --*)
+                die_with_error "unrecognized option: ${arg}"
+                ;;
+            *)
+                # no option, assume only positional arguments left
+                break
+                ;;
+        esac
+        shift
+    done
+    arg1=${1}
+    arg2=${2}
+    ...

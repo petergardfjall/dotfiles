@@ -1,29 +1,30 @@
 ### Identify interfaces/devices
 
-ifconfig -a                          Show all interfaces currently available,
-                                     even if down.
+Show all interfaces currently available, even if down.
 
-if config -s [device]                Show short list.
+     ifconfig -a
 
-sudo lshw -class network             List network hardware. Can help identify
-                                     which network interface is attached to a
-                                     given network device.
+Show short list.
 
+    if config -s [device]
 
+List network hardware. Can help identify which network interface is attached to
+a given network device.
+
+    sudo lshw -class network
 
 ### Desktop Ubuntu: change IP address
 
-Open Settings > "Network Connections"    Modifies settings under
-                                         /etc/NetworkManager/system-connections
+Modifies settings under `/etc/NetworkManager/system-connections`:
+
+    Open Settings > "Network Connections"
 
 Note: there are really two services, NetworkManager (GUI management of network
-interfaces) and networking (/etc/network/interfaces).
-
-
+interfaces) and networking (`/etc/network/interfaces`).
 
 ### Ubuntu server: change IP address
 
-Modify /etc/network/interfaces to hold something similar to:
+Modify `/etc/network/interfaces` to hold something similar to:
 
     auto eth0
     iface eth0 inet static
@@ -46,20 +47,21 @@ To disable the interface:
     sudo ifdown eth0
 
 
-
-
-
 ### Ubuntu server: temporarily change IP address (lost on reboot)
 
-sudo ifconfig eth0 10.0.0.100 netmask 255.255.255.0   Temporarily set IP and
-                                                      subnet mask.
-ifconfig eth0                                         Verify.
+Temporarily set IP and subnet mask.
 
+    sudo ifconfig eth0 10.0.0.100 netmask 255.255.255.0
+    # verify
+    ifconfig eth0
 
-sudo route add default gw 10.0.0.1 eth0               Modify default gateway.
-route -n                                              Verify.
+Modify default gateway.
 
-echo "nameserver 8.8.8.8" >> /etc/resolv.conf         Add DNS nameserver.
-                                                      Not recommended, but
-                                                      temporary setting that is
-                                                      overwritten on reboot.
+    sudo route add default gw 10.0.0.1 eth0
+    # verify
+    route -n
+
+Add DNS nameserver.  Not recommended, but temporary setting that is overwritten
+on reboot.
+
+    echo "nameserver 8.8.8.8" >> /etc/resolv.conf

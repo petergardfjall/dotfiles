@@ -16,10 +16,10 @@
 
 ### components
 - kubernetes control-plane ("master") components
-  - apiserver: rest api
-  - etcd: state store
-  - scheduler: watches apiserver, assigns pods to nodes
-  - controller-manager: runs control loops (see below)
+  - *apiserver*: rest api
+  - *etcd*: state store
+  - *scheduler*: watches apiserver, assigns pods to nodes
+  - *controller-manager*: runs control loops (see below)
 - node components
   - docker/container runtime: pull images, start/stop, etc
   - kubelet: agent, listen for apiserver/sched instructions (10255), run pods
@@ -28,7 +28,10 @@
     programs iptables on nodes to redirect service ip requests to a
     registered backend pod. kube-proxy is no longer a suitable name,
     as it isn't on the data path. it just handles iptables rules:
-    "if dest.ip:port == svc1.ip:port { pick endpoint backend at random; rewrite dest.ip }"
+
+        if dest.ip:port == svc1.ip:port {
+            pick endpoint backend at random; rewrite dest.ip
+        }
 
 - cluster communication
   - cluster -> master: all communication via apiserver (https, cert-auth)
@@ -36,7 +39,7 @@
     - apiserver -> kubelet:
       - kubelet cert not verified by default (man-in-the-middle vulnerable)
         - should not run on untrusted/public networks
-      - to secure: use apiserver flag: --kubelet-certificate-authority
+      - to secure: use apiserver flag: `--kubelet-certificate-authority`
     - apiserver -> node/pods/services
       - not safe, plain http. should not run over untrusted networks.
 
@@ -238,148 +241,148 @@
 
 
 ### kubectl
-# get bash tab-completion
-source <(kubectl completion bash)
+    # get bash tab-completion
+    source <(kubectl completion bash)
 
-# use a particular kubeconfig
-export KUBECONFIG=/path/to/kubeconfig; kubectl ...
-kubectl ... --kubeconfig=/some/path
-
-
-# show kubelet version running on nodes
-kubectl get nodes
-# show apiserver version
-kubectl version --short
-
-# validate a resource
-kubectl create --validate --dry-run -f <file>
-
-# record the command in the resource annotation
-kubectl apply --record ...
-
-# show API object/field documentation
-kubectl explain <resource>
-kubectl explain deployment.spec.template.spec.containers
-kubectl explain pod.status.phase
-
-# block to see changes
-kubectl get ... --watch
-# show labels set on object
-kubectl get ... --show-labels
-# show columns with particular label values for every resource
-kubectl get ... -Lapp -Ltier -Lrole
-# show only resources with certain (comma-separated) field values
-kubectl get pods --field-selector status.phase=Pending
-# show only pods matching a given label selector
-kubectl get pods -l app=nginx,tier=frontend
-kubectl get pods -l 'app in (nginx),tier not in (backend)'
-
-# create deployment
-kubectl run nginx --image=nginx --env="A=B" --labels="app=nginx" --port=80
-# edit and re-apply deployment
-kubectl edit nginx
-# front deployment pods with a service
-kubectl expose deployment nginx --port=80 --target-port=80 --type=LoadBalancer
-
-# undo rollout (pod template change) on a deployment
-kubectl rollout undo deployment/<name> [--to-revision=2]
-# show revisions (with change command if deployment created with --record)
-kubectl rollout history deployment <name>
-# watch the status of latest rollout until done (--watch=true by default)
-# will report how many replicas have been updated
-kubectl rollout status deployment <name>
-
-# scaling
-kubectl scale deployment <name> --replicas=3
-kubectl autoscale deployment <name> --min=3 --max=10 --cpu-percent=50
-
-# troubleshooting; check logs for current container
-kubectl logs <pod> <container>
-# check logs for previous (crashed) container
-kubectl logs --previous <pod> <container>
-# only show recent logs
-kubectl logs --since=1h ...
-# only show recent logs
-kubectl logs --since-time=2018-09-18T12:00:00Z ...
-
-# set additional labels on existing resources
-kubectl label <resource> <name> app=nginx role=frontend
-kubectl label node worker-1 disk=ssd
-# set additional annotations on existing resources
-kubectl annotate <resource> <name> description='bla bla bla'
-
-# update API objects in-place
-kubectl patch ...
-
-# view node capacity and cpu/mem requests
-kubectl describe nodes
-
-# delete deployment but keep pods
-kubectl delete deployment <name> --cascade=false
-
-# delete multiple resources by label
-kubectl delete deployment,service -l app=nginx
-
-# create a horizontal pod autoscaler for a deployment
-kubectl autoscale deployment/my-nginx --min=1 --max=3
-
-# run scripted command
-/bin/sh -c '...'
-
-kubectl label nodes <node> disktype=ssd
-# set taint key 'node-type' and value 'master' with effect 'NoSchedule'
-kubectl taint nodes <node> node-type=master:NoSchedule
-# remove taint with key 'node-type' and effect 'NoSchedule'
-kubectl taint nodes <node> node-type:NoSchedule-
-# remove all taints with key 'node-type'
-kubectl taint nodes <node> node-type-
-
-kubectl get componentstatuses
-
-    NAME                 STATUS    MESSAGE              ERROR
-    controller-manager   Healthy   ok
-    scheduler            Healthy   ok
-    etcd-0               Healthy   {"health": "true"}
-
-# get events for objects in a given namespace
-kubectl get events -n <ns>
-kubectl get events --all-namespaces
-
-# create a kubeconfig file for a given cluster with auth credentials embedded
-kubectl config set-cluster <name> --certificate-authority=ca.pem \
-        --embed-certs=true \
-        --server=https://${apiserver_ip}:6443 \
-        --kubeconfig=admin.kubeconfig
-kubectl config set-credentials admin \
-        --client-certificate=admin.pem \
-        --client-key=admin-key.pem \
-        --embed-certs=true \
-        --kubeconfig=admin.kubeconfig
-kubectl config set-context default \
-        --cluster=<name> \
-        --user=admin \
-        --kubeconfig=admin.kubeconfig
-kubectl config use-context default --kubeconfig=admin.kubeconfig
+    # use a particular kubeconfig
+    export KUBECONFIG=/path/to/kubeconfig; kubectl ...
+    kubectl ... --kubeconfig=/some/path
 
 
-# configmaps imperatively
-kubectl create configmap my-cm --from-file=/some/dir
-kubectl create configmap my-cm --from-file=user=/user.txt --from-file=pass=/pass.txt
-kubectl create configmap my-cm --from-literal=user=foobar
-kubectl create configmap my-cm --from-env-file=/foo.env
+    # show kubelet version running on nodes
+    kubectl get nodes
+    # show apiserver version
+    kubectl version --short
 
-# create secrets imperatively
-kubectl create secret docker-registry ...
-kubectl create secret tls ...
-kubectl create secret generic my-secret --from-file=/some/dir
-kubectl create secret generic my-secret --from-file=user=/user.txt --from-file=pass=/pass.txt
-kubectl create secret generic my-secret --from-literal=user=foobar
-kubectl create secret generic my-secret --from-env-file=/foo.env
+    # validate a resource
+    kubectl create --validate --dry-run -f <file>
 
-# http proxy on localhost to apiserver, kubectl connects via https to apiserver
-kubectl proxy -p 8000
+    # record the command in the resource annotation
+    kubectl apply --record ...
 
-# RBAC
-kubectl create serviceaccount -n <ns>
-kubectl create role ...
-kubectl create rolebinding ...
+    # show API object/field documentation
+    kubectl explain <resource>
+    kubectl explain deployment.spec.template.spec.containers
+    kubectl explain pod.status.phase
+
+    # block to see changes
+    kubectl get ... --watch
+    # show labels set on object
+    kubectl get ... --show-labels
+    # show columns with particular label values for every resource
+    kubectl get ... -Lapp -Ltier -Lrole
+    # show only resources with certain (comma-separated) field values
+    kubectl get pods --field-selector status.phase=Pending
+    # show only pods matching a given label selector
+    kubectl get pods -l app=nginx,tier=frontend
+    kubectl get pods -l 'app in (nginx),tier not in (backend)'
+
+    # create deployment
+    kubectl run nginx --image=nginx --env="A=B" --labels="app=nginx" --port=80
+    # edit and re-apply deployment
+    kubectl edit nginx
+    # front deployment pods with a service
+    kubectl expose deployment nginx --port=80 --target-port=80 --type=LoadBalancer
+
+    # undo rollout (pod template change) on a deployment
+    kubectl rollout undo deployment/<name> [--to-revision=2]
+    # show revisions (with change command if deployment created with --record)
+    kubectl rollout history deployment <name>
+    # watch the status of latest rollout until done (--watch=true by default)
+    # will report how many replicas have been updated
+    kubectl rollout status deployment <name>
+
+    # scaling
+    kubectl scale deployment <name> --replicas=3
+    kubectl autoscale deployment <name> --min=3 --max=10 --cpu-percent=50
+
+    # troubleshooting; check logs for current container
+    kubectl logs <pod> <container>
+    # check logs for previous (crashed) container
+    kubectl logs --previous <pod> <container>
+    # only show recent logs
+    kubectl logs --since=1h ...
+    # only show recent logs
+    kubectl logs --since-time=2018-09-18T12:00:00Z ...
+
+    # set additional labels on existing resources
+    kubectl label <resource> <name> app=nginx role=frontend
+    kubectl label node worker-1 disk=ssd
+    # set additional annotations on existing resources
+    kubectl annotate <resource> <name> description='bla bla bla'
+
+    # update API objects in-place
+    kubectl patch ...
+
+    # view node capacity and cpu/mem requests
+    kubectl describe nodes
+
+    # delete deployment but keep pods
+    kubectl delete deployment <name> --cascade=false
+
+    # delete multiple resources by label
+    kubectl delete deployment,service -l app=nginx
+
+    # create a horizontal pod autoscaler for a deployment
+    kubectl autoscale deployment/my-nginx --min=1 --max=3
+
+    # run scripted command
+    /bin/sh -c '...'
+
+    kubectl label nodes <node> disktype=ssd
+    # set taint key 'node-type' and value 'master' with effect 'NoSchedule'
+    kubectl taint nodes <node> node-type=master:NoSchedule
+    # remove taint with key 'node-type' and effect 'NoSchedule'
+    kubectl taint nodes <node> node-type:NoSchedule-
+    # remove all taints with key 'node-type'
+    kubectl taint nodes <node> node-type-
+
+    kubectl get componentstatuses
+
+        NAME                 STATUS    MESSAGE              ERROR
+        controller-manager   Healthy   ok
+        scheduler            Healthy   ok
+        etcd-0               Healthy   {"health": "true"}
+
+    # get events for objects in a given namespace
+    kubectl get events -n <ns>
+    kubectl get events --all-namespaces
+
+    # create a kubeconfig file for a given cluster with auth credentials embedded
+    kubectl config set-cluster <name> --certificate-authority=ca.pem \
+            --embed-certs=true \
+            --server=https://${apiserver_ip}:6443 \
+            --kubeconfig=admin.kubeconfig
+    kubectl config set-credentials admin \
+            --client-certificate=admin.pem \
+            --client-key=admin-key.pem \
+            --embed-certs=true \
+            --kubeconfig=admin.kubeconfig
+    kubectl config set-context default \
+            --cluster=<name> \
+            --user=admin \
+            --kubeconfig=admin.kubeconfig
+    kubectl config use-context default --kubeconfig=admin.kubeconfig
+
+
+    # configmaps imperatively
+    kubectl create configmap my-cm --from-file=/some/dir
+    kubectl create configmap my-cm --from-file=user=/user.txt --from-file=pass=/pass.txt
+    kubectl create configmap my-cm --from-literal=user=foobar
+    kubectl create configmap my-cm --from-env-file=/foo.env
+
+    # create secrets imperatively
+    kubectl create secret docker-registry ...
+    kubectl create secret tls ...
+    kubectl create secret generic my-secret --from-file=/some/dir
+    kubectl create secret generic my-secret --from-file=user=/user.txt --from-file=pass=/pass.txt
+    kubectl create secret generic my-secret --from-literal=user=foobar
+    kubectl create secret generic my-secret --from-env-file=/foo.env
+
+    # http proxy on localhost to apiserver, kubectl connects via https to apiserver
+    kubectl proxy -p 8000
+
+    # RBAC
+    kubectl create serviceaccount -n <ns>
+    kubectl create role ...
+    kubectl create rolebinding ...

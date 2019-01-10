@@ -1,108 +1,131 @@
-## Legend
-M = Meta (or Alt)
-C = Ctrl
+### Legend
+`M` = Meta (or Alt)
+`C` = Ctrl
 
+### General
+Exit:                           `C-x C-c`
 
-## General
-Help:				C-h (or F1)
-Exit: 			    	C-x C-c
+Help:                           `C-h` (or `F1`)
+_A_propos: show matching commands `C-h a <match-string>`
+Describe function for _k_ey       `C-h k <keyboard-shortcut>`
+Describe a _f_unction             `C-h f`
+Get _m_ode-specific information   `C-h m`
+Display value and doc of _v_ar    `C-h v var <RET>`
 
+List keyboard shortcuts:        `M-x describe-bindings`
+Toggle line numbers:            `M-x linum-mode`
 
-## Major Mode:
-Describe:			M-x describe-mode # describe current major mode
-Set:				M-x <mode>  # e.g., js-mode or python-mode
+List installed packages:        `M-x package-list-packages`
+Refresh packages:               `M-x package-refresh-contents`
 
+Customize variables and faces:  `M-x customize`
 
-## File
-Open:				C-x C-f
-Save:				C-x C-s
-Save all:			C-x s
+### Major Mode:
+Describe current major-mode:  `M-x describe-mode`
+Set mode (e.g. `yaml-mode`):    `M-x <mode>`
 
-## Buffers (open files)
-Switch buffer:			C-x b
-Kill/close buffer:		C-x k
-Restore buffer:			M-x revert-buffer
+### File and buffers
+Open file:             `C-x C-f`
+Save buffer:           `C-x C-s`
+Save all:              `C-x s`
+Kill/close frame:      `M-x delete-frame`
+List buffers:          `C-x C-b`
+Switch buffer:         `C-x b <buffer>`
+Kill/close buffer:     `C-x k`
+Restore buffer:        `M-x revert-buffer`
 
-## Navigation
-One word forward:		M-f
-One word backward:		M-b
-Start of line:			C-a
-End of line:			C-e
-Goto line:			M-g g
-Save point to register:		C-x r <SPC> <name>
-Jump to point in register:	C-x r j <name>
+### Multiple windows (in buffer)
+Split window:           `C-x 2` (vertical) `C-x 3` (horizontal)
+Switch to other window: `C-x o`
+Close other windows:    `C-x 1`
+Close this window:      `C-x 0`
 
-## Bookmarks
-Set bookmark at point:		C-x r m
-Jump to bookmark:		C-x r b
-List bookmarks:			C-x r l
-Delete bookmark:		M-x bookmark-delete
+### Navigation
+One word forward:       `M-f`
+One word backward:      `M-b`
+Start of line:          `C-a`
+End of line:            `C-e`
+Goto line:              `M-g g`
+Save point to register:     `C-x r <SPC> <name>`
+Jump to point in register:  `C-x r j <name>`
 
-## Deleting
-Delete (rest of) row:		C-k
-Delete (next) word: 		M-d
-Delete (previous) word:		M-Backspace
-Delete selection/region:	C-w or M-x delete-region
+### Editing
+Undo:                            `C-x u`
+Cancel/abort command:            `C-g`
+Delete (rest of) row:            `C-k`
+Delete (next) word:              `M-d`
+Delete (previous) word:          `M-Backspace`
+Delete selection/region:         `C-w` or `M-x delete-region`
+Delete trailing whitespace:      `M-x delete-trailing-whitespace`
+Insert `<str>` on each line        `C-sp, move to row, C-x r t <str>`
+Break paragraph lines (@fillcol) `M-q`
+set-fill-column                  `C-x f <col>`
+Uppercase word at cursor         `M-u`
+Lowercase word at cursor         `M-l`
 
-## Undoing
-Undo:				C-x u
-Cancel/abort command:		C-g
+*Rectangle*:
+Start rectangle corner at cursor:     `C-space`
+Prefix each rectangle line with text: `C-x r t <chars>`
+Kill rectangle:                       `C-x r k`
+Copy rectangle                        `C-x r M-w`
+Yank rectangle:                       `C-x r y`
 
-## Copy-paste
-Start selection:		C-Space
-Select all:			C-x h
-Copy (region):			M-w
-Cut (region): 			C-w
-Insert another file: 		C-x i
-Paste (yank):			C-y
+### Copy-paste
+Start selection:        `C-Space`
+Select all:             `C-x h`
+Copy (region):          `M-w`
+Cut (region):           `C-w`
+Insert another file:    `C-x i`
+Paste (yank):           `C-y`
 
-## Incremental search
-Search forward:			C-s
-Search backward: 		C-r
+### Indentation
+Indent rigidly (marked rows):  `C-u C-x TAB`
+Decrease indent by 2:          `C-u 2 C-x TAB`
+Decrease indent by 4:          `C-u -4 C-x TAB`
+Mode-aware indent:             `M-x indent-region`
 
-## Replace
-Query replace:			M-%
-Replace with regexp:		M-x query-replace-regexp
+### Search/replace
+Search forward:         `C-s`
+Search backward:        `C-r`
+Query replace:          `M-%`
+Replace with regexp:    `M-x query-replace-regexp`
 
-## Indentation
-Indent rigidly (marked rows):	C-u C-x TAB
-Decrease indent:       		C-u -4 C-x TAB
-Mode-aware indent:		M-x indent-region
+### Bookmarks
+Set bookmark at point:  `C-x r m`
+Jump to bookmark:       `C-x r b`
+List bookmarks:         `C-x r l`
+Delete bookmark:        `M-x bookmark-delete`
 
-## Rectangles
-Insert <string> on each line    M-x string-insert-rectangle RET <string> RET
+### Shell commands
+Execute a shell command:       `M-!`
+Open shell in `*shell*` buffer:  `M-x shell`
 
+### Programming
+*General*:
+- comment-line:                 `C-c c`
+- commen-region:                `<mark> + C-c c`
+- list-flycheck-errors:         `C-c e`
 
-## Multiple windows
-Split window:			C-x 2
-Switch window:			C-x o
-Close other windows:		C-x 1
-Close this window:		C-x 0
+*LSP-mode*:
+- lsp-find-definition           `<M-down>`
+- xref-pop-marker-stack         `<M-up>`
+- lsp-ui-peek-find-definitions  `C-c p d`
+- lsp-ui-peek-find-references   `C-c p r`
+- lsp-hover                     `C-c h`
+- lsp-find-definition           `C-c f d`
+- lsp-find-references           `C-c f r`
+- lsp-rename                    `C-c C-r`
+- lsp-describe-thing-at-point   `C-c C-d`
+- restart lsp server:           `M-x lsp-restart-workspace`
 
-## Shell commands
-Execute a shell command:	M-!
-Open shell in *shell* buffer:	M-x shell
+*Snippets*
+Expand snippet:                 `<type trigger><TAB>`
+Show available snippets:        `M-x yas-describe-tables`
 
-## Programming
-Toggle line numbers:		M-x linum-mode
+## Web browser
+Open web page:       `M-x eww <URL>`
+Reload web page:     `M-x eww-reload`
 
-## Python (Ropemacs: refactorings and code assist)
-Rope code assist:   		M-/
-Goto definition	:		C-c g or C-c r a g
-Show doc:			C-c d or C-c r a d
-Find occurrences:		C-c f
-Rename:				C-c r r
-Extract variable:		C-c r l
-Extract method:			C-c r m
-
-## Python (Jedi.el: auto-completion)
-Complete code at point:		C-tab 	or M-x jedi:complete
-Goto definition of object:	C-. 	or M-x jedi:goto-definition
-Show documentation of object: 	C-c D 	or M-x jedi:show-doc
-     		      		(note: C-c D is my override)
-
-## Key bindings
-List (command shortcuts):	M-x describe-bindings
-
-## Customization with Emacs Lisp
-Global key bindings:		(global-set-key “\C-cg” ‘goto-line)
+## Lisp
+Go to the *scratch* buffer, enter an expression, like `(+ 1 1)`, and run `C-j`
+to have the last expression evaluated.
