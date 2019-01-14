@@ -51,6 +51,8 @@ Close this window:      `C-x 0`
 ### Navigation
 One word forward:       `M-f`
 One word backward:      `M-b`
+Start of buffer:        `M-<`
+End of buffer:          `M->`
 Start of line:          `C-a`
 End of line:            `C-e`
 Goto line:              `M-g g`
