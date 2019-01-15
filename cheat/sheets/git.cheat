@@ -155,7 +155,16 @@ List local branches:  `git branch`
 List remote branches: `git branch -r`
 Switch local branch:  `git checkout <otherbranch>`
 Delete local branch:  `git branch -d ticket123`
-Delete remote branch: `git push origin :ticket123`
+Delete remote branch: `git push origin :ticket123
+`
+Rename local branch:
+
+    # if on the branch to rename
+    git branch -m use-package
+    # if on a different branch than the one being renamed
+    git branch -m old-name new-name
+    # replace the old remote branch with the new
+    git push origin :old-name new-name
 
 Checkout a remote branch:
     git fetch && git checkout ticket123
