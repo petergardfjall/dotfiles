@@ -9,6 +9,7 @@ Help:                           `C-h` (or `F1`)
 _A_propos: show matching commands `C-h a <match-string>`
 Describe function for _k_ey       `C-h k <keyboard-shortcut>`
 Describe a _f_unction             `C-h f`
+Get key _b_indings in buffer      `C-h b` or `M-x describe-mode`
 Get _m_ode-specific information   `C-h m`
 Display value and doc of _v_ar    `C-h v var <RET>`
 
