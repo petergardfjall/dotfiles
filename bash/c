@@ -1,0 +1,2 @@
+# C compiler: e.g. cmake uses this variable to determine compiler to use.
+export CC=/usr/bin/clang
