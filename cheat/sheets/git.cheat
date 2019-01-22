@@ -261,6 +261,10 @@ Show info about the remotes of this repo.
 
     git remote -v
 
+Show a short hash (like `ceba11f`) for current commit:
+
+    git rev-parse --short HEAD
+
 ### Remove sensitive files
 
 If a file containing sensitive data has been mistakenly added (and pushed)
