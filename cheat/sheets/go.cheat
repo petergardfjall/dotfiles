@@ -1,0 +1,113 @@
+### General
+
+### Strings
+
+Convert string to bytes:
+
+    []byte("Here is a string....")
+
+Convert bytes to string:
+
+     string(byteArray[:])
+
+### File system
+
+Check if a file/directory exists
+
+    if _, err := os.Stat("/path/to/whatever"); os.IsNotExist(err) {
+        return err
+    }
+
+### Tests
+Tests are written in files ending in `_test.go` and use the `testing` package.
+
+    import "testing"
+
+    func TestSum(t *testing.T) {
+        total := Sum(5, 5)
+        if total != 10 {
+           t.Errorf("Sum was incorrect, got: %d, want: %d.", total, 10)
+        }
+    }
+
+Run tests via:
+
+    go test -v
+    go test -v ./pkg/...
+
+With coverage
+
+    go test -v -cover -coverprofile=coverage/coverage.txt ./pkg/... ./cmd/...
+    # view in browser
+    go tool cover -html coverage/coverage.txt
+
+Table-driven tests are common in Go:
+
+    func TestSum(t *testing.T) {
+        tables := []struct {
+            x int
+            y int
+            n int
+        }{
+            {1, 1, 2},
+            {1, 2, 3},
+            {2, 2, 4},
+            {5, 2, 7},
+        }
+
+        for _, table := range tables {
+            total := Sum(table.x, table.y)
+            if total != table.n {
+                t.Errorf("Sum of (%d+%d) was incorrect, got: %d, want: %d.", table.x, table.y, total, table.n)
+            }
+        }
+    }
+
+### stretchr/testify
+Libraries like https://github.com/stretchr/testify can be used to simplify
+testing:
+
+    package yours
+
+    import (
+      "testing"
+      "github.com/stretchr/testify/assert"
+    )
+
+    func TestSomething(t *testing.T) {
+      assert.Equal(t, 123, 123, "they should be equal")
+      assert.NotEqual(t, 123, 456, "they should not be equal")
+      assert.Nil(t, object)
+      if assert.NotNil(t, object) {
+        assert.Equal(t, "Something", object.Value)
+      }
+    }
+
+Every `assert` func returns a bool indicating whether the assertion was
+successful or not, this is useful for if you want to go on making further
+assertions under certain conditions.
+
+To test many things you can also avoid specifying the `t` variable by:
+
+    assert := assert.New(t)
+    assert.Equal(123, 123, "they should be equal")
+    assert.NotEqual(123, 456, "they should not be equal")
+
+The `require` package provides same global functions as the assert package, but
+instead of returning a boolean result they terminate current test.
+
+    func TestSomething(t *testing.T) {
+      require.Equal(t, 123, 456, "not equal, terminating test ...")
+      // will not run
+      require.Equal(t, 123, 123, "expected to be equal")
+
+There is also a `mock` package for easily creating mocks:
+https://github.com/stretchr/testify#mock-package
+
+One can also test that a given function panics:
+
+        failingFunc := func() {
+            GoCrazyAndPanic()
+        }
+
+        assert.Panics(t, failingFunc)
