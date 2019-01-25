@@ -101,8 +101,6 @@ instead of returning a boolean result they terminate current test.
       // will not run
       require.Equal(t, 123, 123, "expected to be equal")
 
-There is also a `mock` package for easily creating mocks:
-https://github.com/stretchr/testify#mock-package
 
 One can also test that a given function panics:
 
@@ -111,3 +109,45 @@ One can also test that a given function panics:
         }
 
         assert.Panics(t, failingFunc)
+
+
+## Mocking
+A simple `mock` package https://github.com/stretchr/testify#mock-package:
+As an example:
+
+    type Runner interface {
+        // Run executes an external command as a sub-process.
+        Run(command *Command) error
+    }
+
+    // RunnerMock is a mocked object that implements the Runner interface
+    type RunnerMock struct {
+        mock.Mock
+    }
+
+    func (m *RunnerMock) Run(cmd *Command) error {
+        args := m.Called(cmd)
+        return args.Error(0)
+    }
+
+    func TestSomething(t *testing.T) {
+            ...
+            callerOfRunner := Caller{mockRunner}
+
+            //
+            // set up mock expectations
+            //
+
+            // On successful executions, these Run() calls should be made
+            mockRunner.On("Run", expectedCmd1).Return(nil)
+            mockRunner.On("Run", expectedCmd1).Return(nil)
+
+            //
+            // make calls
+            //
+            err := callerOfRunner.Call()
+            assert.Nil(err, "expected Prepare() call to succeed")
+
+             // verify that expected mock calls were made
+            mockRunner.AssertExpectations(t)
+    }
