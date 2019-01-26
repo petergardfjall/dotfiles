@@ -16,6 +16,7 @@ Display value and doc of _v_ar    `C-h v var <RET>`
 List keyboard shortcuts:        `M-x describe-bindings`
 Toggle line numbers:            `M-x linum-mode`
 
+Customize/select theme:         `M-x customize-themes`
 Customize variables and faces:  `M-x customize`
 
 Reload configuration:           `M-x load-file ~/.emacs`
