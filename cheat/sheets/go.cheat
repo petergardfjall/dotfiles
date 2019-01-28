@@ -10,6 +10,13 @@ Convert bytes to string:
 
      string(byteArray[:])
 
+Use a `ByteBuffer` as an `io.Writer` to capture a string:
+
+	var buf bytes.Buffer
+	fmt.Fprintf(&buf, "hello world")
+	buf.String() // "hello world"
+
+
 ### File system
 
 Check if a file/directory exists
