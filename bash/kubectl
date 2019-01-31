@@ -14,3 +14,10 @@ if which kubectl > /dev/null; then
     source <(kubectl completion bash)
 
 fi
+
+if which minikube > /dev/null; then
+    # don't notify of new minikube versions
+    export MINIKUBE_WANTUPDATENOTIFICATION=false
+    # add tab completion for minikube
+    source <(minikube completion bash)
+fi
