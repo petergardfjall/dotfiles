@@ -10,16 +10,26 @@ repository are given write permission.
 ### Setup user for one or more git repos
 
 Set user globally
+
     git config --global user.name "Foo Bar"
     git config --global user.email "foo@bar.com"
 
 Set user for a single repo.
+
     git config user.name "Foo Bar"
     git config user.email "foo@bar.com"
 
 Set password cache timeout:
+
     git config --global credential.helper 'cache --timeout=3600'
 
+### Use a particular SSH key
+Git can be told to use a particular SSH key:
+
+    GIT_SSH_COMMAND="ssh -i ~/.ssh/id_rsa_example"
+
+    # will now clone with the specified ssh command
+    git clone git@github.com:some/repo.git
 
 ### Basic commands
 
