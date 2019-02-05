@@ -9,7 +9,8 @@ set -e
 ts=$(date +%Y%m%d-%H%M%S)
 if [ -f ~/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml ]; then
     # make a backup of existing shortcuts
-    cp ~/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml ~/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml.${ts}
+    mkdir -p ~/.config/xfce4/backup
+    cp ~/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml ~/.config/xfce4/backup/xfce4-keyboard-shortcuts.xml.${ts}
 fi
 
 #
