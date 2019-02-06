@@ -58,6 +58,7 @@
       <property name="names-visible" type="array">
         <value type="string" value="slack"/>
         <value type="string" value="networkmanager applet"/>
+        <value type="string" value="network"/>
         <value type="string" value="blueman-applet"/>
         <value type="string" value="update-notifier"/>
       </property>
