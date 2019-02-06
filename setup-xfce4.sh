@@ -30,7 +30,7 @@ mkdir -p ${backup}
 # xfce4-panel.xml with the session panel. We'll restart it at the end of the
 # script by restarting the xfce4-panel.
 warn "temporarily killing xfconfd ..."
-pkill -KILL xfconfd
+pkill xfconfd || warn "xfconfd does not appear to be running ..."
 
 # for each flie in ~/dotfiles/xfce4/, make a symlink to it from
 # ~/.config/xfce4
@@ -58,8 +58,11 @@ for file in $(cd ${src} && find -type f | sed 's#^./##'); do
     ln -s ${src}/${file} ${destpath}
 done
 
-info "restarting xfce4-panel (also starts xfconfd) ..."
-xfce4-panel --restart
+info "restarting xfce4-panel (should restart xfconfd) ..."
+# may not be possible when not in X11 mode
+xfce4-panel --restart || warn "could not restart xfce4-panel, not in graphical mode?"
+# this should take care of restarting xfcond when not in X11 mode
+xfconf-query > /dev/null 2>&1
 
 echo "setting up xfce keyboard shortcuts ..."
 ${scriptdir}/setup-xfce4-keyboard-shortcuts.sh
