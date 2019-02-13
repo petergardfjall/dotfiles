@@ -1,0 +1,139 @@
+## The tour
+
+## Language basics
+
+C++ is a compiled language. Each source file is processed by a compiler,
+producing object files, which are combined by a linker into an executable.
+
+An executable program is created for a specific hardware/system combination; it
+is not portable, say, from a Mac to a Windows PC. When we talk about portability
+of C++ programs, we usually mean portability of source code; that is, the source
+code can be successfully compiled and run on a variety of systems.
+
+The ISO C++ standard defines two kinds of entities:
+- Core language features (built-in types, language constructs).
+- The standard library.
+
+C++ is statically typed. The type of every entity (e.g., object, value, name,
+and expression) must be known to the compiler at its point of use.
+
+- A *type* defines a set of possible values and operations (for an object).
+- An *object* is some memory that holds a value of some type.
+- A *value* is a set of bits interpreted according to a type.
+- A *variable* is a named object.
+
+Each *fundamental type* corresponds directly to hardware facilities and has a
+fixed size that deter- mines the range of values that can be stored in it.
+
+The size of a type is implementation-defined and can be found out with the
+`sizeof` operator.
+
+    sizeof(int)  // often 4
+
+
+## Initialization
+
+C++ offers different notations for expressing initialization, such as the
+universal form based on *initializer lists* `{}` and `=`. The `{}`-list form
+prevents narrowing conversions (that would lose information):
+
+    double d1 = 2.3;
+    double d2 {2.3};
+    std::complex<double> z = 1;
+    std::complex<double> z2 {d1,d2};
+    std::complex<double> z3 = {1,2};  // the = is optional
+    std::vector<int> v {1,2,3,4,5,6}; // a vector of ints
+
+`auto` can be used as type when the type can be deduced from the initializer:
+
+    auto b = true;    // a bool
+    auto ch = 'x';    // a char
+    auto i = 123;     // an int
+    auto d = 1.2;     // a double
+    auto z = sqrt(y); // z has the type of whatever sqr t(y) returns
+
+    // place a copy of each value in v in x
+    int v[] = {0,1,2}
+    for (auto x : v) {
+        cout << x << "\n";
+    }
+
+    // have x refer to each element in v
+    int v[] = {0,1,2}
+    for (auto& x : v) {
+        x++;
+    }
+
+## Constants
+
+C++ supports two notions of immutability:
+- `const`: primarily used to specify interfaces, so that data can be passed to
+  functions without fear of it being modified. The compiler enforces constness.
+- `constexpr` : "to be evaluated at compile time". Primarily to specify
+  constants. A function to be used in constant expressions must be declared
+  `constexpr` (such functions must be "simple").
+
+## Pointers, arrays, loops
+
+     T a[n];  // T[n]: array of n Ts
+     T∗ p;    // T*: pointer to T
+     T& r;    // T&: reference to T
+     T f(A);  // T(A): function taking argument of type A and returning T
+
+In an expression, prefix unary `∗` means "contents of" and prefix unary `&`
+means "address of". In a declaration, `&` means "reference to".
+
+    char∗ p = &v[3]; // p points to v’s four th element
+    char x = ∗p;     // *p is the object that p points to
+    char& r = x;
+
+`nullptr` is used to represent "no object available". `0` and `NULL` are often
+seen in older code.
+     
+     
+---------
+
+
+
+## Types and declarations
+Chapter 6
+
+## Pointers, Arrays, References
+Chapter 7
+
+## Structures, unions, and enumerations
+Chapter 8
+
+## Statements
+ch 9
+
+## Expressions
+ch 11
+
+## Functions
+ch 12
+
+## Exceptions
+ch 13
+
+## Namespaces
+ch 14
+
+## Classes (user-defined types)
+ch 16
+
+
+## Concurrency
+
+
+## Tools
+- Compiler: clang, g++
+- Build/packaging: CMake
+
+## Project structure
+
+## CMake
+CMake is a build file generator that uses a compiler-independent configuration
+language. It enables building, testing and packaging of software. It is
+cross-platform and can generate build files for different tools (make, xcode,
+ninja, vs).
