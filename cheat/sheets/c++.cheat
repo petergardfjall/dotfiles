@@ -30,6 +30,17 @@ The size of a type is implementation-defined and can be found out with the
 
     sizeof(int)  // often 4
 
+Sizes of C++ objects are expressed in terms of multiples of the size of a
+`char`, so by definition the size of a `char` is `1`. It is *guaranteed* that:
+
+- a `char` has at least 8 bits
+- a `short` at least 16 bits
+- a `long` at least 32 bits
+
+`sizeof` and `<limits>` can be used to find sizes.
+
+    cout << "size of long: " << sizeof(1L) << "\n";
+    cout << "largest float: " << std::numeric_limits<float>::max() << "\n";
 
 ## Initialization
 
@@ -89,38 +100,180 @@ means "address of". In a declaration, `&` means "reference to".
 
 `nullptr` is used to represent "no object available". `0` and `NULL` are often
 seen in older code.
-     
-     
+
+
 ---------
 
 
 
 ## Types and declarations
-Chapter 6
+(The C++ Programming Language, Chapter 6)
+
+C++ has a set of *fundamental types* corresponding to the most common basic
+storage units of a computer and the most common ways of using them to hold data:
+
+- Boolean: `bool`
+  - `true == 1` and `false == 0` when converted to integer
+  - in arithmetic and logical expressions: `0 == false` and `nonzero == true`
+  - a pointer can implicitly be converted to `bool`:
+
+        if (p) { ... }    // equivalent to if (p != nullptr) { ... }
+
+- Character types:
+  - `char`: default character type for program text. Usually 8 bits. Safe to
+    assume that the character set includes decimal digits, english alphabet
+    letters, and basic punctuation. Whether `char` is signed or unsigned is
+    implementation-defined. One solution is to avoid plain `char`.
+    Literal: `'a'`.
+  - `signed char`: like char but guaranteed to be signed, capable of holding
+    both positive and negative values.
+  - `unsigned char`: like char but guaranteed to be unsigned.
+  - `wchar_t` : for larger character sets such as Unicode. Size is impl-defined,
+    but large enough to hold the largest character set supported by the
+    implementation’s locale.
+    Literal: `L'a'`.
+  - `char16_t`: for holding 16-bit character sets, such as UTF-16.
+    Literal: `u'a'`.
+  - `char32_t`: for holding 32-bit character sets, such as UTF-32.
+    Literal: `U'a'`
+
+- Integer types: come in "plain", `signed` and `unsigned` and four sizes:
+  - `short int` (aka `short`)
+  - plain `int`
+  - `long int` (aka `long`)
+  - `long long int` (aka `long long`).
+
+  Can use `int16_t`, `int64_t` and friends from `<cstdint>` for more control.
+  `size_t` from `<cstddef>` is an unsigned int that can hot the size in bytes of
+  every object.
+  - Literals:
+
+        int i = 99;    // decimal literal
+        int i = 077;   // octal literal - leading '0'
+        int i = 0xff;  // hexadecimal literal - leading '0x'
+
+- Floating-point types:
+  - `float` (single precision)
+  - `double` (double precision)
+  - `long double` (extended precision)
+  - Literals: `1.23` `.23` `0.23` `1.2e10` `1.23e−15`
+
+- Void type: `void`
+
+        void∗ pv;  // pointer to object of unknown type
+
+String literals:
+
+    auto s0 =   "hello"; // const char*
+    auto s1 = u8"hello"; // const char*, encoded as UTF-8
+    auto s2 =  L"hello"; // const wchar_t*
+    auto s3 =  u"hello"; // const char16_t*, encoded as UTF-16
+    auto s4 =  U"hello"; // const char32_t*, encoded as UTF-32
+
+    // Raw string literals containing unescaped \ and "
+    auto R0 =   R"("Hello \ world")"; // const char*
+    auto R1 = u8R"("Hello \ world")"; // const char*, encoded as UTF-8
+    auto R2 =  LR"("Hello \ world")"; // const wchar_t*
+    auto R3 =  uR"("Hello \ world")"; // const char16_t*, encoded as UTF-16
+    auto R4 =  UR"("Hello \ world")"; // const char32_t*, encoded as UTF-32
+
+    // Combining string literals with standard s-suffix
+    auto S0 =   "hello"s; // std::string
+    auto S1 = u8"hello"s; // std::string
+    auto S2 =  L"hello"s; // std::wstring
+    auto S3 =  u"hello"s; // std::u16string
+    auto S4 =  U"hello"s; // std::u32string
+
+*Initialization*:
+An initializer can use one of four syntactic styles:
+
+    X a1 {v};    // recommended: introduced in C++11. no narrowing conversions.
+    X a2 = {v};  // common in C
+    X a3 = v;    // common in C
+    X a4(v);     // function-style initializer (use constructor)
+
+Prefer initializer `{}` unless the type is `auto`, then use `=`.
+
+    auto i1 = 99;   // i1 is an int
+    auto i2 = {99}; // warning: i2 is an std::initializer_list<int>
+
+    vector<int> v1 {99}; // v1 is a vector of 1 element with the value 99
+    vector<int> v2(99);  // warning: a vector of 99 elements (each with value 0)
+
+The empty initializer list, `{}` , is used to indicate a default value.
+
+    int x4 {};           // 0
+    double d4 {};        // 0.0
+    char∗ p {};          // nullptr
+    vector<int> v4{};    // empty vector
+    string s4 {};        // ""
+
+Local variables and objects created on the free store (sometimes called dynamic
+objects or heap objects) are not initialized by default unless they are
+of user-defined types with a default constructor
+
+    int x;                     // x does not have a well-defined value
+    char buf[1024];            // buf[i] does not have a well-defined value
+    int* p {new int};          // *p does not have a well-defined value
+    char* q {new char[1024]};  // q[i] does not have a well-defined value
+
+    string s;                  // s=="" because of string’s default constructor
+    vector<char> v;            // v=={} because of vector’s default constructor
+
+    string* ps {new string};   // *ps is "" because of string’s default constr
+
+Use `{}` to initialize local/new-created local variables:
+
+    int x {};                  // x is 0
+    char buf[1024] {};         // buf[i] is 0 for all i
+
+    int* p {new int{10}};      // *p is 10
+    char* q {new char[1024]{}};  // q[i] is 0 for all i
+
+Complex objects can also be created with initializer lists (note: the `=` is
+redundant):
+
+    int a[] = { 1, 2 };             // array initializer
+    struct S { int x, string s };
+    S s = { 1, "Helios" };          // struct initializer
+    complex<double> z = { 0, pi };  // uses constructor
+    vector<int> v = { 0, 1, 2, 3 }; // uses list constructor
+
+
+We can construct other types using declarator operators:
+- Pointer types: `int∗`
+- Array types: `char[]`
+- Reference types: `double&`, `vector<int>&&`
+
+A user can also define user-defined types:
+- Classes: `struct`s and `class`es
+- Enumeration types (specific sets of values): `enum`, `enum class`
+
 
 ## Pointers, Arrays, References
-Chapter 7
+(The C++ Programming Language, Chapter 7)
 
 ## Structures, unions, and enumerations
-Chapter 8
+(The C++ Programming Language, Chapter 8)
 
 ## Statements
-ch 9
+(The C++ Programming Language, Chapter 9)
 
 ## Expressions
-ch 11
+(The C++ Programming Language, Chapter 11)
+
 
 ## Functions
-ch 12
+(The C++ Programming Language, Chapter 12)
 
 ## Exceptions
-ch 13
+(The C++ Programming Language, Chapter 13)
 
 ## Namespaces
-ch 14
+(The C++ Programming Language, Chapter 14)
 
 ## Classes (user-defined types)
-ch 16
+(The C++ Programming Language, Chapter 16)
 
 
 ## Concurrency
