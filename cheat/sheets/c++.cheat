@@ -75,6 +75,9 @@ prevents narrowing conversions (that would lose information):
         x++;
     }
 
+    // modifiers such as const can be used
+    for (const auto& x : v) { ... }
+
 ## Constants
 
 C++ supports two notions of immutability:
@@ -184,6 +187,16 @@ String literals:
     auto S3 =  u"hello"s; // std::u16string
     auto S4 =  U"hello"s; // std::u32string
 
+We can construct other types using declarator operators:
+- Pointer types: `int∗`
+- Array types: `char[]`
+- Reference types: `double&`, `vector<int>&&`
+
+A user can also define user-defined types:
+- Classes: `struct`s and `class`es
+- Enumeration types (specific sets of values): `enum`, `enum class`
+
+
 *Initialization*:
 An initializer can use one of four syntactic styles:
 
@@ -239,15 +252,63 @@ redundant):
     complex<double> z = { 0, pi };  // uses constructor
     vector<int> v = { 0, 1, 2, 3 }; // uses list constructor
 
+*decltype*:
+To deduce a type we can use `decltype(expr)`. This is typically used in generic
+programming to express types that depend on template parameters:
 
-We can construct other types using declarator operators:
-- Pointer types: `int∗`
-- Array types: `char[]`
-- Reference types: `double&`, `vector<int>&&`
+    // return type can be deduced since C++14
+    template<typename T, typename U>
+    auto add(T t, U u) -> decltype(t + u)
+    {
+        return t+u;
+    }
 
-A user can also define user-defined types:
-- Classes: `struct`s and `class`es
-- Enumeration types (specific sets of values): `enum`, `enum class`
+*L-values and R-values*:
+
+- L-value: an expression that refers to an object. ("something that can be on
+  the left-hand side of an assignment").
+- R-value: roughly means "a value that is not an lvalue", such as a temporary
+  value like the value returned by a function.
+
+*Lifetimes*:
+
+The *lifetime* of an object starts when its constructor completes and ends when
+its destructor starts executing. Objects of types without a declared
+constructor, such as an `int`, can be considered to have default constructors
+and destructors that do nothing.
+
+We can classify objects based on their lifetimes:
+- Automatic: an object declared in a function is created when its definition is
+  encountered and destroyed when its name goes out of scope. Typically
+  stack-allocated.
+- Static: objects declared in global or namespace scope and statics declared in
+  functions or classes are created and initialized once (only) and "live" until
+  the program terminates (§15.4.3).
+- Free store: Using the new and delete operators, we can create objects whose
+  lifetimes are controlled directly.
+- Temporary objects (e.g., intermediate results in a computation or an object
+  used to hold a value for a reference to const argument): their lifetime is
+  determined by their use. Typically, temporary objects are automatic.
+- Thread-local objects; that is, objects declared `thread_local`: such
+  objects are created and destroyed with their thread.
+
+*Type aliases*:
+
+The `using` keyword can be used to define type aliases:
+
+    using Pchar = char∗; // pointer to character
+    using PF = int(∗)(double); // pointer to function: f(double) -> int
+
+For good and bad, type aliases are synonyms for other types rather than distinct
+types.
+
+An older syntax with `typedef` fulfills the same purpose:
+
+    typedef int int32_t;      // equivalent to "using int32_t = int;"
+    typedef short int16_t;    // equivalent to "using int16_t = short;"
+    typedef void(∗PtoF)(int); // equivalent to "using PtoF = void(*)(int);"
+
+
 
 
 ## Pointers, Arrays, References
