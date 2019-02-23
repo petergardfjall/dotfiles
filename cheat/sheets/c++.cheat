@@ -451,7 +451,79 @@ to, a constant, we use the *declarator operator* `∗const` instead of plain `�
     cpc = p;      // error : cpc is constant
 
 
+*References*:
 
+Like a pointer, a reference is an alias for an object. It is usually implemented
+to hold a machine address of an object (no performance overhead compared to
+pointers). There is no "null reference" - a reference always refers to an
+object.
+
+To reflect the lvalue/rvalue and const /non- const distinctions, there are three kinds of references:
+
+- *lvalue references*: refers to object whose value we want to change
+- *const references*: refers to object whose value we do not want to change
+- *rvalue references*: refers to objects whose value we do not need to preserve
+  after we have used it (e.g., a temporary). We want to know if a reference
+  refers to a temporary, because if it does, we can sometimes turn an expensive
+  copy operation into a cheap move operation. An object (such as a `string` or a
+  `list`) that is represented by a small descriptor pointing to a potentially
+  huge amount of information can be simply and cheaply moved if we know that the
+  source isn’t going to be used again.
+
+Examples:
+
+    string var {"Cambridge"};
+    string f();
+
+    string& r1 {var};         // lvalue reference, bind r1 to var (an lvalue)
+    string& r2 {f()};         // error : f() is an rvalue
+    string& r3 {"Princeton"}; // error : cannot bind to temporar y
+    const string cr1& {"Harvard"}; // OK: make temporary and bind to cr1
+
+    string&& rr1 {f()};      // rvalue reference, bind rr1 to temporary
+    string&& rr2 {var};      // error : var is an lvalue
+    string&& rr3 {"Oxford"}; // rr3 refers to a temporary holding "Oxford"
+
+
+
+    string a(x);         // x is an lvalue
+    string b(x + y);     // x + y is an rvalue
+    string c(get_str()); // return value from get_str() is an rvalue
+
+The `&&` declarator operator means "rvalue reference". We do not use `const`
+rvalue references; most of the benefits from using rvalue references involve
+writing to the object to which it refers. Both a `const` lvalue reference and an
+`rvalue` reference can bind to an rvalue. However, the purposes will be
+fundamentally different:
+
+- We use rvalue references to implement a "destructive read" for optimization of
+  what would otherwise have required a copy.
+- We use a `const` lvalue reference to prevent modification of an argument.
+
+The `std::move()` function can be used to turn an lvalue into an rvalue
+reference.
+
+    string x;
+
+    string new_x {std::move(x)};  // NOTE: x may NOT be used from this point on
+    // string new_x {static_cast<string&&>(x); // equivalent
+
+All standard-library containers provide move constructors and move assignment.
+Also, their operations that insert new elements, such as `insert()` and
+`push_back()`, have versions that take rvalue references.
+
+References can be used as return values, for example, when a function can be
+used both on the left-hand and right-hand sides of an assigmnent.
+
+    class list {
+    public:
+        int& operator[] (const int index);
+        const int& operator[] (const int index) const;
+    };
+
+    list l {1,2,3};
+    cout << l[0];   // uses const int& operator[]
+    l[0] = 1;       // uses int& operator[]
 
 ## Structures, unions, and enumerations
 (The C++ Programming Language, Chapter 8)
