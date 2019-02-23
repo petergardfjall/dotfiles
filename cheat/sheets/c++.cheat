@@ -314,6 +314,145 @@ An older syntax with `typedef` fulfills the same purpose:
 ## Pointers, Arrays, References
 (The C++ Programming Language, Chapter 7)
 
+*Pointers*:
+
+For a type `T` , `T∗` is the type "pointer to T". In declarations, `*` is a
+suffix to the type name. In expressions, it's the dereference operator.
+
+    char  c = 'a';
+    char∗ p = &c; // p holds the address of c; & is the address-of operator
+    char c2 = ∗p; // c2 == ’a’; * is the dereference operator
+
+    int∗ pi;          // pointer to int
+    char∗∗ ppc;       // pointer to pointer to char
+    int∗ ap[15];      // array of 15 pointers to ints
+    int (∗fp)(char∗); // pointer to function of type f(char*) -> int
+    int∗ f(char∗);    // function with char* argument; returns a pointer to int
+
+`void *` is a "pointer to an object of unknown type":
+
+    int∗ pi = &i;
+
+    void∗ pv = pi; // ok: implicit conversion of int* to void*
+    ∗pv;           // error : can’t dereference void*
+    ++pv;          // error : can’t increment (size of type pointed to unknown)
+
+    int∗ pi2 = static_cast<int∗>(pv); // explicit conversion back to int*
+
+The primary use for `void∗` is for passing pointers to/from functions not
+allowed to make assumptions about types. Typically only seen in low-level system
+calls (like `malloc`).
+
+    void* alloc(size_t n);
+
+Use `nullptr` (instead of `NULL` or `0`) to make code more readable.
+
+    int* pi = nullptr;
+
+*Arrays*:
+
+Arrays are can be accessed with pointers (and pointer arithmetic):
+
+    int v[] = { 1, 2, 3, 4 };
+    int∗ p1 = v;       // pointer to v[0]
+    int∗ p2 = &v[0];   // pointer to initial element (p1 == p2)
+    int∗ p3 = v+4;     // pointer to one-beyond-last element
+
+In fact array subscripting is defined in terms of pointer operations:
+
+    a[j] == ∗(&a[0]+j) == ∗(a+j) == ∗(j+a) == j[a]
+
+Curiously enough this is always true: `a[j] == j[a]`.
+
+Pointer arithmetic depends on the size of the type `T`. `p+1` will be
+`sizeof(T)` larger than (the integer value of) `p`.
+
+Arrays cannot be passed by-value. An array is passed as a pointer to its first
+element. When used as a parameter, the first dimension of an array is simply
+treated as a pointer. Any array bound specified is ignored. Either pass the
+length of the array as second argument or use `std::array`, `std::vector`,
+`std::string`).
+
+    void f(double arg[10]) {}  // these are equivalent
+    void f(double *arg) {}
+
+A multidimensional array is laid out as a sequence of elements in memory
+(`m[3][5]` laid out as `m[15]`). For multi-dimensional arrays, you need to pass
+the first dimension as an explicit argument:
+
+    void print1(int m[][5], int dim1) {
+        for (int i = 0; i != dim1; i++) {
+            for (int j = 0; j != 5; j++)
+              cout << m[i][j] << '\t';
+        }
+    }
+
+    // equivalently, but obscure
+    void print2(int *m, int dim1, int dim2) {
+        ...
+             cout << *(m + i*dim2 + j) << '\t';
+    }
+
+    int v[3][5] = { {0,1,2,3,4}, {10,11,12,13,14}, {20,21,22,23,24} };
+    print1(v, 5);
+    print2(&v[0][0], 3, 5);
+
+For most cases, `std::array` or `std::vector` should be preferred as a safer
+alternative.
+
+*Const*:
+
+C++ offers two related meanings of "constant":
+- `constexpr`: Evaluate at compile time.
+- `const` : Do not modify in this scope.
+
+To express this notion of immutability after initialization, we can add const to
+the definition of an object. An object declared const cannot be assigned to, it
+must be initialized.
+
+    const int model = 90;            // model is a const
+    const int v[] = { 1, 2, 3, 4 };  // v[i] is a const
+    const int x;                     // error : no initializer
+
+    // declaring something const ensures that its value will not change within
+    // its scope:
+
+    model = 200; // error
+    v[2] = 3;    // error
+
+Note that `const` modifies a type; it restricts how an object can be used.
+
+    void g(const T∗ p) { // cannot modify *p here }
+
+    void h() {
+        T val;   // can modify val here
+        g(&val); // val cannot be modified here
+    }
+
+Prefixing a declaration of a pointer with `const` makes the object, but not the
+pointer, a constant. To declare a pointer itself, rather than the object pointed
+to, a constant, we use the *declarator operator* `∗const` instead of plain `∗`.
+
+    char s[] = "hello";
+
+    char ∗const cp = s;        // const pointer to char
+    char const∗ pc = s;        // pointer to const char
+    const char∗ pc2 = s;       // pointer to const char (equivalent to pc)
+    const char ∗const cpc = s; // const pointer to const
+
+
+    cp[3] = 'a';  // OK
+    cp = p;       // error: cp is constant
+
+    pc[3] = 'g';  // error : pc points to constant
+    pc = p;       // OK
+
+    cpc[3] = 'a'; // error : cpc points to constant
+    cpc = p;      // error : cpc is constant
+
+
+
+
 ## Structures, unions, and enumerations
 (The C++ Programming Language, Chapter 8)
 
