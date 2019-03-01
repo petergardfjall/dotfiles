@@ -528,6 +528,131 @@ used both on the left-hand and right-hand sides of an assigmnent.
 ## Structures, unions, and enumerations
 (The C++ Programming Language, Chapter 8)
 
+    struct Address {
+        const char∗ name;
+        int number;
+        const char∗ street;
+        const char∗ town;
+        char state[2];
+    };
+
+    // Can initialized via memberwise intialization.
+    Address jd = { "Jim Dandy", 61, "South St", "New Providence", {'N','J'} };
+
+A `struct` is a simple form of class with all members `public`. So a struct can
+have member functions and even constructors. A constructor is needed if you need
+to reorder arguments, validate or modify arguments.
+
+    struct Points {
+        vector<Point> elem;// must contain at least one Point
+        Points(Point p0) { elem.push_back(p0);}
+        // ...
+    };
+    Points x0;               // error : no default constructor
+    Points x1{ {100,200} };
+
+The name of a type becomes available for use immediately after it has been
+encountered and not just after the complete declaration has been seen. However,
+it is not possible to declare new objects of a struct until its complete
+declaration has been.
+
+    // OK
+    struct Link {
+        Link∗ previous;
+        Link∗ successor;
+    };
+
+    // error: recursive definition
+    //        the compiler is not able to determine the size of No_good
+    struct No_good {
+        No_good member;
+    };
+
+To allow two structs to refer to each other:
+
+    struct List; // struct name declaration: List to be defined later
+
+    struct Link {
+        Link∗ pre;
+        Link∗ suc;
+        List∗ member_of;
+        int data;
+    };
+
+    struct List {
+        Link∗ head;
+    };
+
+Sometimes, we want to treat an object as just "plain old data" (POD) (a
+contiguous sequence of bytes in memory) and not worry about more advanced
+semantic notions, such as run-time polymorphism, user-defined copy semantics,
+etc. Often, the reason is to be able to move objects around in the most
+efficient way (e.g. via `std::memcpy()`). So, a POD is an object that can be
+manipulated as "just data" without worrying about complications of class
+layouts or user-defined semantics for construction, copy, and move. For example:
+
+    struct S0 { };        // POD
+    struct S1 { int a; }; // POD
+
+    // no POD (no default constructor)
+    struct S2 { int a; S2(int aa) : a(aa) { } };
+    // no POD (user-defined default constructor)
+    struct S3 { int a; S3(int aa) : a(aa) { } S3() {} };
+    // POD (has a default constructor)
+    struct S4 { int a; S4(int aa) : a(aa) { } S4() = default; };
+    // no POD (has a virtual function)
+    struct S5 { virtual void f(); /* ... */ };
+
+
+    struct S6 : S1 { };         // POD
+    struct S7 : S0 { int b; };  // POD
+    struct S8 : S1 { int b; };  // not a POD (data in both S1 and S8
+    struct S9 : S0, S1 {};      // POD
+
+The `is_pod<T>::value` type property predicate from `<type_traits>` can
+determine if a type is a POD.
+
+A `union` is a struct in which all members are allocated at the same address so
+that the union occupies only as much space as its largest member. A `union` can
+only hold a value for one member at a time.
+
+    union Value {
+        char∗ s;
+        int i;
+    };
+
+The language doesn’t keep track of which kind of value is held by a union , so
+the programmer must do that:
+
+    struct Entry {
+        char∗ name;
+        Type t;
+        Value v; // use v.s if t==str; use v.i if t==num
+    };
+
+    void f(Entry∗ p) {
+        if (p−>t == str)
+            cout << p−>v.s;
+        // ...
+    }
+
+There are two kinds of enumerations:
+1. `enum classes`, for which the enumerator names (e.g., red ) are local to the
+  `enum` and their values do not implicitly convert to other types.
+2. "Plain `enums`" for which the enumerator names are in the same scope as the
+   enum and their values implicitly convert to integers.
+
+In general, prefer `enum class`es because they cause fewer surprises.
+
+    enum class Traffic_light { red, yellow, green };
+    enum class Warning { green, yellow, orang e, red }; // fire alert levels
+
+    Warning a1 = 7;               // error: no int->Warning conversion
+    int a2 = green;               // error : green not in scope
+    int a3 = Warning::green;      // error: no Warning->int conversion
+    Warning a4 = Warning::green;  // OK
+
+
 ## Statements
 (The C++ Programming Language, Chapter 9)
 
