@@ -656,8 +656,63 @@ In general, prefer `enum class`es because they cause fewer surprises.
 ## Statements
 (The C++ Programming Language, Chapter 9)
 
+It is usually a good idea to introduce the variable into the smallest scope
+possible. A variable can be declared in a condition:
+
+    if (double d = prim(true)) {
+        left /= d;
+        break;
+    }
+
+A `break` breaks out of the nearest enclosing switch or iteration statement.
+
 ## Expressions
 (The C++ Programming Language, Chapter 11)
+
+Some operators:
+- `typeid(type)`: type identification
+- `typeid(expr)`: runtime type identification
+- `dynamic_cast<type>(expr)`: runtime checked conversion
+- `static_cast<type>(expr)`: compile-time checked conversion
+- `reinterpret_cast<type>(expr)`: unchecked conversion
+- `const_cast<type>(expr)`: const conversion
+- `sizeof expr`: size of object
+- `sizeof(type)`: size of type
+
+There are alternate keywords for the operators:
+
+- `and`: `&`
+- `or`: `|`
+- `not`: `!`
+- `xor`: `^`
+- `and_eq`: `&=`
+- `or_eq`: `|=`
+- `not_eq`: `!=`
+- `xor_eq`: `^=`
+- `bitand`: `&`
+- `bitor`: `|`
+- `compl`: `~`
+
+For example:
+
+    bool b = not (x or y) and z;
+    int x4 = ~(x1 bitor x2) bitand x3;
+
+is equivalent to:
+
+    bool b = !(x || y) && z;
+    int x4 = ~(x1 | x2) & x3;
+
+*Order of evaluation*: 
+The order of evaluation of subexpressions within an
+expression is undefined. In particular, you cannot assume that the expression is
+evaluated left-to-right.
+
+    int x = f(2)+g(3); // undefined whether f() or g() is called first
+    v[i] = i++;        // undefined result: evaluated as either v[1]=1 or v[2]=1
+
+The operators `,` (comma), `&&` (logical and), and `||` (logical or) guarantee
+that their left-hand operand is evaluated before their right-hand operand.
 
 
 ## Functions
