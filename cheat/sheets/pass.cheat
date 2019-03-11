@@ -37,6 +37,7 @@ Now you can initialize into `~/.pass/red` and `~/.pass/blue` and have two pass
 contexts with the passred and passblue aliases. You can generalize this further
 into as many contexts as you like.
 
+
 ## Basic usage
 
 Create a new password, with a descriptive hierarchical name.
@@ -55,6 +56,10 @@ Users of Xorg with `xclip` installed can retrieve the password directly onto the
 clipboard temporarily (it gets cleared after a few seconds):
 
     pass -c archlinux.org/wiki/username
+
+Remove a password:
+
+    pass rm archlinux.org/wiki/username
 
 
 ## Version control
