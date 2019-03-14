@@ -12,9 +12,9 @@ Convert bytes to string:
 
 Use a `ByteBuffer` as an `io.Writer` to capture a string:
 
-	var buf bytes.Buffer
-	fmt.Fprintf(&buf, "hello world")
-	buf.String() // "hello world"
+    var buf bytes.Buffer
+    fmt.Fprintf(&buf, "hello world")
+    buf.String() // "hello world"
 
 
 ### File system
@@ -24,6 +24,38 @@ Check if a file/directory exists
     if _, err := os.Stat("/path/to/whatever"); os.IsNotExist(err) {
         return err
     }
+
+Open a file for reading:
+
+     f, err := os.Open("/tmp/dat")
+
+
+     // read line-by-line with scanner
+     s := bufio.NewScanner(f)
+     for s.Scan() {
+         fmt.Printf(s.Text() + "\n")
+     }
+
+
+    // read line-by-line with a bufio Reader
+    r := bufio.NewReader(f)
+    for {
+        line, err := r.ReadString('\n')
+        fmt.Print(line)
+        if err != nil {
+            if err == io.EOF {
+                break
+            } else {
+                return fmt.Errorf("failed to read line: %s", err)
+            }
+        }
+    }
+
+
+Read an entire file into a string:
+
+    data, err := ioutil.ReadFile("/tmp/dat")
+
 
 ### Tests
 Tests are written in files ending in `_test.go` and use the `testing` package.
