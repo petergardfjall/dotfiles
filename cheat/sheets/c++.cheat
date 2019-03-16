@@ -97,7 +97,7 @@ C++ supports two notions of immutability:
 In an expression, prefix unary `∗` means "contents of" and prefix unary `&`
 means "address of". In a declaration, `&` means "reference to".
 
-    char∗ p = &v[3]; // p points to v’s four th element
+    char∗ p = &v[3]; // p points to v's four th element
     char x = ∗p;     // *p is the object that p points to
     char& r = x;
 
@@ -133,7 +133,7 @@ storage units of a computer and the most common ways of using them to hold data:
   - `unsigned char`: like char but guaranteed to be unsigned.
   - `wchar_t` : for larger character sets such as Unicode. Size is impl-defined,
     but large enough to hold the largest character set supported by the
-    implementation’s locale.
+    implementation's locale.
     Literal: `L'a'`.
   - `char16_t`: for holding 16-bit character sets, such as UTF-16.
     Literal: `u'a'`.
@@ -230,10 +230,10 @@ of user-defined types with a default constructor
     int* p {new int};          // *p does not have a well-defined value
     char* q {new char[1024]};  // q[i] does not have a well-defined value
 
-    string s;                  // s=="" because of string’s default constructor
-    vector<char> v;            // v=={} because of vector’s default constructor
+    string s;                  // s=="" because of string's default constructor
+    vector<char> v;            // v=={} because of vector's default constructor
 
-    string* ps {new string};   // *ps is "" because of string’s default constr
+    string* ps {new string};   // *ps is "" because of string's default constr
 
 Use `{}` to initialize local/new-created local variables:
 
@@ -321,7 +321,7 @@ suffix to the type name. In expressions, it's the dereference operator.
 
     char  c = 'a';
     char∗ p = &c; // p holds the address of c; & is the address-of operator
-    char c2 = ∗p; // c2 == ’a’; * is the dereference operator
+    char c2 = ∗p; // c2 == 'a'; * is the dereference operator
 
     int∗ pi;          // pointer to int
     char∗∗ ppc;       // pointer to pointer to char
@@ -334,8 +334,8 @@ suffix to the type name. In expressions, it's the dereference operator.
     int∗ pi = &i;
 
     void∗ pv = pi; // ok: implicit conversion of int* to void*
-    ∗pv;           // error : can’t dereference void*
-    ++pv;          // error : can’t increment (size of type pointed to unknown)
+    ∗pv;           // error : can't dereference void*
+    ++pv;          // error : can't increment (size of type pointed to unknown)
 
     int∗ pi2 = static_cast<int∗>(pv); // explicit conversion back to int*
 
@@ -468,7 +468,7 @@ To reflect the lvalue/rvalue and const /non- const distinctions, there are three
   copy operation into a cheap move operation. An object (such as a `string` or a
   `list`) that is represented by a small descriptor pointing to a potentially
   huge amount of information can be simply and cheaply moved if we know that the
-  source isn’t going to be used again.
+  source isn't going to be used again.
 
 Examples:
 
@@ -621,7 +621,7 @@ only hold a value for one member at a time.
         int i;
     };
 
-The language doesn’t keep track of which kind of value is held by a union , so
+The language doesn't keep track of which kind of value is held by a union , so
 the programmer must do that:
 
     struct Entry {
@@ -666,10 +666,10 @@ possible. A variable can be declared in a condition:
 
 A `break` breaks out of the nearest enclosing switch or iteration statement.
 
-## Expressions
-(The C++ Programming Language, Chapter 11)
+## Expressions and operations
+(The C++ Programming Language, Chapter 10 and 11)
 
-Some operators:
+A few less obvious operators:
 - `typeid(type)`: type identification
 - `typeid(expr)`: runtime type identification
 - `dynamic_cast<type>(expr)`: runtime checked conversion
@@ -679,21 +679,7 @@ Some operators:
 - `sizeof expr`: size of object
 - `sizeof(type)`: size of type
 
-There are alternate keywords for the operators:
-
-- `and`: `&`
-- `or`: `|`
-- `not`: `!`
-- `xor`: `^`
-- `and_eq`: `&=`
-- `or_eq`: `|=`
-- `not_eq`: `!=`
-- `xor_eq`: `^=`
-- `bitand`: `&`
-- `bitor`: `|`
-- `compl`: `~`
-
-For example:
+There are alternate keywords for the logical and bit operators. For example:
 
     bool b = not (x or y) and z;
     int x4 = ~(x1 bitor x2) bitand x3;
@@ -703,7 +689,7 @@ is equivalent to:
     bool b = !(x || y) && z;
     int x4 = ~(x1 | x2) & x3;
 
-*Order of evaluation*: 
+*Order of evaluation*:
 The order of evaluation of subexpressions within an
 expression is undefined. In particular, you cannot assume that the expression is
 evaluated left-to-right.
@@ -714,6 +700,306 @@ evaluated left-to-right.
 The operators `,` (comma), `&&` (logical and), and `||` (logical or) guarantee
 that their left-hand operand is evaluated before their right-hand operand.
 
+*Constant expressions*:
+
+C++ offers two related meanings of "constant":
+- `constexpr` : Enables/ensures compile-time evaluation.
+- `const`: Do not modify in this scope -- specify immutability in interfaces.
+
+*Conversions*:
+
+The fundamental types can be implicitly converted in too many ways. For example:
+
+    void f(double d) {
+        char c = d;   // warn: floating-point to char conversion
+    }
+
+Luckily, compilers often warn about such questionable conversions. Also, the
+`{}`-initializer syntax prevents narrowing. For example:
+
+    void f(double d) {
+        char c {d};  // error : double to char conversion may lose information
+    }
+
+If potentially narrowing conversions are unavoidable, consider using some form
+of run-time checked conversion function, such as `narrow_cast<>()`.
+
+Some conversion rules:
+- An integer can be converted to another integer type.
+- A floating-point value can be converted to another floating-point type. If the
+  source value can be exactly represented in the destination type, the result is
+  the original numeric value. If the source value is between two adjacent
+  destination values, the result is one of those values. Otherwise, the behavior
+  is undefined.
+- Any pointer to an object type can be implicitly converted to a `void∗`.  A
+  pointer (reference) to a derived class can be implicitly converted to a
+  pointer (reference) to an accessible and unambiguous base.
+- Pointer, integral, and floating-point values can be implicitly converted to
+  value converts to `true`; a zero value converts to `false`.
+
+        if (p) { do_something(∗p); }
+
+        // copy a (zero-terminated) char array (C-style string
+        while (∗p++ = ∗q++) ;
+
+- When a floating-point value is converted to an integer value, the fractional
+  part is discarded. Loss of precision occurs if an integral value cannot be
+  represented exactly as a value of the floating type.
+
+*Free store*:
+
+The operator `new` creates objects, and the operator `delete` can be used to
+destroy them. Objects allocated by new are said to be "on the free store" (also,
+"on the heap" or "in dynamic memory").
+
+*Memory management*:
+
+The main problems with free store are:
+- *Leaked objects*: People use `new` and then forget to `delete` the allocated
+  object.
+- *Premature deletion*: People `delete` an object that they have some other
+  pointer to and later use that other pointer (a.k.a. *dangling pointer*).
+- *Double deletion*: An object is deleted twice, invoking its destructor (if
+  any) twice.
+
+As alternatives to "naked" `new` and `delete`s there are two general
+recommendations w.r.t. resource management:
+
+- 1. Don't put objects on the free store if you don't have to; prefer scoped
+     (stack allocated) variables.
+- 2. When you construct an object on the free store, place its pointer into a
+     manager object (sometimes called a handle) with a destructor that will
+     destroy it. Examples are string, vector and all the other standard-library
+     containers, unique_ptr, and shared_ptr. Wherever possible, have that
+     manager object be a scoped variable. Many classical uses of free store can
+     be eliminated by using move semantics to return large objects represented
+     as manager objects from functions. This is commonly known as *RAII*
+     (Resource Acquisition is Initialization).
+
+`new` belongs in constructors and similar operations, `delete` belongs in
+destructors, and together they provide a coherent memory management strategy. In
+addition, `new` is often used in arguments to resource handles (such as
+`unique_ptr`).
+
+When `new` cannot find memory to allocate, the allocator throws a
+standard-library `bad_alloc` exception:
+
+    try {
+        char ∗ p = new char[10000];
+    } catch(bad_alloc) {
+        cerr << "Memory exhausted!\n";
+    }
+
+Be careful: the `new` operator is not guaranteed to throw when you run out of
+physical main memory. On a system with virtual memory, it can consume a lot of
+disk space and take a long time doing so before the exception is thrown. We can
+specify what new should do upon memory exhaustion by defining a *new handler*:
+`set_new_handler(my_new_handler)`.
+
+One can override the `new` operator to allocate objects somewhere other than the
+free store (default).
+
+*Lambda Expressions*:
+
+A lambda expression ("lambda function", "lambda"), is a simplified notation for
+defining and using an anonymous function object. Instead of defining a named
+class with an `operator()`, later making an object of that class, and finally
+invoking it, we use a lambda as a shorthand. This is particularly useful when we
+want to pass an operation as an argument to an algorithm. A lambda expression
+consists of a sequence of parts:
+- A possibly empty *capture list*, specifying what names from the definition
+  environment can be used in the lambda expression's body, and whether those are
+  copied or accessed by reference. The capture list is delimited by `[]`.
+- An optional *parameter list*, specifying what arguments the lambda expression
+  requires. The parameter list is delimited by `()`.
+- An optional `mutable` specifier, indicating that the lambda expression's body
+  may modify the state of the lambda (i.e., change the lambda's copies of
+  variables captured by value).
+- An optional return type declaration of the form `−> type`.
+- A *body*, specifying the code to be executed. The body is delimited by `{}`.
+
+        // output v[i] to os if v[i] is an even number
+        void print_modulo(const vector<int>& v, ostream& os) {
+            for_each(begin(v), end(v),
+                [&os](int x) { if (x % 2 == 0) os << x << '\n'; }
+            );
+        }
+
+
+The capture list, `[&os]` , becomes member variables and a constructor to
+initialize them. The `&` before `os` means that we should store a reference (an
+absence of `&` denotes pass a copy). The equivalent function object:
+
+    class Modulo_print {
+        ostream& os; // members to hold the capture list
+    public:
+        Modulo_print(ostream& s) :os(s) {}
+
+        void operator()(int x) const {
+             if (x % 2 == 0) os << x << '\n';
+        }
+    };
+
+    // output v[i] to os if v[i] is an even number
+    void print_modulo(const vector<int>& v, ostream& os) {
+        for_each(begin(v), end(v), Modulo_print{os});
+    }
+
+It is often a good idea to name the lambda:
+
+    // output v[i] to os if v[i] is an even number
+    void print_modulo(const vector<int>& v, ostream& os) {
+        auto print_even = [&os] (int x) { if (x % 2 == 0) os << x << '\n'; };
+        for_each(begin(v), end(v), print_even);
+    }
+
+Some lambdas require no access to their local environment. Such lambdas are
+defined with the empty lambda introducer `[]`:
+
+    void algo(vector<int>& v) {
+        sort(v.begin(), v.end(), [](int x, int y) { return abs(x)<abs(y); });
+    }
+
+A lambda introducer can take various forms:
+
+- `[]`: an empty capture list. This implies that no local names from the
+  surrounding context can be used in the lambda body. For such lambda
+  expressions, data is obtained from arguments or from nonlocal variables.
+- `[&]`: implicitly capture by reference. All local names can be used. All local
+  variables are accessed by reference.
+- `[=]` : implicitly capture by value. All local names can be used. All names
+  refer to copies of the local variables taken at the point of call of the
+  lambda expression.
+- `[ capture-list ]`: explicit capture; the capture-list is the list of names of
+  local variables to be captured (i.e., stored in the object) by reference or by
+  value. Variables with names preceded by `&` are captured by reference. Other
+  variables are captured by value.
+- `[&, capture-list ]`: implicitly capture by reference all local variables with
+  names not mentioned in the list. The capture list can contain `this`. Listed
+  names cannot be preceded by `&`. Variables named in the capture list are
+  captured by value.
+- `[=, capture-list ]`: implicitly capture by value all local variables with
+  names not mentioned in the list. The capture list cannot contain `this`. The
+  listed names must be preceded by `&`. Variables named in the capture list are
+  captured by reference.
+
+When passing a lambda to another thread, capturing by value (`[=]`) is typically
+best: accessing another thread's stack through a reference or a pointer can be
+most disruptive (to perfor- mance or correctness), and trying to access the
+stack of a terminated thread can lead to extremely difficult-to-find errors.
+
+A lambda might outlive its caller. This can happen if we pass a lambda to a
+different thread or if the callee stores away the lambda for later use:
+
+    void setup(Menu& m) {
+      Point p1, p2, p3;
+      // compute positions of p1, p2, and p3
+      m.add("draw triangle",[&]{ m.draw(p1,p2,p3); }); // probable disaster
+      // ...
+    }
+
+Assuming that `add()` is an operation that adds a (name,action) pair to a menu,
+we are left with a time bomb: the `setup()` completes and later - maybe minutes
+later - a user presses the draw triangle button and the lambda tries to access
+the long-gone local variables. A lambda that wrote to a variable caught by
+reference would be even worse in that situation. If a lambda might outlive its
+caller, we must make sure that all local information (if any) is copied into the
+closure object and that values are returned through the return mechanism or
+through suitable arguments. For the `setup()` example, that is easily done:
+
+    m.add("draw triangle",[=]{ m.draw(p1,p2,p3); });
+
+Think of the capture list as the initializer list for the closure object and
+`[=]` and `[&]` as short-hand notation.
+
+We can include class members in the set of names potentially captured by adding
+`this` to the capture list. Members are always captured by reference. That is,
+`[this]` implies that members are accessed through this rather than copied into
+the lambda. Unfortunately, `[this]` and `[=]` are incompatible.
+
+    class Request {
+    public:
+      // parse and store request
+      Request(const string& s);
+
+      future<void> execute() {
+        return async([this]() { results = oper(values); });
+      }
+    private:
+      function<map<string,string>(const map<string,string>&)> oper;
+      map<string,string> values;
+      map<string,string> results;
+    };
+
+Usually, we don't want to modify the state of the function object (the closure),
+so by default we can't. That is, the `operator()()` for the generated function
+object is a `const` member function. If we really want to modify the state (as
+opposed to modifying the state of some variable captured by reference), we can
+declare the lambda `mutable`:
+
+    void algo(vector<int>& v) {
+      int count = v.siz e();
+      std::generate(v.begin(),v.end(), [count]()mutable{ return −−count; });
+    }
+
+The `−−count` decrements the copy of `v`'s size stored in the closure.
+
+A lambda expression's return type can be deduced from its body. That is not also
+done for a function (in C++11, it *is* supported in C++14).
+
+    double y = 1.0;
+
+    [&]{ f(y); }                            // return type is void
+    auto z1 = [=](int x){ return x+y; }     // return type is double
+    auto z3 =[y]() { return (y) ? 1 : 2; }  // return type is int
+    auto z4 = [=,y]()−>int { if (y) return 1; else return 2; } // explicit type
+
+In addition to using a lambda as an argument, we can use it to initialize a
+variable declared `auto` or `std::function<R(AL)>` where `R` is the lambda's
+return type and `AL` is its argument list of types.
+
+A lambda that doesn't capture can be assigned to a pointer to function of an
+appropriate type:
+
+    double (∗p1)(double) = [](double a) { return sqrt(a); };
+
+*Explicit Type Conversion*:
+
+C++ offers explicit type conversion operations of varying
+convenience and safety. In order of preference/safety:
+
+- Construction, using the `{}` notation, providing type-safe construction of new
+  values.
+- Named conversions, providing conversions of various degrees of nastiness:
+  - `const_cast` for getting write access to something declared const. Converts
+    between types that differ only in const and volatile qualifiers
+  - `static_cast` for reversing a well-defined implicit conversion. Converts
+    between related types such as one pointer type to another in the same class
+    hierarchy, an integral type to an enumeration, or a floating-point type to
+    an integral type.
+  - `reinterpret_cast` for changing the meaning of bit patterns. Handles
+    conversions between unrelated types such as an integer to a pointer or a
+    pointer to an unrelated pointer type.
+  - `dynamic_cast` for dynamically checked class hierarchy navigation. Does
+    run-time checked conversion of pointers and references into a class
+    hierarchy.
+  - C-style casts, providing any of the named conversions and some combinations
+    of those.
+- Functional notation, providing a different notation for C-style
+  casts. A.k.a. "function-style cast":
+
+         void f(double d) {
+           int i = int(d);      // truncate d
+           complex z = complex(d); // make a complex from d
+           // ...
+         }
+
+  It is best avoided. Prefer `T{v}` conversions over `T(e)` for well-behaved
+  construction and use the named casts (e.g., `static_cast`) for other
+  conversions.
+
+
+// OK: explicit return type
 
 ## Functions
 (The C++ Programming Language, Chapter 12)
