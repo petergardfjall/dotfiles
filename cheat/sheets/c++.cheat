@@ -765,16 +765,16 @@ The main problems with free store are:
 As alternatives to "naked" `new` and `delete`s there are two general
 recommendations w.r.t. resource management:
 
-- 1. Don't put objects on the free store if you don't have to; prefer scoped
-     (stack allocated) variables.
-- 2. When you construct an object on the free store, place its pointer into a
-     manager object (sometimes called a handle) with a destructor that will
-     destroy it. Examples are string, vector and all the other standard-library
-     containers, unique_ptr, and shared_ptr. Wherever possible, have that
-     manager object be a scoped variable. Many classical uses of free store can
-     be eliminated by using move semantics to return large objects represented
-     as manager objects from functions. This is commonly known as *RAII*
-     (Resource Acquisition is Initialization).
+1. Don't put objects on the free store if you don't have to; prefer scoped
+   (stack allocated) variables.
+2. When you construct an object on the free store, place its pointer into a
+   manager object (sometimes called a handle) with a destructor that will
+   destroy it. Examples are string, vector and all the other standard-library
+   containers, unique_ptr, and shared_ptr. Wherever possible, have that manager
+   object be a scoped variable. Many classical uses of free store can be
+   eliminated by using move semantics to return large objects represented as
+   manager objects from functions. This is commonly known as *RAII* (Resource
+   Acquisition is Initialization).
 
 `new` belongs in constructors and similar operations, `delete` belongs in
 destructors, and together they provide a coherent memory management strategy. In
@@ -999,10 +999,174 @@ convenience and safety. In order of preference/safety:
   conversions.
 
 
-// OK: explicit return type
-
 ## Functions
 (The C++ Programming Language, Chapter 12)
+
+A function declaration can contain a variety of specifiers and modifiers:
+- The return type may be either prefix or suffix (using `auto`).
+
+        auto to_string(int a) −> string;   // suffix return type
+
+  A suffix return type is needed in function template declarations in which the
+  return type depends on the arguments.
+
+        template<class T, class U>
+        auto product(const vector<T>& x, const vector<U>& y) −> decltype(x∗y);
+
+- `inline`: hint to have function calls implemented by inlining the body.
+- `constexpr`: possible to evaluate the function at compile time if given
+  constant expressions as arguments.
+- `noexcept`: may not throw an exception.
+- A linkage specification, for example, `static`.
+- `[[noreturn]]`: will not return using the normal call/return mechanism.
+In addition, a *member function* may be specified as:
+- `virtual`: can be overridden in a derived class.
+- `override`: must be overriding a virtual function from a base class.
+- `final`: cannot be overriden in a derived class.
+- `static`: class function not associated with a particular object.
+- `const`: may not modify its object.
+
+If a local variable is declared `static`, a single, statically allocated object
+will be used to represent that variable in all calls of the function. It will
+be initialized only the first time a thread of execution reaches its definition.
+
+    void f(int a) {
+      while (a−−) {
+        static int n = 0; // initialized once
+        int x = 0;        // initialized ’a’ times in each call of f()
+        cout << "n == " << n++ << ", x == " << x++ << '\n';
+      }
+    }
+
+A static local variable allows the function to preserve information between
+calls without introducing a global variable that might be accessed and
+corrupted by other functions.
+
+The absence of `const` in the declaration of a reference argument is taken as a
+statement of intent to modify the variable:
+
+    void f(Large& arg); // assume that f() modifies arg
+
+Similarly, declaring a pointer argument `const` tells readers that the value of
+an object pointed to by that argument is not changed by the function:
+
+    int strlen(const char∗);                  // length of a C-style string
+    char∗ strcpy(char∗ to, const char∗ from); // copy C-style string
+    int strcmp(const char∗, const char∗);     // compare C-style strings
+
+Preferred ways of passing arguments:
+1. Use pass-by-value for small objects.
+2. Use pass-by-`const`-reference to pass large values that are read-only.
+3. Return a result value rather than modifying an object through an argument.
+4. Use rvalue references to implement move and forwarding.
+5. Pass a pointer if "no object" is a valid alternative (and represent "no
+   object" by `nullptr`).
+6. Use pass-by-reference only if you have to.
+
+An array parameter type is equivalent to a parameter of pointer type. All these
+are equivalent (note that `std::vector` or `std:array` should be prefered):
+
+    void odd(int∗ p);
+    void odd(int a[]);
+    void odd(int buf[1020]);
+
+To support functions with unknown number of arguments:
+1. Use a variadic template: allows us to handle an arbitrary number of arbitrary
+   types in a type-safe manner by writing a small template metaprogram.
+2. Use an `initializer_list` as the argument type. This allows us to handle an
+   arbitrary number of arguments of a single type in a type-safe manner.
+3. Terminate the argument list with the ellipsis `...`, which means "and maybe
+   some more arguments". This allows us to handle an arbitrary number of
+   (almost) arbitrary types by using some macros from `<cstdarg>`. This C-style
+   solution is not inherently type-safe and can be hard to use with
+   sophisticated user-defined types.
+
+Default function arguments can be provided for trailing arguments:
+
+    int f(int, int ={0}, char∗ =nullptr);  // OK
+    int g(int =0, int ={0}, char∗);        // error
+    int h(int =0, int, char∗ =nullptr);  // error
+
+Using the same name for operations on different types is called *overloading*.
+
+    void print(int);           // print an int
+    void print(const char∗);   // print a C-style string
+
+The compiler uses a fairly complicated set of resolution rules to determine
+which function to call when there are overloaded functions. Sometimes the
+developer is surprised to find which function is called. Still, overloading is
+useful and a lot nicer than `print_int`, `print_double`, etc.  One can also add
+an explicit type conversion to resolve a specific call.
+
+    void f(char);
+    void f(long);
+    void f(char*);
+    void f(int*);
+
+    f(static_cast<int∗>(0));
+
+Return types are *not* considered in overload resolutions.
+
+Like a (data) object, the code generated for a function body is placed in memory
+somewhere, so it has an address. We can have a pointer to a function just as we
+can have a pointer to an object. There are only two things one can do to a
+function: call it and take its address.
+
+    void error(string s) { /* ... */ }
+
+    void (∗efct)(string);
+
+    // pointer to function taking a string argument and returning nothing
+    void f() {
+      efct = &error;
+      efct("error");
+    }
+
+Using `&` to get the address of a function is optional:
+
+    void (∗f1)(string) = &error;
+    void (∗f2)(string) = error;
+
+You can take the address of an overloaded function by assigning to or
+initializing a pointer to function. In that case, the type of the target is
+used to select from the set of overloaded functions:
+
+    void f(int);
+    int f(char);
+
+    void (∗pf1)(int) = &f;   // void f(int)
+    int (∗pf2)(char) = &f;   // int f(char)
+    void (∗pf3)(char) = &f;  // error : no void f(char)
+
+It is also possible to take the address of member functions, but a pointer to
+member function is quite different from a pointer to (nonmember) function.
+
+*Macros*:
+
+Macros are very important in C but have far fewer uses in C++. The first rule
+about macros is: don’t use them unless you have to. One use of macros is almost
+impossible to avoid. The directive `#ifdef`:
+
+    #ifndef MYHEADER_H
+    #define MYHEADER_H
+    ...   // This will be seen by the compiler only once
+    #endif /* MYHEADER_H */
+
+A few macros are predefined by the compiler:
+
+- `__cplusplus`: defined in a C++ compilation (and not in a C compilation). Its
+  value is `201103L` in a `C++11` program.
+- `__DATE__`: date in "yyyy:mm:dd" format.
+- `__TIME__`: time in "hh:mm:ss" format.
+- `__FILE__` name of current source file.
+- `__LINE__` source line number within the current source file.
+- `__FUNC__` an implementation-defined C-style string naming the current
+  function.
+- `__STDC__`: defined in a C compilation (and not in a C++ compilation).
+- `__STDCPP_THREADS__`: 1 if a program can have more than one thread of
+  execution; otherwise undefined.
+
+
 
 ## Exceptions
 (The C++ Programming Language, Chapter 13)
