@@ -1033,7 +1033,7 @@ be initialized only the first time a thread of execution reaches its definition.
     void f(int a) {
       while (a−−) {
         static int n = 0; // initialized once
-        int x = 0;        // initialized ’a’ times in each call of f()
+        int x = 0;        // initialized 'a' times in each call of f()
         cout << "n == " << n++ << ", x == " << x++ << '\n';
       }
     }
@@ -1144,7 +1144,7 @@ member function is quite different from a pointer to (nonmember) function.
 *Macros*:
 
 Macros are very important in C but have far fewer uses in C++. The first rule
-about macros is: don’t use them unless you have to. One use of macros is almost
+about macros is: don't use them unless you have to. One use of macros is almost
 impossible to avoid. The directive `#ifdef`:
 
     #ifndef MYHEADER_H
@@ -1170,6 +1170,182 @@ A few macros are predefined by the compiler:
 
 ## Exceptions
 (The C++ Programming Language, Chapter 13)
+
+An exception can be of any type that can be copied, but it is strongly
+recommended to use only user-defined types specifically defined for that
+purpose.
+
+    struct Range_error {};
+
+    void f(int n) {
+        if (n<0 || max<n) throw Range_error {};
+        // ...
+    }
+
+An exception is caught by code that has expressed interest in handling a
+particular type of exception (a `catch`-clause).
+
+    void f() {
+        try {
+            throw E{};
+        } catch(H) {
+            // when do we get here?
+        }
+    }
+
+The handler is invoked:
+1. If `H` is the same type as `E`.
+2. If `H` is an unambiguous public base of `E`.
+3. If `H` and `E` are pointer types and 1. or 2. holds for the types to which
+   they refer.
+4. If `H` is a reference and 1. or 2. holds for the type to which `H` refers.
+
+The standard library also defines a small hierarchy of exception classes. An
+exception can carry information about the error it represents. Its type
+represents the kind of error, and whatever data it holds represents the
+particular occurrence of that error. For example, the standard-library
+exceptions contain a string value, which can be used to transmit information
+such as the location of the throw. The standard library exception classes, such
+as `std::runtime_error` and `std::out_of_range`, take a string argument as a
+constructor argument and have a virtual function `what()`:
+
+    struct MyError : std::runtime_error {
+        const char∗ what() const noexcept { return "MyError"; }
+    };
+
+    void g(int n) {
+        if (n)
+            throw std::runtime_error{"I give up!"};
+        else
+            throw MyError{};
+    }
+
+    void f(int n) {
+        try {
+            void g(n);
+        } catch (std::exception& e) {
+            cerr << e.what() << '\n';
+        }
+    }
+
+
+`<stdexcept>` in the standard library provides a small hierarchy of exception
+classes with a common base `exception`. This catches every *standard libary
+exception*:
+
+    void m() {
+        try {
+            // ... do something ...
+        } catch (std::exception& err) {
+            // handles every standard library exception
+            // ... cleanup ...
+            throw; // rethrow
+        }
+    }
+
+To catch all exceptions, use `catch(...)`.
+
+        try {
+            // ... do something ...
+        } catch (...) {
+            // handle every exception
+        }
+
+There are programs that for practical and historical reasons cannot use
+exceptions. For example:
+
+- A time-critical component of an embedded system where an operation must be
+  guaranteed to complete in a specific maximum time.
+- A large old program in which resource management is an ad hoc mess (e.g., free
+  store is unsystematically "managed" using "naked" pointers, `new`s, and
+  `delete`s), rather than relying on some systematic scheme, such as resource
+  handles (e.g., string and vector).
+
+*Resource Acquisition Is Initialization (RAII)*:
+
+When a function acquires a resource - that is, it opens a file, allocates some
+memory from the free store, acquires a mutex, etc. - it is often essential for
+the future running of the system that the resource be properly released.
+
+    // naive code: file descriptor will leak if an exception is thrown mid-way
+    void use_file(const char∗ filename) {
+      FILE∗ f = fopen(filename,"r");
+
+      // use f ...
+
+      fclose(f);
+    }
+
+It is important that resources are released in opposite order of acquisition:
+
+     void acquire() {
+       // acquire resource 1
+       // ...
+       // acquire resource n
+
+       // ... use resources ...
+
+       // release resource n
+       // ...
+       // release resource 1
+     }
+
+Thus, we can handle such resource acquisition and release problems using
+stack-allocated objects of classes with constructors and destructors. ne than
+its traditional counterpart.  This technique for managing resources using local
+objects is usually referred to as "Resource Acquisition Is Initialization"
+(RAII). This is a general technique that relies on the properties of
+constructors and destructors and their interaction with exception handling.
+
+    class File_ptr {
+        FILE∗ p;
+    public:
+        File_ptr(const char∗ name, const char∗ mode)
+            : p{fopen(name, mode)}
+        {
+          if (p==nullptr)
+            throw runtime_error{"File_ptr: Can't open file"};
+        }
+
+        ~File_ptr() { fclose(p); }
+    };
+
+
+
+    // RAII: exception-safe code
+    void use_file(const char∗ filename) {
+      FilePtr f(filename, "r");
+
+      // use f ...
+
+    }  // f goes out of scope -> destructor called -> file closed
+
+The most common resource is memory, and `string`, `vector`, and the other
+standard containers use RAII to implicitly manage acquisition and
+release. Compared to ad hoc memory management using `new` and `delete`, this
+saves lots of work and avoids lots of errors.  When a pointer to an object,
+rather than a local object, is needed, consider using the standard library types
+`unique_ptr` and `shared_ptr`.
+
+In older C++ code, you may find exception specifications. For example:
+
+    void f(int) throw(Bad,Worse); // may only throw Bad or Worse exceptions
+    void g(int) throw();          // may not throw
+
+This feature has not been a success and is deprecated. Don't use it.
+
+We can transfer an exception thrown on one thread to a handler on another thread
+using the standard-library function `current_exception()`:
+
+    try {
+        // ... do the work ...
+    } catch(...) {
+        prom.set_exception(current_exception());
+    }
+
+There is a fundamental language rule that when an exception is thrown from a
+constructor, subobjects (including bases) that have already been completely
+constructed will be properly destroyed.
 
 ## Namespaces
 (The C++ Programming Language, Chapter 14)
