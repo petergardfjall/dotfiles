@@ -1350,6 +1350,87 @@ constructed will be properly destroyed.
 ## Namespaces
 (The C++ Programming Language, Chapter 14)
 
+C++ does not provide a single language feature supporting the notion of a
+module; there is no module construct (will be in C++20). Instead, modularity is
+expressed through combinations of other language facilities, such as functions,
+classes, and namespaces, and source code organization.
+
+The notion of a namespace is provided to directly represent the notion of a set
+of facilities that directly belong together, for example, the code of a
+library. The members of a namespace are in the same scope and can refer to each
+other without special notation, whereas access from outside the namespace
+requires explicit notation.
+
+A member can be declared within a namespace definition and defined later using
+the `<namespace-name>::<member-name>` notation.
+
+    // declaration
+    namespace Parser {
+        double expr(bool);
+        ...
+    }
+
+    // definition
+    double Parser::expr(bool b) {
+        // ...
+    }
+
+    // use
+    double val = Parser::expr();
+
+The global scope is a namespace and can be explicitly referred to using `::`:
+
+    int f();    // global function
+
+    int g() {
+        int f;
+        f();    // error: can't call an int
+        ::f();  // OK: call global function
+    }
+
+The `using` declaration is used to bring a namespaced construct into a scope.
+
+    using std::string; // use "string" to mean "std::string"
+
+To prevent confusion, keep `using` as local as possible.
+
+    namespace N {
+        void f(int);
+        void f(string);
+    };
+
+    void g(){
+        using N::f;
+        f(789);
+        f("Bruce");
+    }
+
+We can also use a `using`-directive to request that every name from a namespace
+be accessible in our scope without qualification.
+
+    using namespace std;
+
+A namespace is open; that is, you can add names to it from several separate
+namespace declarations.
+
+    namespace A {
+         int f();   // now A has member f()
+    }
+    namespace A {
+        int g();    // now A has two members, f() and g()
+    }
+
+That way, the members of a namespace need not be placed contiguously in a single
+file.
+
+One can provide a short alias for a longer namespace name:
+
+    // use namespace alias to shorten names:
+    namespace ATT = American_Telephone_and_Telegraph;
+
+    ATT::do_something();
+
+
 ## Classes (user-defined types)
 (The C++ Programming Language, Chapter 16)
 
