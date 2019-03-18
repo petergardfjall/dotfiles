@@ -1145,7 +1145,7 @@ member function is quite different from a pointer to (nonmember) function.
 
 Macros are very important in C but have far fewer uses in C++. The first rule
 about macros is: don't use them unless you have to. One use of macros is almost
-impossible to avoid. The directive `#ifdef`:
+impossible to avoid. The directive `#ifndef` as a "header include guard":
 
     #ifndef MYHEADER_H
     #define MYHEADER_H
@@ -1430,6 +1430,34 @@ One can provide a short alias for a longer namespace name:
 
     ATT::do_something();
 
+Namespaces can be nested:
+
+    namespace X {
+        void g();
+
+        namespace Y {
+            void f();
+            void ff();
+        }
+    }
+
+    void X::Y::ff() {
+        f();
+        g();
+    }
+
+    void X::g() {
+        f();     // error: no f() in X
+        Y::f();  // OK
+    }
+
+    ...
+
+    int main() {
+        f();        // error: no global f()
+        Y::f();     // error: no global Y
+        X::Y::f();  // OK
+    }
 
 ## Classes (user-defined types)
 (The C++ Programming Language, Chapter 16)
