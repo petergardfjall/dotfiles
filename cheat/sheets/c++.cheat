@@ -1580,7 +1580,7 @@ Conversely, a header should *never* contain:
 - Data definitions:              `int a;`
 - Aggregate definitions:         `short tbl[] = { 1, 2, 3 };`
 - Unnamed namespaces:            `namespace { /∗ ... ∗/ }`
-- `using`-directives:          `using namespace Foo;`
+- `using`-directives:              `using namespace Foo;`
 
 Header files are conventionally suffixed by `.h` , and files containing function
 or data definitions are suffixed by `.cpp`. Other conventions, such as `.c`,
