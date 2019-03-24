@@ -1512,6 +1512,165 @@ Namespaces can be nested:
         X::Y::f();  // OK
     }
 
+## Source Files and Programs
+(The C++ Programming Language, Chapter 15)
+
+A user presents a *source file* to the compiler. The file is then preprocessed;
+that is, macro processing is done and `#include` directives bring in
+headers. The result of preprocessing is called a *translation unit*.
+
+To enable separate compilation, the programmer must supply declarations
+providing the type information needed to analyze a translation unit in isolation
+from the rest of the program.
+
+The *linker* is the program that binds together the separately compiled parts. A
+linker is sometimes (confusingly) called a *loader*. Linking can be done
+completely before a program starts to run. Alternatively, new code can be added
+to the running program ("dynamically linked") later.
+
+A program is a collection of separately compiled units combined by a
+linker. Every function, object, type, etc., used in this collection must have a
+unique definition.
+
+The return type of `main()` is `int`, and the following two versions of `main()`
+are supported by all implementations:
+
+    int main() { /* ... */ }
+    int main(int argc, char∗ argv[]) { /* ... */ }
+
+The organization of a program into source files is commonly called the *physical
+structure* of a program. The physical separation of a program into separate
+files should be guided by the logical structure of the program. The same
+dependency concerns that guide the composition of programs out of namespaces
+guide its composition into source files. However, the logical and physical
+structures of a program need not be identical.
+
+The types in all declarations of the same object, function, class, etc., must be
+consistent. Consequently, the source code submitted to the compiler and later
+linked together must be consistent. The most common method of achieving
+consistency for declarations in different translation units is to
+`#include` header files containing interface information in source files
+containing executable code and/or data definitions.
+
+As a rule of thumb, a header may contain:
+
+- Named namespaces:                `namespace N { /∗ ... ∗/ }`
+- inline namespaces:               `inline namespace N { /∗ ... ∗/ }`
+- Type definitions:                `struct Point { int x, y; };`
+- Template declarations:           `template<class T> class Z;`
+- Template definitions:            `template<class T> class V { /∗ ... ∗/ };`
+- Function declarations:           `extern int strlen(const char∗);`
+- inline function definitions:     `inline char get(char∗ p) { /∗ ... ∗/ }`
+- constexpr func defs: `constexpr int fac(int n) {return (n<2) ? 1 : fac(n−1);}`
+- Data declarations:               `extern int a;`
+- const definitions:               `const float pi = 3.141593;`
+- constexpr definitions:           `constexpr float pi2 = pi∗pi;`
+- Enumerations:                    `enum class Light { red, yellow, green };`
+- Name declarations:               `class Matrix;`
+- Type aliases:                    `using value_type = long;`
+- Compile-time assertions:         `static_assert(4<=sizeof(int),"small ints");`
+- Include directives:              `#include<algorithm>`
+- Macro definitions:               `#define VERSION 12.03`
+- Conditional compilation directives: `#ifdef __cplusplus`
+- Comments:                           `// bla bla`
+
+Conversely, a header should *never* contain:
+
+- Ordinary function definitions: `char get(char∗ p) {return ∗p++; }`
+- Data definitions:              `int a;`
+- Aggregate definitions:         `short tbl[] = { 1, 2, 3 };`
+- Unnamed namespaces:            `namespace { /∗ ... ∗/ }`
+- `using`-directives:          `using namespace Foo;`
+
+Header files are conventionally suffixed by `.h` , and files containing function
+or data definitions are suffixed by `.cpp`. Other conventions, such as `.c`,
+`.C`, `.cxx`, `.cc`, `.hh` , and `.hpp` are also found.
+
+A given class, enumeration, and template, etc., must be defined exactly once in
+a program. Unfortunately, the language rule cannot be that simple. For example,
+the definition of a class may be composed through macro expansion, and a def-
+inition of a class may be textually included in two source files by `#include`
+directives. In fact, a "file" isn’t a concept that is part of the C++ language
+definition; there exist implementations that do not store programs in source
+files. Consequently, the rule in the standard that says that there must be a
+unique definition of a class, template, etc., is phrased in a somewhat more
+complicated and subtle manner. This rule is com- monly referred to as *the
+one-definition rule* ("the ODR"). That is, two definitions of a class, template,
+or inline function are accepted as examples of the same unique definition if and
+only if [1] they appear in different translation units, and [2] they are
+token-for-token identical, and [3] the meanings of those tokens are the same in
+both translation units.
+
+The intent of the ODR is to allow inclusion of a class definition in different
+translation units from a common source file.
+
+*Include guards*:
+
+For larger programs a header containing class definitions or inline functions
+can easily get `#include`d twice in the same compilation unit. To prevent such
+repeated inclusion of headers one typically makes use of *include guards* (or
+*header guards*):
+
+    // error.h:
+    #ifndef CALC_ERROR_H
+    #define CALC_ERROR_H
+
+    namespace Error {
+        // ...
+    }
+
+    #endif // CALC_ERROR_H
+
+The contents of the file between the #ifndef and #endif are ignored by the
+compiler if `CALC_ERROR_H` is defined. Thus, the first time error.h is seen
+during a compilation, its contents are read and `CALC_ERROR_H` is given a value.
+Should the compiler be presented with `error.h` again during the compilation,
+the contents are ignored. This is a piece of macro hackery, but it works and it
+is pervasive in the C and C++ worlds. The standard headers all have include
+guards.
+
+Header files are included in essentially arbitrary contexts, and there is no
+namespace protection against macro name clashes. Consequently, choose rather
+long and ugly names for include guards.
+
+In principle, a variable defined outside any function (that is, global,
+namespace, and class static variables) is initialized before `main()` is
+invoked. Such nonlocal variables in a translation unit are initialized in their
+definition order. There is no guaranteed order of initialization of global
+variables in different translation units. Beware though: if multiple threads are
+used, each will do the run-time initialization.
+
+    int x = 3;
+    int y = sqrt(++x);
+
+`sqrt(++x)` in one thread may happen before or after the other thread manages to
+increment `x`. So, the value of `y` may be `sqrt(4)` or `sqrt(5)`.
+
+
+If a program is terminated using the standard-library function `exit()`, the
+destructors for constructed static objects are called. However, if the program
+is terminated using the standard-library function `abort()`, they are not.
+
+The C (and C++) standard-library function `atexit()` offers the possibility to
+have code executed at program termination. For example:
+
+    void my_cleanup();
+
+    void somewhere() {
+        if (atexit(&my_cleanup)==0) {
+            // my_cleanup will be called at normal termination
+        } else {
+            // oops: too many atexit functions
+        }
+    }
+
+This strongly resembles the automatic invocation of destructors for global
+variables at program termination. An argument to `atexit()` cannot take
+arguments or return a result, and there is an implementation-defined limit to
+the number of atexit functions. A nonzero value returned by atexit() indicates
+that the limit is reached. These limitations make `atexit()`, in essence, a C
+workaround for the lack of destructors.
+
 ## Classes (user-defined types)
 (The C++ Programming Language, Chapter 16)
 
