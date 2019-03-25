@@ -1687,6 +1687,19 @@ A very brief summary of classes:
         class  S { public: /* ... */ };
 
 
+A type/class is called *concrete* (or a *concrete class*) if its representation
+is part of its definition. This distinguishes it from abstract classes and
+classes in class hierarchies which provide an interface to a variety of
+implementations. Concrete classes are very similar to, and used much like,
+*built-in types* such as `int` and `char`. Sometimes, concrete types are also
+referred to as *value types*. Having the representation available allows us:
+
+- To place objects on the stack, in statically allocated memory, and in other
+  objects.
+- To copy and move objects.
+- To refer directly to named objects (as opposed to accessing through pointers
+  and references)
+
 By default, objects can be copied and copy assigned. The compiler generates a
 default *copy constructor* and a default *copy assignment operator*. Both use
 memberwise copy. If the user doesn't declare a constructor, the compiler also
@@ -1781,6 +1794,8 @@ is equivalent to:
         ...
      }
 
+*Explicit Constructors*:
+
 By default, a constructor invoked by a single argument acts as an implicit
 conversion from its argument type to its type. For example:
 
@@ -1821,6 +1836,8 @@ initialization and explicit conversions.
 By default, declare a constructor that can be called with a single argument
 `explicit`. You need a good reason not to do so (as for `complex`).
 
+*Immutability via const member functions*:
+
 The `const` specifier declares that a member function does not modify the state
 of its object (it provides immutability).
 
@@ -1836,6 +1853,92 @@ of its object (it provides immutability).
      int Date::year() const {
        return ++y; // error: attempt to change member value in const function
      }
+
+A member *can* be defined as `mutable` to allow it to be modified even in a
+`const` object, but often it is better to place the data that needs modification
+in a separate object and access it indirectly (`const` does not apply
+transitively to objects accessed through pointers or references).
+
+*Static Members*:
+
+Class members declared `static` exist on the class-level. For a static variable
+there is exactly one copy (not one per object). A `static` member function can
+be called without a particular object.
+
+If used, a `static` member - a function or data member - must be defined
+somewhere. The keyword `static` is not repeated in the definition of a static
+member.
+
+    //
+    // date.h
+    //
+    class Date {
+      int d, m, y;
+      static Date default_date;
+    public:
+      Date(int dd = 0, int mm = 0, int yy = 0);
+      static void set_default(int dd, int mm, int yy);
+    };
+
+    //
+    // date.cpp
+    //
+    Date Date::default_date {16,12,1770}; // definition of Date::default_date
+
+    void Date::set_default(int d, int m, int y) {
+        default_date = {d,m,y};
+    }
+
+     Date::Date(int dd, int mm, int yy) {
+         d = dd ? dd : default_date.d;
+         m = mm ? mm : default_date.m;
+         y = yy ? yy : default_date.y;
+     }
+
+
+*Member Types (nested class)*:
+
+Types and type aliases can be members of a class. A *member class* (often called
+a *nested class*) can refer to types and static members of its enclosing class.
+A nested class has access to members of its enclosing class, even to private
+members (just as a member function has), but has no notion of a current object
+of the enclosing class.
+
+    // tree.h
+
+    template<typename T>
+    class Tree {
+        using value_type = T;                // member alias
+        enum Policy { rb, splay, treeps };   // member enum
+
+        class Node {                         // member class
+            Node∗ right;
+            Node∗ left;
+            value_type value;
+          public:
+            void f(Tree∗);
+        };
+
+        Node∗ top;
+    public:
+         void g(const T&);
+    };
+
+    // tree.cpp
+
+    template<typename T>
+    void Tree::Node::f(Tree∗ p) {
+        top = right;                // error: no object of type Tree specified
+        p−>top = right;             // OK
+        value_type v = left−>value; // OK: value_type not associated with object
+    }
+
+Member classes are more a notational convenience than a feature of fundamental
+importance. On the other hand, member aliases are important as the basis of
+generic programming techniques relying on associated types.
+
+## Construction, Cleanup, Copy and Move
+(The C++ Programming Language, Chapter 17)
 
 ## Concurrency
 
