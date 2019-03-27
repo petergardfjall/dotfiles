@@ -1,5 +1,7 @@
 # General
 
+For local documentation: Use `godoc-open.sh` or `godoc -http localhost:1234`.
+
 ## Types
 Go's basic types are:
 
@@ -26,6 +28,21 @@ The *zero value* is:
     i := 42
     f := float64(i)
 
+
+A *type assertion* provides access to an interface value's underlying concrete
+value.
+
+    var i interface{} = "hello"
+    s := i.(string)
+    fmt.Println(s)
+
+If `i` does not hold a `string`, the statement will trigger a panic.
+
+To test whether an interface value holds a specific type, a type assertion can
+return two values: the underlying value and a boolean value that reports whether
+the assertion succeeded.
+
+     t, ok := i.(T)
 
 Constants can be character, string, boolean, or numeric values.
 
@@ -238,6 +255,11 @@ TODO: sorting and searching
     m["b"] = 2
     delete(m, "b")
 
+If the requested key doesn't exist, we get the value type's zero value.
+
+    m["c"] // -> 0
+
+
     // optional second return value marks presence of key
     if _, ok := m["foo"]; ok {
         fmt.Println("contains key foo")
@@ -288,19 +310,37 @@ Check if a file/directory exists
         return err
     }
 
+Create a directory:
+
+    // error is of type *os.PathError
+    err := os.Mkdir("/my/dir", 0744)
+    err := os.MkdirAll("/my/dir", 0744)
+
+Read an entire file into a string:
+
+    data, err := ioutil.ReadFile("/tmp/dat")
+
 Open a file for reading:
 
      f, err := os.Open("/tmp/dat")
+     if err != nil { ... }
+     defer f.Close()
 
+Open a file for writing:
 
-     // read line-by-line with scanner
+     f, err := os.OpenFile("/tmp/dat", os.O_WRONLY|os.O_CREATE, 0644)
+     if err != nil { ... }
+     defer f.Close()
+
+Read line-by-line with `Scanner`:
+
      s := bufio.NewScanner(f)
      for s.Scan() {
          fmt.Printf(s.Text() + "\n")
      }
 
+Read line-by-line with a `bufio.Reader`:
 
-    // read line-by-line with a bufio Reader
     r := bufio.NewReader(f)
     for {
         line, err := r.ReadString('\n')
@@ -315,14 +355,51 @@ Open a file for reading:
     }
 
 
-Read an entire file into a string:
-
-    data, err := ioutil.ReadFile("/tmp/dat")
 
 ### JSON
 
 - TODO: annotations, unmarshal
+- TODO: only exported struct names are unmarshalled!
+
+
 - TODO: stream parsing (one entry at a time)
+
+### XML parsing
+
+Stream-based parsing (one entry at a time). Suitable for very large files.
+
+    // element to be parsed from XML stream
+    type Product struct {
+        Name string `xml:"name,attr"`
+        Type string `xml:"type,attr"`
+    }
+
+    ...
+
+    src, _ := os.Open(xmlPath)
+    defer src.Close()
+
+    decoder := xml.NewDecoder(src)
+    for {
+        token, _ := decoder.Token()
+        switch elem := token.(type) {
+        case xml.StartElement:
+            // If we just read a StartElement token and its name is "prod-item"
+            if elem.Name.Local == "prod-item" {
+                var product Product
+                _ := decoder.DecodeElement(&cpeItem, &elem)
+                // do something with product ...
+            }
+        default:
+            log.Debug().Msgf("ignoring token %s", elem)
+        }
+    }
+
+    if err == io.EOF {
+        // normal exit
+        return nil
+    }
+
 
 ### Database
 
