@@ -65,15 +65,35 @@ Examples are:
 - channels: `close(c chan<- Type)`
 - error handling: `panic`, `recover`
 
+## Looping
+
+Three forms:
+
+    // Like a C for
+    for init; condition; post { }
+
+    // Like a C while
+    for condition { }
+
+    // Like a C for(;;)
+    for { }
+
+One can use `range` to iterate over slice, map or reading from a channel.
+
+     for key, value := range oldMap {
+         newMap[key] = value
+     }
+
 ## Switch
 
 Use commas to separate multiple expressions in a single `case`:
 
-    switch time.Now().Weekday() {
-    case time.Saturday, time.Sunday:
-        fmt.Println("It's the weekend")
-    default:
-        fmt.Println("It's a weekday")
+    func shouldEscape(c byte) bool {
+        switch c {
+        case ' ', '?', '&', '=', '#', '+', '%':
+            return true
+        }
+        return false
     }
 
 An alternative to an `if-else` is to use a `switch` without expression:
@@ -191,11 +211,8 @@ Pointer:
 - `%p`: base 16 notation, with leading `0x`
 
 
-## Enumerations
 
-- TODO: type MyEnum int + iota
-
-### Errors
+## Errors
 
 It's common to declare errors at one place and then have them returned later.
 
@@ -212,6 +229,11 @@ It's common to declare errors at one place and then have them returned later.
 TODO: https://godoc.org/github.com/pkg/errors
 
 ## Slices
+
+Slices wrap arrays to give a more general, powerful, and convenient interface to
+sequences of data. Slices hold references to an underlying array, and if you
+assign one slice to another, both refer to the same array.  Note: Go types read
+from left to right `[]string` "slice of string".
 
 The zero-value for a slice is a zero capacity slice. No need to use `make()`.
 
@@ -234,21 +256,41 @@ Iterate:
 
     for index, item := range v { ... }
 
-
-
 Merge two slices:
 
     var v1 := []string{"foo", "bar"}
     var v2 := []string{"baz"}
     v1 = append(v1, v2...)
 
+Sort a slice
 
+    var values = []int{3,1,2}
+    comp := func(i,j int) bool { return values[i] < values[j] }
+    sort.SliceIsSorted(values, comp)  // false
+    sort.Slice(values, func(i,j int) bool { return values[i] < values[j] })
+    sort.SliceIsSorted(values, comp)  // true
 
-TODO:
+Binary search:
 
-TODO: sorting and searching
+    a := []int{55, 45, 36, 28, 21, 15, 10, 6, 3, 1}
+    x := 6
+    i := sort.Search(len(a), func(i int) bool { return a[i] <= x })
+    fmt.Println(i)  // -> 7
+
+Sort strings:
+
+    var strList = []string{"foo","bar","baz"}
+    sort.Strings(strList)
+
+Search strings:
+
+    sort.SearchStrings(strList, "baz")  // -> 2
+
 
 ## Maps
+
+The zero value of a map is `nil`. A `nil` map has no keys, nor can keys be
+added. Use `make` to create a `map`.
 
     m := make(map[string]int)
     m["a"] = 1
@@ -259,28 +301,68 @@ If the requested key doesn't exist, we get the value type's zero value.
 
     m["c"] // -> 0
 
+Optional second return value marks presence of key
 
-    // optional second return value marks presence of key
     if _, ok := m["foo"]; ok {
         fmt.Println("contains key foo")
     }
 
-    // Litteral map
-    n := map[string]int{"foo": 1, "bar": 2}
+Map literals:
 
-    // range over keys and values
+    var letters = map[string]int{ "a": 1, "b": 2}
+
+    type Vertex struct {
+        Lat, Long float64
+    }
+
+    var m = map[string]Vertex{
+        "Bell Labs": {40.68433, -74.39967},
+        "Google":    {37.42202, -122.08408},
+    }
+
+Range over keys and values:
+
     for k, v := range m {
         fmt.Printf("%s -> %s\n", k, v)
     }
 
-    // range over keys only
+Range over keys only:
+
     for k := range m {
         fmt.Printf("key: %s\n", k)
     }
 
 
-TODO: `_, ok := m["route"]`
-TODO: https://blog.golang.org/go-maps-in-action
+## Functions
+
+Functions are values and can be passed around just like other values.
+
+    func compute(fn func(float64, float64) float64) float64 {
+        return fn(3, 4)
+    }
+
+    ...
+
+    hypot := func(x, y float64) float64 {
+        return math.Sqrt(x*x + y*y)
+    }
+    fmt.Println(compute(hypot))    // prints "5"
+
+A closure is a function value that references variables from outside its
+body. The function may access and assign to the referenced variables; in this
+sense the function is "bound" to the variables.
+
+    func adder(start int) func(int) int {
+        sum := start  // becomes part of the returned functions closure
+        return func(x int) int {
+            sum += x
+            return sum
+        }
+    }
+    ...
+    next := adder(1)
+    fmt.Println(next(2))  // -> 3
+    fmt.Println(next(1))  // -> 4
 
 
 ## Strings
@@ -299,7 +381,10 @@ Use a `ByteBuffer` as an `io.Writer` to capture a string:
     fmt.Fprintf(&buf, "hello world")
     buf.String() // "hello world"
 
-TODO: format
+
+## Enumerations
+
+- TODO: type MyEnum int + iota
 
 
 ## I/O and files
