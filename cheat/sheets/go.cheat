@@ -364,6 +364,31 @@ sense the function is "bound" to the variables.
     fmt.Println(next(2))  // -> 3
     fmt.Println(next(1))  // -> 4
 
+Go does not have classes. However, you can define *methods* on types.  A method
+is a function with a *receiver argument*.
+
+    type Vertex struct {
+        X, Y float64
+    }
+
+    func (v Vertex) Abs() float64 {
+        return math.Sqrt(v.X*v.X + v.Y*v.Y)
+    }
+
+You can declare a method on non-struct types, too. However, you can only
+declare a method with a receiver whose type is defined in the same package as
+the method, which prevents us from modifying built-in types such as `int`.
+
+    type MyFloat float64
+
+    func (f MyFloat) Abs() float64 {
+        if f < 0 {
+            return float64(-f)
+        }
+        return float64(f)
+    }
+
+TODO: pointer receiver vs value receiver
 
 ## Strings
 
