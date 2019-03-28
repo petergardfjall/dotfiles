@@ -333,6 +333,77 @@ Range over keys only:
     }
 
 
+## Embedding
+
+See https://golang.org/doc/effective_go.html#embedding
+
+Go does not provide subclassing, but it does have the ability to “borrow” pieces
+of an implementation by *embedding* types within a struct or interface.
+
+Interface embedding is very simple.
+
+    type Reader interface {
+        Read(p []byte) (n int, err error)
+    }
+
+    type Writer interface {
+        Write(p []byte) (n int, err error)
+    }
+
+    // ReadWriter combines the Reader and Writer interfaces.
+    type ReadWriter interface {
+        Reader
+        Writer
+    }
+
+The same basic idea applies to structs.
+
+     // bufio.ReadWriter stores pointers to a Reader and a Writer.
+     // It implements io.ReadWriter.
+     type ReadWriter struct {
+         *Reader  // *bufio.Reader
+         *Writer  // *bufio.Writer
+     }
+
+     var r *Reader = ...
+     var w *Writer = ...
+     rw := &bufio.ReadWriter{r, w}
+     // rw := &bufio.ReadWriter{Reader: r, Writer: w}
+
+The embedded elements are pointers to structs and of course must be initialized
+to point to valid structs before they can be used. The ReadWriter struct could
+be written to be composed as below, however then but then to promote the methods
+of the fields and to satisfy the io interfaces, we would also need to provide
+forwarding methods
+
+    type ReadWriter struct {
+        reader *Reader
+        writer *Writer
+    }
+
+    // forwarding method for Reader.Read()
+    func (rw *ReadWriter) Read(p []byte) (n int, err error) {
+        return rw.reader.Read(p)
+    }
+
+By embedding the structs directly, we avoid this bookkeeping. The methods of
+embedded types come along for free, so that `bufio.ReadWriter` not only has the
+methods of `bufio.Reader` and `bufio.Writer`, it also satisfies all three
+interfaces: `io.Reader`, `io.Writer`, and `io.ReadWriter`.
+
+When we embed a type, the methods of that type become methods of the outer type,
+but when they are invoked the receiver of the method is the inner type, not the
+outer one. When `Read` is invoked on a `bufio.ReadWriter`, it has exactly the
+same effect as the forwarding method above; the receiver is the reader field of
+the ReadWriter, not the ReadWriter itself.
+
+If we need to refer to an embedded field directly, the type name of the field,
+ignoring the package qualifier, serves as a field name, as it did in the Read
+method of our ReadWriter struct.
+
+    var rw ReadWriter = ...
+    rw.Write(...)  // equivalent to rw.Writer.Write(...)
+
 ## Functions
 
 Functions are values and can be passed around just like other values.
@@ -434,6 +505,55 @@ Use a `ByteBuffer` as an `io.Writer` to capture a string:
     fmt.Fprintf(&buf, "hello world")
     buf.String() // "hello world"
 
+Split and join:
+
+    s := strings.Split("4.0.0.RELEASE", ".")  // []string{"4","0","0","RELEASE"}
+    strings.Join(s[:3], ".")  // "4.0.0"
+
+## Regular expressions
+
+The syntax of the regular expressions accepted is the same general syntax used
+by Perl, Python, and other languages. More precisely, it is the syntax accepted
+by RE2: https://github.com/google/re2/wiki/Syntax
+
+There are a few intersting functions:
+
+- Without first compiling a `regexp.Regexp`:
+
+        // true if string contains *any* match of the pattern
+        matched, _ := regexp.MatchString(`foo.*`, "seafood")
+
+        // true if byte slice contains *any* match of the pattern
+        matched, _ := regexp.Match(`foo.*`, []byte(`seafood`))
+
+- By compiling a `regexp.Regexp`. Use `MustCompile` in an `init` function or in
+  a package-global `var` declaration to compile a pattern (will panic on error).
+
+        var (
+            // semantic versions are of form 0.0.1-alpha.preview+123.github,
+            // not 4.0.1.RC1 (cannot have dot after patch version number)
+            NonSemverVersion = regexp.MustCompile(`([0-9]\.){3}\S+`)
+        )
+
+        func main() {
+            v1 := "4.0.0.RELEASE"
+            v2 := "0.0.1-alpha"
+
+            for _, ver := range []string{v1, v2} {
+                if NonSemverVersion.Match([]byte(ver)) {
+                    fmt.Printf("version '%s' matched\n", ver)
+                }
+            }
+         }
+
+`Regexp` has several methods:
+- `Match(b []byte) bool`: does `b` contain any match of the regexp?
+- `Find(b []byte) []byte`: leftmost match in `b` of the regexp
+- `FindAll(b []byte, n int) [][]byte`: all matches in `b` of the regexp.
+- `ReplaceAllString(src, repl string) string`: returns a copy of `src`,
+  replacing matches of the `Regexp` with the replacement string `repl`. Inside
+  `repl`, `$` signs are interpreted so that `$1` represents the text of the
+  first submatch (capture group).
 
 ## Enumerations
 
