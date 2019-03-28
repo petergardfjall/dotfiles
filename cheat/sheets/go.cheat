@@ -388,7 +388,35 @@ the method, which prevents us from modifying built-in types such as `int`.
         return float64(f)
     }
 
-TODO: pointer receiver vs value receiver
+You can declare methods with *pointer receivers* or *value receivers*.
+
+    func (v Vertex) ScaleVal(f float64)  {
+        v.X = v.X * f
+        v.Y = v.Y * f
+    }
+
+    func (v *Vertex) ScalePtr(f float64) {
+        v.X = v.X * f
+        v.Y = v.Y * f
+    }
+
+    func main() {
+        v := Vertex{3, 4}
+
+        v.ScaleVal(10)  // (by-value: no change to v)
+        fmt.Println(v)  // -> 3, 4
+        v.ScalePtr(10)  // (by-reference: modifies v)
+        fmt.Println(v)  // -> 30, 40
+    }
+
+Use pointer receivers when:
+
+- You want to change the state of the receiver in a method. This is not possible
+  with a value receiver, which copies by value.
+- If the struct you're defining the method on is very large, copying it would be
+  far too expensive than using a value receiver.
+
+Also, for a single type, be consistent in the use of value/pointer receivers.
 
 ## Strings
 
