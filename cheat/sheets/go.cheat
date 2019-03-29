@@ -1,6 +1,550 @@
-### General
+# General
 
-### Strings
+For local documentation: Use `godoc-open.sh` or `godoc -http localhost:1234`.
+
+## Types
+Go's basic types are:
+
+- boolean: `bool`
+- string: `string`
+- integer numbers: `int`, `int8`, `int16`, `int32`, `int64`, `uint`, `uint8`,
+  `uint16`, `uint32`, `uint64`, `uintptr`,`byte` (alias for `uint8`), `rune`
+  (alias for `int32` -- represents a Unicode code point).
+
+  The `int`, `uint`, and `uintptr` types are usually 32 bits wide on 32-bit
+  systems and 64 bits wide on 64-bit systems. Use `int` unless you have a
+  specific reason to use a sized or unsigned integer type.
+
+- floating point numbers: `float32`, `float64`
+- complex numbers: `complex64`, `complex128`
+
+The *zero value* is:
+- `0` for numeric types,
+- `false` for the boolean type, and
+- `""` (the empty string) for strings.
+
+`T(v)` converts the value `v` to the type `T`:
+
+    i := 42
+    f := float64(i)
+
+
+A *type assertion* provides access to an interface value's underlying concrete
+value.
+
+    var i interface{} = "hello"
+    s := i.(string)
+    fmt.Println(s)
+
+If `i` does not hold a `string`, the statement will trigger a panic.
+
+To test whether an interface value holds a specific type, a type assertion can
+return two values: the underlying value and a boolean value that reports whether
+the assertion succeeded.
+
+     t, ok := i.(T)
+
+Constants can be character, string, boolean, or numeric values.
+
+    const (
+        Pi = 3.14
+        E  = 2.71
+    )
+
+## Builtin
+
+Package `builtin` provides *documentation* (they aren't actually declared there)
+for built-in identifiers: https://golang.org/pkg/builtin/.
+
+Examples are:
+- output: `print`, `println`
+- slices: `append`, `copy`
+- map: `delete`
+- creation:
+  - `new`: returns a pointer to a newly allocated zero value of type T. That is,
+    it does not initialize the memory, it only zeros it. It's helpful to arrange
+    your data structures such that the zero value can be used directly. Since
+    the zero-value of both `sync.Mutex` and `bytes.Buffer` is usable, it follows
+    that a SyncedBuffer can be used off the bat.
+
+         type SyncedBuffer struct {
+             lock    sync.Mutex
+             buffer  bytes.Buffer
+         }
+         ...
+         p := new(SyncedBuffer)  // type *SyncedBuffer
+         var v SyncedBuffer      // type  SyncedBuffer
+
+  - `make`: creates slices, maps, and channels only, and it returns an
+    initialized (not zeroed) value of type `T` (*not* `*T`).
+
+        v := make([]int, 10, 100)   // slice of length 10, capacity 100
+        ch := make(chan int)        // creates a 'chan int'
+        m := make(map[string]int)   // creates a string->int map
+
+- size: `len`,  `cap`
+- channels: `close(c chan<- Type)`
+- error handling: `panic`, `recover`
+
+
+## Looping
+
+Three forms:
+
+    // Like a C for
+    for init; condition; post { }
+
+    // Like a C while
+    for condition { }
+
+    // Like a C for(;;)
+    for { }
+
+One can use `range` to iterate over slice, map or reading from a channel.
+
+     for key, value := range oldMap {
+         newMap[key] = value
+     }
+
+## Switch
+
+Use commas to separate multiple expressions in a single `case`:
+
+    func shouldEscape(c byte) bool {
+        switch c {
+        case ' ', '?', '&', '=', '#', '+', '%':
+            return true
+        }
+        return false
+    }
+
+An alternative to an `if-else` is to use a `switch` without expression:
+
+    switch {
+    case t.Hour() < 12:
+        fmt.Println("It's before noon")
+    default:
+        fmt.Println("It's after noon")
+    }
+
+Use a "type switch" to compare types instead of values:
+
+    whatAmI := func(i interface{}) {
+        switch t := i.(type) {
+        case bool:
+            fmt.Println("I'm a bool")
+        case int:
+            fmt.Println("I'm an int")
+        default:
+            fmt.Printf("Don't know type %T\n", t)
+        }
+    }
+    whatAmI(true)
+    whatAmI(1)
+    whatAmI("hey")
+
+
+Switch cases evaluate cases from top to bottom, stopping when a case succeeds.
+
+    // does not call `f` if `i==0`.
+    switch i {
+    case 0:
+    case f():
+    }
+
+Each `case` can be an expression. For example `today + 1`.
+
+
+## Defer
+
+A defer statement defers the execution of a function until the surrounding
+function returns. The deferred call's arguments are evaluated immediately, but
+the function call is not executed until the surrounding function returns.
+Deferred function calls are pushed onto a stack. When a function returns, its
+deferred calls are executed in LIFO order. This reclaims resources in opposite
+order of acquisition.
+
+    f, err := os.Open(path)
+    if err != nil {
+        return nil, errors.Wrap(err, "open failed")
+    }
+    defer f.Close()
+    ...
+
+## Panics
+
+For fatal conditions (where the normal error return-value is inapproriate), For
+this purpose, there is a built-in `panic` function that raises a run-time error
+that will abort the program (unless recovered from). The function takes a single
+argument of arbitrary type (like string/error) to be printed as the program
+dies.
+
+When `panic` is called, including implicitly for run-time errors such as
+indexing a slice out of bounds or failing a type assertion, it immediately stops
+execution of the current function and begins unwinding the stack of the
+goroutine, running any deferred functions along the way. If that unwinding
+reaches the top of the goroutine's stack, the program dies. However, it is
+possible to use the built-in function recover to regain control of the goroutine
+and resume normal execution. Note that deferred functions can modify named
+return values.
+
+    func myFun() (err error) {
+        defer func() {
+            if e := recover(); e != nil {
+                fmt.Printf("recovered from error: %s\n", e)
+
+                // handle error
+                err = errors.New("did not go well: " + e)
+
+                // ... or re-panic
+                // panic(err)
+            }
+        }()
+
+        panic("error occured!")
+    }
+
+## Formatting
+
+The formatted I/O from package `fmt` supports these format specifiers:
+
+General:
+- `%v`: the value in a default format.For compound objects, the elements are
+  printed using these rules, recursively, laid out like this:
+
+        struct:             {field0 field1 ...}
+        array, slice:       [elem0 elem1 ...]
+        maps:               map[key1:value1 key2:value2 ...]
+        pointer to above:   &{}, &[], &map[]
+
+- `%+v`: same as `%v`, but When printing `struct`s, field names are written
+- `%#v`: a Go-syntax representation of the value.
+- `%T`:  a Go-syntax representation of the *type* of the value.
+- `%%`:  a literal percent sign; consumes no value
+
+Boolean:
+- `%t`: the word `true` or `false`.
+
+Integer:
+- `%b`: base 2
+- `%c`: the character represented by the corresponding Unicode code point
+- `%d`: base 10
+- `%o`: base 8
+- `%q`: a single-quoted character literal safely escaped with Go syntax.
+- `%x`: base 16, with lower-case letters for a-f
+- `%X`: base 16, with upper-case letters for A-F
+- `%U`: Unicode format: U+1234; same as "U+%04X"
+
+Floating-point:
+- `%b`: decimalless scientific notation with exponent a power of two.
+- `%e`:  scientific notation (`-1.234456e+78`
+- `%E`:  scientific notation (`-1.234456E+78`)
+- `%f`: decimal point but no exponent, e.g. `123.456`. Width is specified by an
+  optional number immediately preceding the verb. Precision is specified after
+  the (optional) width by a period followed by a number.
+
+        %f     default width, default precision
+        %9f    width 9, default precision
+        %.2f   default width, precision 2
+        %9.2f  width 9, precision 2
+        %9.f   width 9, precision 0
+
+- `%F`:  synonym for `%f`
+- `%g`:  `%e` for large exponents, `%f` otherwise.
+- `%G`:  `%E` for large exponents, `%F` otherwise
+
+String and slice of bytes (treated equivalently with these verbs):
+- `%s`: the uninterpreted bytes of the string or slice
+- `%q`: a double-quoted string safely escaped with Go syntax
+- `%x`: base 16, lower-case, two characters per byte
+- `%X`: base 16, upper-case, two characters per byte
+
+Slice:
+- `%p`: address of 0th element in base 16 notation, with leading `0x`
+
+Pointer:
+- `%p`: base 16 notation, with leading `0x`
+
+
+
+## Errors
+
+It's common to declare errors at one place and then have them returned later.
+
+    var (
+        ErrInternal      = errors.New("regexp: internal error")
+        ErrUnmatchedLpar = errors.New("regexp: unmatched '('")
+        ErrUnmatchedRpar = errors.New("regexp: unmatched ')'")
+    )
+
+    ...
+
+    return nil, ErrUnmatchedLpar
+
+TODO: https://godoc.org/github.com/pkg/errors
+
+## Slices
+
+Slices wrap arrays to give a more general, powerful, and convenient interface to
+sequences of data. Slices hold references to an underlying array, and if you
+assign one slice to another, both refer to the same array.  Note: Go types read
+from left to right `[]string` "slice of string".
+
+The zero-value for a slice is a zero capacity slice. No need to use `make()`.
+
+    var v []string
+    v = append(v, "foo", "bar")  // we can append without make()
+
+    s := make([]string, 3)       // create slice of 3 zero-valued strings
+    s[0] = "a"
+    s[1] = "b"
+    s[2] = "c"
+    fmt.Println(s[:])    // "abc"
+    fmt.Println(s[1:])   // "bc"
+    fmt.Println(s[1:2])  // "b"
+    fmt.Println(s[1:3])  // "bc"
+    fmt.Println(s[:2])   // "ab"
+
+Iterate:
+
+    for item := range v { ... }
+
+    for index, item := range v { ... }
+
+Merge two slices:
+
+    var v1 := []string{"foo", "bar"}
+    var v2 := []string{"baz"}
+    v1 = append(v1, v2...)
+
+Sort a slice
+
+    var values = []int{3,1,2}
+    comp := func(i,j int) bool { return values[i] < values[j] }
+    sort.SliceIsSorted(values, comp)  // false
+    sort.Slice(values, func(i,j int) bool { return values[i] < values[j] })
+    sort.SliceIsSorted(values, comp)  // true
+
+Binary search:
+
+    a := []int{55, 45, 36, 28, 21, 15, 10, 6, 3, 1}
+    x := 6
+    i := sort.Search(len(a), func(i int) bool { return a[i] <= x })
+    fmt.Println(i)  // -> 7
+
+Sort strings:
+
+    var strList = []string{"foo","bar","baz"}
+    sort.Strings(strList)
+
+Search strings:
+
+    sort.SearchStrings(strList, "baz")  // -> 2
+
+
+## Maps
+
+The zero value of a map is `nil`. A `nil` map has no keys, nor can keys be
+added. Use `make` to create a `map`.
+
+    m := make(map[string]int)
+    m["a"] = 1
+    m["b"] = 2
+    delete(m, "b")
+
+If the requested key doesn't exist, we get the value type's zero value.
+
+    m["c"] // -> 0
+
+Optional second return value marks presence of key
+
+    if _, ok := m["foo"]; ok {
+        fmt.Println("contains key foo")
+    }
+
+Map literals:
+
+    var letters = map[string]int{ "a": 1, "b": 2}
+
+    type Vertex struct {
+        Lat, Long float64
+    }
+
+    var m = map[string]Vertex{
+        "Bell Labs": {40.68433, -74.39967},
+        "Google":    {37.42202, -122.08408},
+    }
+
+Range over keys and values:
+
+    for k, v := range m {
+        fmt.Printf("%s -> %s\n", k, v)
+    }
+
+Range over keys only:
+
+    for k := range m {
+        fmt.Printf("key: %s\n", k)
+    }
+
+
+## Embedding
+
+See https://golang.org/doc/effective_go.html#embedding
+
+Go does not provide subclassing, but it does have the ability to “borrow” pieces
+of an implementation by *embedding* types within a struct or interface.
+
+Interface embedding is very simple.
+
+    type Reader interface {
+        Read(p []byte) (n int, err error)
+    }
+
+    type Writer interface {
+        Write(p []byte) (n int, err error)
+    }
+
+    // ReadWriter combines the Reader and Writer interfaces.
+    type ReadWriter interface {
+        Reader
+        Writer
+    }
+
+The same basic idea applies to structs.
+
+     // bufio.ReadWriter stores pointers to a Reader and a Writer.
+     // It implements io.ReadWriter.
+     type ReadWriter struct {
+         *Reader  // *bufio.Reader
+         *Writer  // *bufio.Writer
+     }
+
+     var r *Reader = ...
+     var w *Writer = ...
+     rw := &bufio.ReadWriter{r, w}
+     // rw := &bufio.ReadWriter{Reader: r, Writer: w}
+
+The embedded elements are pointers to structs and of course must be initialized
+to point to valid structs before they can be used. The ReadWriter struct could
+be written to be composed as below, however then but then to promote the methods
+of the fields and to satisfy the io interfaces, we would also need to provide
+forwarding methods
+
+    type ReadWriter struct {
+        reader *Reader
+        writer *Writer
+    }
+
+    // forwarding method for Reader.Read()
+    func (rw *ReadWriter) Read(p []byte) (n int, err error) {
+        return rw.reader.Read(p)
+    }
+
+By embedding the structs directly, we avoid this bookkeeping. The methods of
+embedded types come along for free, so that `bufio.ReadWriter` not only has the
+methods of `bufio.Reader` and `bufio.Writer`, it also satisfies all three
+interfaces: `io.Reader`, `io.Writer`, and `io.ReadWriter`.
+
+When we embed a type, the methods of that type become methods of the outer type,
+but when they are invoked the receiver of the method is the inner type, not the
+outer one. When `Read` is invoked on a `bufio.ReadWriter`, it has exactly the
+same effect as the forwarding method above; the receiver is the reader field of
+the ReadWriter, not the ReadWriter itself.
+
+If we need to refer to an embedded field directly, the type name of the field,
+ignoring the package qualifier, serves as a field name, as it did in the Read
+method of our ReadWriter struct.
+
+    var rw ReadWriter = ...
+    rw.Write(...)  // equivalent to rw.Writer.Write(...)
+
+## Functions
+
+Functions are values and can be passed around just like other values.
+
+    func compute(fn func(float64, float64) float64) float64 {
+        return fn(3, 4)
+    }
+
+    ...
+
+    hypot := func(x, y float64) float64 {
+        return math.Sqrt(x*x + y*y)
+    }
+    fmt.Println(compute(hypot))    // prints "5"
+
+A closure is a function value that references variables from outside its
+body. The function may access and assign to the referenced variables; in this
+sense the function is "bound" to the variables.
+
+    func adder(start int) func(int) int {
+        sum := start  // becomes part of the returned functions closure
+        return func(x int) int {
+            sum += x
+            return sum
+        }
+    }
+    ...
+    next := adder(1)
+    fmt.Println(next(2))  // -> 3
+    fmt.Println(next(1))  // -> 4
+
+Go does not have classes. However, you can define *methods* on types.  A method
+is a function with a *receiver argument*.
+
+    type Vertex struct {
+        X, Y float64
+    }
+
+    func (v Vertex) Abs() float64 {
+        return math.Sqrt(v.X*v.X + v.Y*v.Y)
+    }
+
+You can declare a method on non-struct types, too. However, you can only
+declare a method with a receiver whose type is defined in the same package as
+the method, which prevents us from modifying built-in types such as `int`.
+
+    type MyFloat float64
+
+    func (f MyFloat) Abs() float64 {
+        if f < 0 {
+            return float64(-f)
+        }
+        return float64(f)
+    }
+
+You can declare methods with *pointer receivers* or *value receivers*.
+
+    func (v Vertex) ScaleVal(f float64)  {
+        v.X = v.X * f
+        v.Y = v.Y * f
+    }
+
+    func (v *Vertex) ScalePtr(f float64) {
+        v.X = v.X * f
+        v.Y = v.Y * f
+    }
+
+    func main() {
+        v := Vertex{3, 4}
+
+        v.ScaleVal(10)  // (by-value: no change to v)
+        fmt.Println(v)  // -> 3, 4
+        v.ScalePtr(10)  // (by-reference: modifies v)
+        fmt.Println(v)  // -> 30, 40
+    }
+
+Use pointer receivers when:
+
+- You want to change the state of the receiver in a method. This is not possible
+  with a value receiver, which copies by value.
+- If the struct you're defining the method on is very large, copying it would be
+  far too expensive than using a value receiver.
+
+Also, for a single type, be consistent in the use of value/pointer receivers.
+
+## Strings
 
 Convert string to bytes:
 
@@ -16,8 +560,62 @@ Use a `ByteBuffer` as an `io.Writer` to capture a string:
     fmt.Fprintf(&buf, "hello world")
     buf.String() // "hello world"
 
+Split and join:
 
-### File system
+    s := strings.Split("4.0.0.RELEASE", ".")  // []string{"4","0","0","RELEASE"}
+    strings.Join(s[:3], ".")  // "4.0.0"
+
+## Regular expressions
+
+The syntax of the regular expressions accepted is the same general syntax used
+by Perl, Python, and other languages. More precisely, it is the syntax accepted
+by RE2: https://github.com/google/re2/wiki/Syntax
+
+There are a few intersting functions:
+
+- Without first compiling a `regexp.Regexp`:
+
+        // true if string contains *any* match of the pattern
+        matched, _ := regexp.MatchString(`foo.*`, "seafood")
+
+        // true if byte slice contains *any* match of the pattern
+        matched, _ := regexp.Match(`foo.*`, []byte(`seafood`))
+
+- By compiling a `regexp.Regexp`. Use `MustCompile` in an `init` function or in
+  a package-global `var` declaration to compile a pattern (will panic on error).
+
+        var (
+            // semantic versions are of form 0.0.1-alpha.preview+123.github,
+            // not 4.0.1.RC1 (cannot have dot after patch version number)
+            NonSemverVersion = regexp.MustCompile(`([0-9]\.){3}\S+`)
+        )
+
+        func main() {
+            v1 := "4.0.0.RELEASE"
+            v2 := "0.0.1-alpha"
+
+            for _, ver := range []string{v1, v2} {
+                if NonSemverVersion.Match([]byte(ver)) {
+                    fmt.Printf("version '%s' matched\n", ver)
+                }
+            }
+         }
+
+`Regexp` has several methods:
+- `Match(b []byte) bool`: does `b` contain any match of the regexp?
+- `Find(b []byte) []byte`: leftmost match in `b` of the regexp
+- `FindAll(b []byte, n int) [][]byte`: all matches in `b` of the regexp.
+- `ReplaceAllString(src, repl string) string`: returns a copy of `src`,
+  replacing matches of the `Regexp` with the replacement string `repl`. Inside
+  `repl`, `$` signs are interpreted so that `$1` represents the text of the
+  first submatch (capture group).
+
+## Enumerations
+
+- TODO: type MyEnum int + iota
+
+
+## I/O and files
 
 Check if a file/directory exists
 
@@ -25,19 +623,37 @@ Check if a file/directory exists
         return err
     }
 
+Create a directory:
+
+    // error is of type *os.PathError
+    err := os.Mkdir("/my/dir", 0744)
+    err := os.MkdirAll("/my/dir", 0744)
+
+Read an entire file into a string:
+
+    data, err := ioutil.ReadFile("/tmp/dat")
+
 Open a file for reading:
 
      f, err := os.Open("/tmp/dat")
+     if err != nil { ... }
+     defer f.Close()
 
+Open a file for writing:
 
-     // read line-by-line with scanner
+     f, err := os.OpenFile("/tmp/dat", os.O_WRONLY|os.O_CREATE, 0644)
+     if err != nil { ... }
+     defer f.Close()
+
+Read line-by-line with `Scanner`:
+
      s := bufio.NewScanner(f)
      for s.Scan() {
          fmt.Printf(s.Text() + "\n")
      }
 
+Read line-by-line with a `bufio.Reader`:
 
-    // read line-by-line with a bufio Reader
     r := bufio.NewReader(f)
     for {
         line, err := r.ReadString('\n')
@@ -52,12 +668,154 @@ Open a file for reading:
     }
 
 
-Read an entire file into a string:
 
-    data, err := ioutil.ReadFile("/tmp/dat")
+## JSON
+
+- TODO: annotations, unmarshal
+- TODO: only exported struct names are unmarshalled!
 
 
-### Tests
+- TODO: stream parsing (one entry at a time)
+
+## XML parsing
+
+Stream-based parsing (one entry at a time). Suitable for very large files.
+
+    // element to be parsed from XML stream
+    type Product struct {
+        Name string `xml:"name,attr"`
+        Type string `xml:"type,attr"`
+    }
+
+    ...
+
+    src, _ := os.Open(xmlPath)
+    defer src.Close()
+
+    decoder := xml.NewDecoder(src)
+    for {
+        token, _ := decoder.Token()
+        switch elem := token.(type) {
+        case xml.StartElement:
+            // If we just read a StartElement token and its name is "prod-item"
+            if elem.Name.Local == "prod-item" {
+                var product Product
+                _ := decoder.DecodeElement(&cpeItem, &elem)
+                // do something with product ...
+            }
+        default:
+            log.Debug().Msgf("ignoring token %s", elem)
+        }
+    }
+
+    if err == io.EOF {
+        // normal exit
+        return nil
+    }
+
+
+## Database
+
+To ensure that a transaction is always commited or rolled back (to ensure that
+the underlying database connection isn't leaked), and to reduce the amount of
+code, the following pattern can be used.
+
+    type txFunc func(*sql.Tx) error
+
+    // executes f within a transaction and handles closing of the transaction.
+    func inTx(db *sql.DB, f txFunc) (err error) {
+        tx, err := db.Begin()
+        if err != nil {
+            return errors.Wrapf(err, "failed to start transaction")
+        }
+
+        // make sure that we always end the transaction:
+        // - rollback on error from the txFunc or a panic
+        // - commit otherwise
+        defer func() {
+            if r := recover(); r != nil {
+                tx.Rollback()
+                panic(r) // re-panic
+            }
+            if err != nil {
+                tx.Rollback()
+                return
+            }
+            err = tx.Commit()
+        }()
+
+        err = f(tx)
+        return
+    }
+
+
+    ...
+
+    // executes within a transaction with guaranteed cleanup
+    func (db *sql.DB) insertAdmin(name string) error {
+        return inTx(db, func(tx *sql.Tx) error {
+            _, err := tx.Exec("INSERT INTO people (name) VALUES ($1)", name)
+            if err != nil {
+                return err
+            }
+
+            _, err = tx.Exec("INSERT INTO groups (name, person) VALUES ('admins', $1)", name)
+            if err != nil {
+                return err
+            }
+
+            return nil
+        })
+    }
+
+
+## Logging
+
+- TODO: zerolog
+
+
+## Command-line parsing
+
+- TODO: viper/cobra
+
+
+## User input from stdio
+
+
+    func Prompt(warning string) {
+        fmt.Println(warning)
+        var r string
+        for {
+            if r = prompt("Are you sure? (y/n)"); r != "y" && r != "n" {
+                fmt.Printf("Please answer y/n.\n")
+                continue
+            }
+            break
+        }
+        if r == "n" {
+            fmt.Printf("aborting ...\n")
+            os.Exit(1)
+        }
+        // ... proceed
+    }
+
+    func prompt(question string) string {
+        reader := bufio.NewReader(os.Stdin)
+        fmt.Printf(question + " ")
+        response, err := reader.ReadString('\n')
+        if err != nil {
+            fmt.Println("aborting ...")
+            os.Exit(1)
+        }
+        return strings.Trim(response, " \n")
+    }
+
+
+##
+
+## Goroutines and channels
+
+## Tests
 Tests are written in files ending in `_test.go` and use the `testing` package.
 
     import "testing"
@@ -102,7 +860,7 @@ Table-driven tests are common in Go:
         }
     }
 
-### stretchr/testify
+## stretchr/testify
 Libraries like https://github.com/stretchr/testify can be used to simplify
 testing:
 
