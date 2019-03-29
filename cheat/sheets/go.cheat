@@ -669,7 +669,7 @@ Read line-by-line with a `bufio.Reader`:
 
 
 
-### JSON
+## JSON
 
 - TODO: annotations, unmarshal
 - TODO: only exported struct names are unmarshalled!
@@ -677,7 +677,7 @@ Read line-by-line with a `bufio.Reader`:
 
 - TODO: stream parsing (one entry at a time)
 
-### XML parsing
+## XML parsing
 
 Stream-based parsing (one entry at a time). Suitable for very large files.
 
@@ -714,7 +714,7 @@ Stream-based parsing (one entry at a time). Suitable for very large files.
     }
 
 
-### Database
+## Database
 
 To ensure that a transaction is always commited or rolled back (to ensure that
 the underlying database connection isn't leaked), and to reduce the amount of
@@ -769,18 +769,53 @@ code, the following pattern can be used.
     }
 
 
-### Logging
+## Logging
 
 - TODO: zerolog
 
 
-### Command-line parsing
+## Command-line parsing
 
 - TODO: viper/cobra
 
-### Goroutines and channels
 
-### Tests
+## User input from stdio
+
+
+    func Prompt(warning string) {
+        fmt.Println(warning)
+        var r string
+        for {
+            if r = prompt("Are you sure? (y/n)"); r != "y" && r != "n" {
+                fmt.Printf("Please answer y/n.\n")
+                continue
+            }
+            break
+        }
+        if r == "n" {
+            fmt.Printf("aborting ...\n")
+            os.Exit(1)
+        }
+        // ... proceed
+    }
+
+    func prompt(question string) string {
+        reader := bufio.NewReader(os.Stdin)
+        fmt.Printf(question + " ")
+        response, err := reader.ReadString('\n')
+        if err != nil {
+            fmt.Println("aborting ...")
+            os.Exit(1)
+        }
+        return strings.Trim(response, " \n")
+    }
+
+
+##
+
+## Goroutines and channels
+
+## Tests
 Tests are written in files ending in `_test.go` and use the `testing` package.
 
     import "testing"
@@ -825,7 +860,7 @@ Table-driven tests are common in Go:
         }
     }
 
-### stretchr/testify
+## stretchr/testify
 Libraries like https://github.com/stretchr/testify can be used to simplify
 testing:
 
