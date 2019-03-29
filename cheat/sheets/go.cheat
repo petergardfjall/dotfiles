@@ -83,6 +83,17 @@ state is required; `init` is called after all the variable declarations in the
 package have evaluated their initializers, and those are evaluated only after
 all the imported packages have been initialized.
 
+Some packages are imported just for their side-effects. The `net/http/pprof`
+package registers HTTP handlers that provide debugging information.
+
+    import _ "net/http/pprof"
+
+Similarly, the `database/sql` drivers often use an `init` method to register
+themselves.
+
+    import _ "github.com/lib/pq"   // postgresql
+
+
 ## Builtin
 
 Package `builtin` provides *documentation* (they aren't actually declared there)
