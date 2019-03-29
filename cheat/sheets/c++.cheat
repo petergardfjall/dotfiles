@@ -1717,7 +1717,8 @@ constructors of the bases and of the non-static class members.
 
 When a class has a constructor, all objects of that class will need to be
 initialized by a constructor call (and a default constructor is no longer
-generated implicitly).
+generated implicitly; but default copy and move constructors are still
+generated).
 
     class Date {
       int d, m, y;
@@ -1939,6 +1940,89 @@ generic programming techniques relying on associated types.
 
 ## Construction, Cleanup, Copy and Move
 (The C++ Programming Language, Chapter 17)
+
+    string ident(string arg) { // string passed by value (copied into arg)
+        return arg;            // move the value of arg out of ident() to caller
+    }
+
+    int main ()  {
+        string s1 {"Adams"}; // initialize string (construct in s1).
+        s1 = ident(s1);      // copy s1 into ident()
+                             // move the result of ident(s1) into s1;
+                             // s1’s value is "Adams".
+
+        string s2 {"Pratchett"};  // initialize string (construct in s2)
+        s1 = s2;                  // copy the value of s2 into s1
+                                  // both s1 and s2 have the value "Pratchett".
+    }  // s1's and s2's destructors are called to release heap-allocated
+       // space for their strings
+
+The difference between *move* and *copy* is that after a copy two objects must
+have the same value, whereas after a move the source of the move is not required
+to have its original value. Moves can be used when the source object will not be
+used again.
+
+Constructors, copy and move assignment operations, and destructors directly
+support a view of lifetime and resource management (e.g. RAII).
+
+Constructors, destructors, and copy and move operations for a type are not
+logically separate.  We must define them as a matched set or suffer logical or
+performance problems. If a class X has a destructor that performs a nontrivial
+task, such as free-store deallocation or lock release, the class is likely to
+need the full complement of functions:
+
+    class X {
+        X(Sometype);            // "ordinary" constructor
+        X();                    // default constructor
+        X(const X&);            // copy constructor
+        X(X&&);                 // move constructor
+        X& operator=(const X&); // copy assignment: clean up target and copy
+        X& operator=(X&&);      // move assignment: clean up target and move
+        ~X();                   // destructor
+    };
+
+There are five situations in which an object is copied or moved:
+- As the source of an assignment
+- As an object initializer
+- As a function argument
+- As a function return value
+- As an exception
+
+In all cases, the copy or move constructor will be applied (unless it can be
+optimized away).
+
+Constructors and destructors interact correctly with class hierarchies. A
+constructor builds a class object "from the bottom up":
+1. first, the constructor invokes its base class constructors,
+2. then, it invokes the member constructors, and
+3. finally, it executes its own body.
+
+A destructor "tears down" an object in the reverse order:
+1. first, the destructor executes its own body,
+2. then, it invokes its member destructors, and
+3. finally, it inv okes its base class destructors.
+
+In particular, a `virtual` base is constructed before any base that might use it
+and destroyed after all such bases. This ordering ensures that a base or a
+member is not used before it has been initialized or used after it has been
+destroyed.
+
+A destructor can be declared to be `virtual`, and usually should be for a class
+with a `virtual` function. The reason we need a `virtual` destructor is that an
+object usually manipulated through the interface provided by a base class is
+often also `delete`d through that interface:
+
+    class Shape {
+    public:
+        virtual void draw() = 0;
+        virtual ~Shape();
+    };
+
+    class Circle : public Shape {
+    public:
+        void draw();
+        ~Circle();
+    };
 
 ## Concurrency
 
