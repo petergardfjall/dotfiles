@@ -28,7 +28,6 @@ The *zero value* is:
     i := 42
     f := float64(i)
 
-
 A *type assertion* provides access to an interface value's underlying concrete
 value.
 
@@ -36,11 +35,10 @@ value.
     s := i.(string)
     fmt.Println(s)
 
-If `i` does not hold a `string`, the statement will trigger a panic.
-
-To test whether an interface value holds a specific type, a type assertion can
-return two values: the underlying value and a boolean value that reports whether
-the assertion succeeded.
+If `i` does not hold a `string`, the statement will trigger a panic. To test
+whether an interface value holds a specific type, a type assertion can return
+two values: the underlying value and a boolean value that reports whether the
+assertion succeeded (the "comma, ok" idiom).
 
      t, ok := i.(T)
 
@@ -50,6 +48,40 @@ Constants can be character, string, boolean, or numeric values.
         Pi = 3.14
         E  = 2.71
     )
+
+For "type alias" definitions where two types (such as `Sequence` and `[]int`
+below) are the same if we ignore the type name, it's legal to convert between
+them. It's an idiom in Go programs to convert the type of an expression to
+access a different set of methods.
+
+    type Sequence []int
+
+    // sorted print
+    func (s Sequence) String() string {
+        s = s.Copy()
+        sort.IntSlice(s).Sort() // convert to sort.IntSlice: type IntSlice []int
+        return fmt.Sprint([]int(s)) // convert to []int
+    }
+
+
+## Packages
+
+A convention is that the package name is the base name of its source directory;
+the package in `src/encoding/base64` is imported as `"encoding/base64"` but has
+name `base64`. This is a *convention*, it would have been perfectly ok to name
+the package `b64`.
+
+The importer of a package will use the name to refer to its contents, so
+exported names in the package can use that fact to avoid stutter. For instance,
+the buffered reader type in the `bufio` package is called `Reader`, not
+`BufReader`, because users see it as `bufio.Reader`.
+
+
+## The init function
+Each source file can define one or more `init` functions to set up whatever
+state is required; `init` is called after all the variable declarations in the
+package have evaluated their initializers, and those are evaluated only after
+all the imported packages have been initialized.
 
 ## Builtin
 
@@ -283,6 +315,20 @@ It's common to declare errors at one place and then have them returned later.
 
 TODO: https://godoc.org/github.com/pkg/errors
 
+## Arrays
+
+Arrays are useful when planning the detailed layout of memory and sometimes can
+help avoid allocation, but primarily they are a building block for slices.
+
+Note though that:
+- Arrays are values. Assigning one array to another copies all the elements.
+- If you pass an array to a function, it will receive a copy of the array, not a
+  pointer to it. If you want C-like behavior and efficiency, pass a pointer to
+  the array.
+- The size of an array is part of its type. The types `[10]int` and `[20]int`
+  are distinct.
+
+
 ## Slices
 
 Slices wrap arrays to give a more general, powerful, and convenient interface to
@@ -387,6 +433,7 @@ Range over keys only:
         fmt.Printf("key: %s\n", k)
     }
 
+A `map[T]bool` is an idiomatic way of representing a set in Go.
 
 ## Embedding
 
@@ -544,6 +591,19 @@ Use pointer receivers when:
 
 Also, for a single type, be consistent in the use of value/pointer receivers.
 
+The return values a Go function can be given names and used as regular
+variables, just like the incoming parameters. When named, they are initialized
+to the zero values for their types when the function begins; if the function
+executes a `return` statement without arguments (*naked return*), the current
+values of the result parameters are used as the returned values.
+
+    func split(sum int) (x, y int) {
+        x = sum * 4 / 9
+        y = sum - x
+        return
+    }
+
+
 ## Strings
 
 Convert string to bytes:
@@ -612,7 +672,34 @@ There are a few intersting functions:
 
 ## Enumerations
 
-- TODO: type MyEnum int + iota
+Enumerated constants are created using the `iota` enumerator. Since `iota` can
+be part of an expression and expressions can be implicitly repeated, it is easy
+to build intricate sets of values. The ability to attach a method such as
+`String` to any user-defined type makes it possible for arbitrary values to
+format themselves automatically for printing. `time.Duration` is defined in a
+similar fashion.
+
+    type ByteSize float64
+
+    const (
+        _           = iota // ignore first value by assigning to blank
+        KB ByteSize = 1 << (10 * iota)
+        MB
+        GB
+    )
+
+    func (b ByteSize) String() string {
+        switch {
+        case b >= GB:
+            return fmt.Sprintf("%.2fGB", b/GB)
+        case b >= MB:
+            return fmt.Sprintf("%.2fMB", b/MB)
+        case b >= KB:
+            return fmt.Sprintf("%.2fKB", b/KB)
+        }
+        return fmt.Sprintf("%.2fB", b)
+    }
+
 
 
 ## I/O and files
