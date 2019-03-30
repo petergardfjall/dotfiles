@@ -312,7 +312,15 @@ Pointer:
 
 ## Errors
 
-It's common to declare errors at one place and then have them returned later.
+Go programs express error state with error values.
+
+The error type is a built-in interface similar to `fmt.Stringer`:
+
+    type error interface {
+        Error() string
+    }
+
+It's a common practice to declare errors at the top of a source file.
 
     var (
         ErrInternal      = errors.New("regexp: internal error")
@@ -324,7 +332,39 @@ It's common to declare errors at one place and then have them returned later.
 
     return nil, ErrUnmatchedLpar
 
-TODO: https://godoc.org/github.com/pkg/errors
+The traditional error handling idiom in Go is roughly akin to
+
+    if err != nil {
+        return err
+    }
+
+which when applied recursively up the call stack results in error reports
+without context or debugging information. The `github.com/pkg/errors` package
+allows context to be added to the failure path in their code in a way that does
+not destroy the original value of the error (e.g. to include a stacktrace, much
+like a panic does). It provides functions `Wrap`, `Wrapf` and `WithStack` which
+record a stack trace at the point they are invoked.
+
+    import "github.com/pkg/errors"
+
+    func main() {
+            err := errors.New("error")
+            err = errors.Wrap(err, "open failed")
+            err = errors.Wrap(err, "read config failed")
+
+            fmt.Println(err)         // "read config failed: open failed: error"
+            fmt.Printf("%+v\n", err) // prints the error with stacktrace
+    }
+
+The `%+v` prints each frame of the error's stacktrace in detail.
+
+Note: for cases when we have no additional message to add but only want to
+provide stacktrace details we can use:
+
+    if err != nil {
+        return errors.WithStack(err)  // annotate with stacktrace
+    }
+
 
 ## Arrays
 
@@ -347,7 +387,12 @@ sequences of data. Slices hold references to an underlying array, and if you
 assign one slice to another, both refer to the same array.  Note: Go types read
 from left to right `[]string` "slice of string".
 
-The zero-value for a slice is a zero capacity slice. No need to use `make()`.
+A slice has both a *length* and a *capacity*. The length of a slice is the
+number of elements it contains. The capacity of a slice is the number of
+elements in the underlying array, counting from the first element in the slice.
+
+The zero-value for a slice is `nil`, which in effect is a zero capacity
+slice. No need to use `make()`. Note that `append` works on `nil` slices.
 
     var v []string
     v = append(v, "foo", "bar")  // we can append without make()
@@ -912,6 +957,18 @@ code, the following pattern can be used.
 ##
 
 ## Goroutines and channels
+
+A *goroutine* is lightweight, costing little more than the allocation of stack
+space. And the stacks start small, so they are cheap, and grow by allocating
+(and freeing) heap storage as required. Goroutines are multiplexed onto multiple
+OS threads so if one should block, such as while waiting for I/O, others
+continue to run.
+
+Besides the well-known thread synchronization primitives such as `sync.Mutex`
+and `sync.Cond` Go offers a message-passing synchronization mechanism in
+*channels*. Go channels can be viewed as a type-safe generalization of Unix
+pipes.
+
 
 ## Tests
 Tests are written in files ending in `_test.go` and use the `testing` package.
