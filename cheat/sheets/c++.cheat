@@ -1715,6 +1715,12 @@ constructors of the bases and of the non-static class members.
       // Date& operator=(const Date&) = default; // copy assignment
     };
 
+A default constructor is used if no arguments are specified or an empty
+initializer list is given:
+
+    Date d1;
+    Date d2 {};
+
 When a class has a constructor, all objects of that class will need to be
 initialized by a constructor call (and a default constructor is no longer
 generated implicitly; but default copy and move constructors are still
@@ -1794,6 +1800,14 @@ is equivalent to:
      {
         ...
      }
+
+This constructor makes use of a *member initializer list* (`: d{dd} ...`). Some
+details: the members' constructors are called before the body of the containing
+class’s own constructor is executed. The constructors are called in the order in
+which the members are declared in the class rather than the order in which the
+members appear in the initializer list.
+
+A reference or `const` member *must* be initialized.
 
 *Explicit Constructors*:
 
@@ -2023,6 +2037,21 @@ often also `delete`d through that interface:
         void draw();
         ~Circle();
     };
+
+
+Bases of a derived class are initialized in the same way non-static data members
+are. If a base requires an initializer, it must be provided as a base
+initializer in a constructor.
+
+    class B1 { B1(); };   // has default constructor
+    class B2 { B2(int); } // no default constructor
+
+    struct D1 : B1, B2 {
+        D1(int i) : B1{}, B2{i} {}   // must call B2(int).
+    };
+
+
+*TODO: Delegating constructors*
 
 ## Concurrency
 
