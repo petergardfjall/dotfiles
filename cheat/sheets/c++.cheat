@@ -2100,8 +2100,76 @@ a definition outside the class.
      // node.cpp
      int Node::node_count = 0;  // definition
 
+
+*Copy vs Move*:
+
+When we need to transfer a value from `a` to `b`, we usually have two options:
+- Copy is the conventional meaning of `x=y;` that is, the effect is that the
+  values of `x` and `y` are both equal to `y`'s value before the assignment.
+- Move leaves `x` with `y`'s former value and `y` in some moved-from state. For
+  the most interesting cases, containers, that moved-from state is "empty".
+
+- A move cannot throw, whereas a copy might (because it may need to acquire a
+  resource).
+- A move is often more efficient than a copy.
+- A move operation *should* leave the source object in a valid but unspecified
+  state because it will eventually be destroyed and the destructor cannot
+  destroy an object left in an invalid state. Also, standard-library algorithms
+  rely on being able to assign to (using move or copy) a moved-from object. So,
+  design your moves not to throw, and to leave their source objects in a state
+  that allows destruction and assignment.
+- To save us from repetitive work, copy and move have default definitions. Use
+  the default copy and move constructor unless you have a specific reason not to
+  (like pointers or resource handles which would, for instance, be copied
+  memberwise).
+
 *Copy*:
-TODO
+
+Copy for a class X is defined by two operations:
+- Copy constructor: `X(const X&)`
+- Copy assignment:  `X& operator=(const X&)`
+
+What does a copy constructor or copy assignment have to do to be considered "a
+proper copy operation"? In addition to be declared with a correct type, a copy
+operation must have the proper *copy semantics*.
+
+- *Equivalence*: After `x=y`, operations on x and y should give the same
+  result. In particular, if `==` is defined for their type, we should have
+  `x==y` and `f(x)==f(y)` for any function `f()`.
+- Independence: After `x=y`, operations on `x` should not implicitly change the
+  state of `y`.
+
+The default menaing of copy is memeberwise copy. However, we need to be careful
+when pointers/resource handles are involved. For such members we need to do a
+"deep copy". An exception to this rule is *immutable* state, which is not a
+problem to share.
+
+A copy constructor and a copy assignment differ in that a copy constructor
+initializes uninitialized memory, whereas the copy assignment operator must
+correctly deal with an object that has already been constructed and may own
+resources. In some cases, copy assignment should protect against
+self-assignment, `m=m`.
+
+For the purposes of copying, a base is just a member: to copy an object of a
+derived class you have to copy its bases:
+
+    struct B1 {
+        ...
+        B1(const B1&);
+    };
+
+    struct B2 {
+        ...
+        B2(const B2&);
+    };
+
+    struct D : B1, B2 {
+        D(const D& a) :B1{a}, B2{a}, m1{a.m1}, m2{a.m2} {}
+
+        B1 m1;
+        B2 m2;
+    };
+
 
 *Move*:
 TODO
