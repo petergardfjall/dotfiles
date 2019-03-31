@@ -1590,7 +1590,7 @@ A given class, enumeration, and template, etc., must be defined exactly once in
 a program. Unfortunately, the language rule cannot be that simple. For example,
 the definition of a class may be composed through macro expansion, and a def-
 inition of a class may be textually included in two source files by `#include`
-directives. In fact, a "file" isn’t a concept that is part of the C++ language
+directives. In fact, a "file" isn't a concept that is part of the C++ language
 definition; there exist implementations that do not store programs in source
 files. Consequently, the rule in the standard that says that there must be a
 unique definition of a class, template, etc., is phrased in a somewhat more
@@ -1751,8 +1751,8 @@ Constructors obey the same overloading rules as do ordinary functions:
     public:
 
       Date(int, int, int); // day, month, year
-      Date(int, int);      // day, month, today’s year
-      Date(int);           // day, today’s month and year
+      Date(int, int);      // day, month, today's year
+      Date(int);           // day, today's month and year
       Date();              // default Date: today
       Date(const string&); // date in string representation
 
@@ -1769,7 +1769,7 @@ The number of related functions can be reduced by using *default arguments*:
       Date(int dd = 0, int mm = 0, int yy = 0);
     };
 
-We can also add initializers to data members:
+We can also add initializers to data members "in-class":
 
     struct { int d, m, y} date_initializer = { 1, 1, 19790 };
 
@@ -1803,7 +1803,7 @@ is equivalent to:
 
 This constructor makes use of a *member initializer list* (`: d{dd} ...`). Some
 details: the members' constructors are called before the body of the containing
-class’s own constructor is executed. The constructors are called in the order in
+class's own constructor is executed. The constructors are called in the order in
 which the members are declared in the class rather than the order in which the
 members appear in the initializer list.
 
@@ -1963,7 +1963,7 @@ generic programming techniques relying on associated types.
         string s1 {"Adams"}; // initialize string (construct in s1).
         s1 = ident(s1);      // copy s1 into ident()
                              // move the result of ident(s1) into s1;
-                             // s1’s value is "Adams".
+                             // s1's value is "Adams".
 
         string s2 {"Pratchett"};  // initialize string (construct in s2)
         s1 = s2;                  // copy the value of s2 into s1
@@ -2050,11 +2050,61 @@ initializer in a constructor.
         D1(int i) : B1{}, B2{i} {}   // must call B2(int).
     };
 
+It's possible to define one constructor in terms of another using a *delegating
+constructor*/*forwarding constructor* in the member initializer:
 
-*TODO: Delegating constructors*
+    class X {
+      int a;
+    public:
+      X(int x) { if (0<x && x<=max) a=x; else throw Bad_X(x); }
+      X() : X{42} { }
+      X(string s) : X{to<int>(s)} {}
+    };
 
-## Concurrency
+Delegating by calling another constructor in a constructor's member and base
+initializer list is very different from explicitly calling a constructor in the
+body of a constructor. The `X{42}` simply creates a new unnamed object (a
+temporary) and does nothing with it.
 
+      X() { X{42}; } // likely error
+
+We can specify an initializer for a non- static data member in the class
+declaration.
+
+    class A {
+    public:
+      int a {7};
+      int b = 77;
+    };
+
+A constructor will use such an in-class initializer, so that the above code is
+equivalent to:
+
+    class A {
+    public:
+      int a; int b;
+    A() : a{7}, b{77} {};
+
+If a member is initialized by both an in-class initializer and a constructor,
+only the constructor's initialization is done (it "overrides" the default).
+
+A `static` class member is statically allocated rather than part of each object
+of the class. Generally, the static member declaration acts as a declaration for
+a definition outside the class.
+
+     // node.h
+     class Node {
+       static int node_count;  // declaration
+     };
+
+     // node.cpp
+     int Node::node_count = 0;  // definition
+
+*Copy*:
+TODO
+
+*Move*:
+TODO
 
 ## Tools
 - Compiler: clang, g++
