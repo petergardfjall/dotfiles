@@ -859,6 +859,74 @@ Stream-based parsing (one entry at a time). Suitable for very large files.
 
 ## Database
 
+The `database/sql` package provides a generic interface around SQL(-like)
+databases. A driver is needed to connect: http://golang.org/s/sqldrivers.
+
+    import "database/sql"
+    import _ "github.com/go-sql-driver/mysql"
+
+
+    // func Open(driverName, dataSourceName string) (*DB, error)
+
+    db, err := sql.Open("mysql", "user:password@/dbname")
+
+`DB` is a database handle representing a pool of zero or more underlying
+connections. It's safe for concurrent use by multiple goroutines. In fact, it is
+encouraged to share a single `DB` instance between goroutines, since creating
+more than one `DB` comes with a resource overhead (each has its own connection
+pool, etc). Although it’s idiomatic to `Close()` the database when you’re
+finished with it, the `sql.DB` object is designed to be long-lived. Create one
+`sql.DB` object for each distinct datastore you need to access, and keep it
+until the program is done accessing that datastore.
+
+Open may just validate its arguments without creating a connection to the
+database. To verify that the data source name is valid, call `DB.Ping()`.
+
+    err = db.Ping()
+    if err != nil {
+        // do something here
+    }
+
+`Query()` is used for data retrieval of multiple rows:
+
+    rows, err := db.Query("SELECT name FROM users WHERE age = $1", age)
+    if err != nil {
+        handleErr(err)
+    }
+    defer rows.Close()  // important: release connection!
+
+    for rows.Next() {
+        var name string
+        if err := rows.Scan(&name); err != nil {
+            handleErr(err)
+        }
+        ...
+    }
+
+    // important: check for errors after rows.Next() returns false!
+    if err := rows.Err(); err != nil {
+
+        handleErr(err)
+    }
+
+`QueryRow()` is used for single-row queries:
+
+    var age int64
+    err := db.QueryRow("SELECT age FROM users WHERE name = $1", name).Scan(&age)
+    if err != nil {
+        handleErr(err)
+    }
+
+`Exec` is used for data manipulation:
+
+    result, err := db.Exec(
+       "INSERT INTO users (name, age) VALUES ($1, $2)", "foobar", 27)
+    if err != nil {
+        handleErr(err)
+    }
+
+    fmt.Printf("updated %d rows.\n", res.RowsAffected())
+
 To ensure that a transaction is always commited or rolled back (to ensure that
 the underlying database connection isn't leaked), and to reduce the amount of
 code, the following pattern can be used.
