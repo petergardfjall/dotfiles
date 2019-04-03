@@ -42,6 +42,13 @@ assertion succeeded (the "comma, ok" idiom).
 
      t, ok := i.(T)
 
+A common use of the comma-ok idiom is to test if a value is of a certain type
+and, if so, take some action:
+
+     if err, ok := err.(SomeType); ok {
+         // do something with error
+     }
+
 Constants can be character, string, boolean, or numeric values.
 
     const (
