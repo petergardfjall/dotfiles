@@ -681,6 +681,11 @@ Split and join:
     s := strings.Split("4.0.0.RELEASE", ".")  // []string{"4","0","0","RELEASE"}
     strings.Join(s[:3], ".")  // "4.0.0"
 
+Create an `io.Reader` from a string:
+
+    strings.NewReader("hello world")
+
+
 ## Regular expressions
 
 The syntax of the regular expressions accepted is the same general syntax used
@@ -814,11 +819,116 @@ Read line-by-line with a `bufio.Reader`:
 
 ## JSON
 
-- TODO: annotations, unmarshal
-- TODO: only exported struct names are unmarshalled!
+Reading and writing data is accomplished with the `encoding/json` package.
+
+Encoding a data structure into JSON is performed via `Marshal`:
+
+    func Marshal(v interface{}) ([]byte, error)
+
+Decoding JSON into a data structure is done via `Unmarshal`:
+
+    func Unmarshal(data []byte, v interface{}) error
+
+It is possible to annotate fields to customize how they are encoded/decoded:
+
+*NOTE: The json package only accesses exported fields of struct types (those
+that begin with an uppercase letter).*
+
+    type Message struct {
+        Name string     `json:"name"`
+        Body string
+        Time int
+    }
+
+    m := Message{"Alice", "Hello", 1554284294}
+    b, _ := json.Marshal(m)
+    fmt.Println(string(b)) // {"name":"Alice","Body":"Hello","Time":1554284294}
 
 
-- TODO: stream parsing (one entry at a time)
+    var m2 Message
+    err := json.Unmarshal(b, &m)
+
+
+Custom marshalling/unmarshalling for a user-defined type can be provided by
+writing `MarshalJSON` and `UnmarshalJSON` methods for the type.
+
+    type Duration time.Duration
+
+    func (d Duration) MarshalJSON() ([]byte, error) {
+        return json.Marshal(fmt.Sprintf("%s", time.Duration(d)))
+    }
+
+    func (d *Duration) UnmarshalJSON(b []byte) error {
+        var v interface{}
+        if err := json.Unmarshal(b, &v); err != nil {
+            return err
+        }
+        switch value := v.(type) {
+        case float64:
+            *d = Duration(time.Duration(value))
+            return nil
+        case string:
+            tmp, err := time.ParseDuration(value)
+            if err != nil {
+                return err
+            }
+            *d = Duration(tmp)
+            return nil
+        default:
+            return errors.New("invalid duration")
+        }
+    }
+
+When we want to parse one entry at a time from a long (potentially infinite)
+stream of JSON, we can use `json.NewDecoder(io.Reader)`. Consider a very large
+document which we don't want to load in its entirety into memory:
+
+    {
+      ...
+      "persons": [
+        { "name": "foo", "age": 30 },
+        ... millions of entries
+      ]
+      ...
+    }
+
+The following snippet shows how to read it element-by-element
+
+        jsonStr := `
+          {
+            "animals": ["zebra", "giraffe"],
+            "persons": [
+               { "name": "foo", "age": 30 },
+               { "name": "bar", "age": 35 }
+             ],
+             "cars": ["volvo"]
+          }`
+
+        type Person struct {
+            Name string `json:"name"`
+            Age  int    `json:"age"`
+        }
+
+        dec := json.NewDecoder(strings.NewReader(jsonStr))
+        // read tokens until we reach "persons"
+        for {
+            token, _ := dec.Token()
+            fmt.Printf("read token: %v (%T)\n", token, token)
+            if token == "persons" {
+                break
+            }
+        }
+
+        // read the opening bracket of the persons array
+        _, _ = dec.Token()
+        // now start reading items, one-at-a-time
+        for dec.More() {
+            var person Person
+            _ = dec.Decode(&person)
+            fmt.Printf("person %#v\n", person)
+        }
+
+
 
 ## XML parsing
 
@@ -988,6 +1098,10 @@ code, the following pattern can be used.
 ## Command-line parsing
 
 - TODO: viper/cobra
+  - root.go
+  - persistent flags
+  - flags
+  - environment variable binding (support env variables in place of flags)
 
 
 ## User input from stdio
