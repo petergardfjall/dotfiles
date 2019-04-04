@@ -650,9 +650,15 @@ Use pointer receivers when:
 - You want to change the state of the receiver in a method. This is not possible
   with a value receiver, which copies by value.
 - If the struct you're defining the method on is very large, copying it would be
-  far too expensive than using a value receiver.
+  far too expensive. It's a bit more complicated than pointers always being more
+  efficient: modern computers are quick at copying memory, heap allocations are
+  expensive (as can garbage collection be), so don't use pointers because you
+  *think* they might give you better performance (prove it by benchmarking!). If
+  memory copying is a limiting factor for you performance-wise, you're in a good
+  place. Default to using values except when you *need* the semantics a pointer
+  provides.
 
-Also, for a single type, be consistent in the use of value/pointer receivers.
+Also, for a single type, *be consistent in the use of value/pointer receivers*.
 
 The return values a Go function can be given names and used as regular
 variables, just like the incoming parameters. When named, they are initialized
@@ -768,6 +774,23 @@ similar fashion.
         return fmt.Sprintf("%.2fB", b)
     }
 
+
+## Stack vs heap allocation
+
+Generally speaking, we want our data on the stack (for reasons of performance:
+no dereferencing, cache friendliness (locality), and less garbage collection
+overhead).
+
+When possible, the Go compilers will allocate variables that are local to a
+function in that function's stack frame. However, if the compiler cannot prove
+that the variable is not referenced after the function returns, then the
+compiler must allocate the variable on the garbage-collected heap to avoid
+dangling pointer errors.
+
+In current compilers, if a variable has its address taken, that variable is a
+candidate for allocation on the heap. However, a basic "escape analysis"
+recognizes some cases when such variables will not live past the return from the
+function and can reside on the stack.
 
 
 ## I/O and files
@@ -991,7 +1014,7 @@ databases. A driver is needed to connect: http://golang.org/s/sqldrivers.
 connections. It's safe for concurrent use by multiple goroutines. In fact, it is
 encouraged to share a single `DB` instance between goroutines, since creating
 more than one `DB` comes with a resource overhead (each has its own connection
-pool, etc). Although it’s idiomatic to `Close()` the database when you’re
+pool, etc). Although it's idiomatic to `Close()` the database when you're
 finished with it, the `sql.DB` object is designed to be long-lived. Create one
 `sql.DB` object for each distinct datastore you need to access, and keep it
 until the program is done accessing that datastore.
@@ -1292,3 +1315,17 @@ As an example:
              // verify that expected mock calls were made
             mockRunner.AssertExpectations(t)
     }
+
+## Profiling
+https://golang.org/pkg/runtime/pprof/
+https://jvns.ca/blog/2017/09/24/profiling-go-with-pprof/
+https://coder.today/tech/2018-11-10_profiling-your-golang-app-in-3-steps/
+
+TODO: https://github.com/golang/go/wiki/Performance#cpu-profiler
+TODO: https://github.com/golang/go/wiki/Performance#memory-profiler
+
+
+https://golang.org/pkg/net/http/pprof/
+
+https://github.com/elastisys/kube-insight-logserver#run
+https://github.com/elastisys/kube-insight-logserver/blob/master/pkg/server/http.go#L51
