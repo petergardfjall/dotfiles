@@ -461,6 +461,13 @@ added. Use `make` to create a `map`.
     m["b"] = 2
     delete(m, "b")
 
+
+Map keys may be of any type that is comparable. The language spec defines this
+precisely, but in short, comparable types are boolean, numeric, string, pointer,
+channel, and interface types, and structs or arrays that contain only those
+types. Notably absent from the list are slices, maps, and functions; these types
+cannot be compared using `==`, and may not be used as map keys.
+
 If the requested key doesn't exist, we get the value type's zero value.
 
     m["c"] // -> 0
@@ -1165,8 +1172,6 @@ code, the following pattern can be used.
         return strings.Trim(response, " \n")
     }
 
-
-##
 
 ## Goroutines and channels
 
