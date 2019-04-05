@@ -131,7 +131,7 @@ storage units of a computer and the most common ways of using them to hold data:
   - `signed char`: like char but guaranteed to be signed, capable of holding
     both positive and negative values.
   - `unsigned char`: like char but guaranteed to be unsigned.
-  - `wchar_t` : for larger character sets such as Unicode. Size is impl-defined,
+  - `wchar_t`: for larger character sets such as Unicode. Size is impl-defined,
     but large enough to hold the largest character set supported by the
     implementation's locale.
     Literal: `L'a'`.
@@ -334,8 +334,8 @@ suffix to the type name. In expressions, it's the dereference operator.
     int∗ pi = &i;
 
     void∗ pv = pi; // ok: implicit conversion of int* to void*
-    ∗pv;           // error : can't dereference void*
-    ++pv;          // error : can't increment (size of type pointed to unknown)
+    ∗pv;           // error: can't dereference void*
+    ++pv;          // error: can't increment (size of type pointed to unknown)
 
     int∗ pi2 = static_cast<int∗>(pv); // explicit conversion back to int*
 
@@ -404,7 +404,7 @@ alternative.
 
 C++ offers two related meanings of "constant":
 - `constexpr`: Evaluate at compile time.
-- `const` : Do not modify in this scope.
+- `const`: Do not modify in this scope.
 
 To express this notion of immutability after initialization, we can add const to
 the definition of an object. An object declared const cannot be assigned to, it
@@ -412,7 +412,7 @@ must be initialized.
 
     const int model = 90;            // model is a const
     const int v[] = { 1, 2, 3, 4 };  // v[i] is a const
-    const int x;                     // error : no initializer
+    const int x;                     // error: no initializer
 
     // declaring something const ensures that its value will not change within
     // its scope:
@@ -444,11 +444,11 @@ to, a constant, we use the *declarator operator* `∗const` instead of plain `�
     cp[3] = 'a';  // OK
     cp = p;       // error: cp is constant
 
-    pc[3] = 'g';  // error : pc points to constant
+    pc[3] = 'g';  // error: pc points to constant
     pc = p;       // OK
 
-    cpc[3] = 'a'; // error : cpc points to constant
-    cpc = p;      // error : cpc is constant
+    cpc[3] = 'a'; // error: cpc points to constant
+    cpc = p;      // error: cpc is constant
 
 
 *References*:
@@ -476,12 +476,12 @@ Examples:
     string f();
 
     string& r1 {var};         // lvalue reference, bind r1 to var (an lvalue)
-    string& r2 {f()};         // error : f() is an rvalue
-    string& r3 {"Princeton"}; // error : cannot bind to temporar y
+    string& r2 {f()};         // error: f() is an rvalue
+    string& r3 {"Princeton"}; // error: cannot bind to temporar y
     const string cr1& {"Harvard"}; // OK: make temporary and bind to cr1
 
     string&& rr1 {f()};      // rvalue reference, bind rr1 to temporary
-    string&& rr2 {var};      // error : var is an lvalue
+    string&& rr2 {var};      // error: var is an lvalue
     string&& rr3 {"Oxford"}; // rr3 refers to a temporary holding "Oxford"
 
 
@@ -536,7 +536,7 @@ used both on the left-hand and right-hand sides of an assigmnent.
         char state[2];
     };
 
-    // Can initialized via memberwise intialization.
+    // Can initialize via memberwise intialization.
     Address jd = { "Jim Dandy", 61, "South St", "New Providence", {'N','J'} };
 
 A `struct` is a simple form of class with all members `public`. So a struct can
@@ -548,7 +548,7 @@ to reorder arguments, validate or modify arguments.
         Points(Point p0) { elem.push_back(p0);}
         // ...
     };
-    Points x0;               // error : no default constructor
+    Points x0;               // error: no default constructor
     Points x1{ {100,200} };
 
 The name of a type becomes available for use immediately after it has been
@@ -648,7 +648,7 @@ In general, prefer `enum class`es because they cause fewer surprises.
     enum class Warning { green, yellow, orang e, red }; // fire alert levels
 
     Warning a1 = 7;               // error: no int->Warning conversion
-    int a2 = green;               // error : green not in scope
+    int a2 = green;               // error: green not in scope
     int a3 = Warning::green;      // error: no Warning->int conversion
     Warning a4 = Warning::green;  // OK
 
@@ -703,7 +703,7 @@ that their left-hand operand is evaluated before their right-hand operand.
 *Constant expressions*:
 
 C++ offers two related meanings of "constant":
-- `constexpr` : Enables/ensures compile-time evaluation.
+- `constexpr`: Enables/ensures compile-time evaluation.
 - `const`: Do not modify in this scope -- specify immutability in interfaces.
 
 *Conversions*:
@@ -718,7 +718,7 @@ Luckily, compilers often warn about such questionable conversions. Also, the
 `{}`-initializer syntax prevents narrowing. For example:
 
     void f(double d) {
-        char c {d};  // error : double to char conversion may lose information
+        char c {d};  // error: double to char conversion may lose information
     }
 
 If potentially narrowing conversions are unavoidable, consider using some form
@@ -867,7 +867,7 @@ A lambda introducer can take various forms:
   expressions, data is obtained from arguments or from nonlocal variables.
 - `[&]`: implicitly capture by reference. All local names can be used. All local
   variables are accessed by reference.
-- `[=]` : implicitly capture by value. All local names can be used. All names
+- `[=]`: implicitly capture by value. All local names can be used. All names
   refer to copies of the local variables taken at the point of call of the
   lambda expression.
 - `[ capture-list ]`: explicit capture; the capture-list is the list of names of
