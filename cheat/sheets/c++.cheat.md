@@ -1,20 +1,18 @@
-# The tour
-
-## Language basics
+# Language basics
 
 C++ is a compiled language. Each source file is processed by a compiler,
-producing object files, which are combined by a linker into an executable.
+producing *object files*, which are combined by a *linker* into an *executable*.
 
 An executable program is created for a specific hardware/system combination; it
-is not portable, say, from a Mac to a Windows PC. When we talk about portability
-of C++ programs, we usually mean portability of source code; that is, the source
-code can be successfully compiled and run on a variety of systems.
+is not portable, say, from a Mac to Windows. Portability of a C++ program
+usually means portability of source code; that is, the source code can be
+successfully compiled and run on a variety of systems.
 
-The ISO C++ standard defines two kinds of entities:
+The ISO C++ standard defines
 - Core language features (built-in types, language constructs).
 - The standard library.
 
-C++ is statically typed. The type of every entity (e.g., object, value, name,
+C++ is *statically typed*. The type of every entity (e.g., object, value, name,
 and expression) must be known to the compiler at its point of use.
 
 - A *type* defines a set of possible values and operations (for an object).
@@ -23,10 +21,9 @@ and expression) must be known to the compiler at its point of use.
 - A *variable* is a named object.
 
 Each *fundamental type* corresponds directly to hardware facilities and has a
-fixed size that deter- mines the range of values that can be stored in it.
-
-The size of a type is implementation-defined and can be found out with the
-`sizeof` operator.
+fixed size that deter- mines the range of values that can be stored in it. The
+size of a type is implementation-defined and can be found with the `sizeof`
+operator.
 
     sizeof(int)  // often 4
 
@@ -41,68 +38,6 @@ Sizes of C++ objects are expressed in terms of multiples of the size of a
 
     cout << "size of long: " << sizeof(1L) << "\n";
     cout << "largest float: " << std::numeric_limits<float>::max() << "\n";
-
-## Initialization
-
-C++ offers different notations for expressing initialization, such as the
-universal form based on *initializer lists* `{}` and `=`. The `{}`-list form
-prevents narrowing conversions (that would lose information):
-
-    double d1 = 2.3;
-    double d2 {2.3};
-    std::complex<double> z = 1;
-    std::complex<double> z2 {d1,d2};
-    std::complex<double> z3 = {1,2};  // the = is optional
-    std::vector<int> v {1,2,3,4,5,6}; // a vector of ints
-
-`auto` can be used as type when the type can be deduced from the initializer:
-
-    auto b = true;    // a bool
-    auto ch = 'x';    // a char
-    auto i = 123;     // an int
-    auto d = 1.2;     // a double
-    auto z = sqrt(y); // z has the type of whatever sqr t(y) returns
-
-    // place a copy of each value in v in x
-    int v[] = {0,1,2}
-    for (auto x : v) {
-        cout << x << "\n";
-    }
-
-    // have x refer to each element in v
-    int v[] = {0,1,2}
-    for (auto& x : v) {
-        x++;
-    }
-
-    // modifiers such as const can be used
-    for (const auto& x : v) { ... }
-
-## Constants
-
-C++ supports two notions of immutability:
-- `const`: primarily used to specify interfaces, so that data can be passed to
-  functions without fear of it being modified. The compiler enforces constness.
-- `constexpr` : "to be evaluated at compile time". Primarily to specify
-  constants. A function to be used in constant expressions must be declared
-  `constexpr` (such functions must be "simple").
-
-## Pointers, arrays, loops
-
-     T a[n];  // T[n]: array of n Ts
-     T∗ p;    // T*: pointer to T
-     T& r;    // T&: reference to T
-     T f(A);  // T(A): function taking argument of type A and returning T
-
-In an expression, prefix unary `∗` means "contents of" and prefix unary `&`
-means "address of". In a declaration, `&` means "reference to".
-
-    char∗ p = &v[3]; // p points to v's four th element
-    char x = ∗p;     // *p is the object that p points to
-    char& r = x;
-
-`nullptr` is used to represent "no object available". `0` and `NULL` are often
-seen in older code.
 
 
 # Types and declarations
@@ -194,12 +129,46 @@ A user can also define user-defined types:
 
 
 ## Initialization
-An initializer can use one of four syntactic styles:
+C++ offers different notations for expressing initialization. An initializer can
+use one of four syntactic styles:
 
     X a1 {v};    // recommended: introduced in C++11. no narrowing conversions.
     X a2 = {v};  // common in C
     X a3 = v;    // common in C
-    X a4(v);     // function-style initializer (use constructor)
+    X a4(v);     // function-style initializer (uses constructor)
+
+The `{}`-list form prevents narrowing conversions (that would lose information).
+A few examples:
+
+    double d1 = 2.3;
+    double d2 {2.3};
+    std::complex<double> z = 1;
+    std::complex<double> z2 {d1,d2};
+    std::complex<double> z3 = {1,2};  // the = is optional
+    std::vector<int> v {1,2,3,4,5,6}; // a vector of ints
+
+`auto` can be used as type when the type can be deduced from the initializer:
+
+    auto b = true;    // a bool
+    auto ch = 'x';    // a char
+    auto i = 123;     // an int
+    auto d = 1.2;     // a double
+    auto z = sqrt(y); // z has the type of whatever sqr t(y) returns
+
+    // place a copy of each value in v in x
+    int v[] = {0,1,2}
+    for (auto x : v) {
+        cout << x << "\n";
+    }
+
+    // have x refer to each element in v
+    int v[] = {0,1,2}
+    for (auto& x : v) {
+        x++;
+    }
+
+    // modifiers such as const can be used
+    for (const auto& x : v) { ... }
 
 Prefer initializer `{}` unless the type is `auto`, then use `=`.
 
@@ -310,6 +279,22 @@ An older syntax with `typedef` fulfills the same purpose:
 # Pointers, Arrays, References
 (The C++ Programming Language, Chapter 7)
 
+     T a[n];  // T[n]: array of n Ts
+     T∗ p;    // T*: pointer to T
+     T& r;    // T&: reference to T
+     T f(A);  // T(A): function taking argument of type A and returning T
+
+In an expression, prefix unary `∗` means "contents of" and prefix unary `&`
+means "address of". In a declaration, `&` means "reference to".
+
+    char∗ p = &v[3]; // p points to v's four th element
+    char x = ∗p;     // *p is the object that p points to
+    char& r = x;
+
+`nullptr` is used to represent "no object available". `0` and `NULL` are often
+seen in older code.
+
+
 ## Pointers
 
 For a type `T` , `T∗` is the type "pointer to T". In declarations, `*` is a
@@ -398,9 +383,13 @@ alternative.
 
 ## Const
 
-C++ offers two related meanings of "constant":
-- `constexpr`: Evaluate at compile time.
-- `const`: Do not modify in this scope.
+C++ supports two notions of immutability:
+- `const`: primarily used to specify interfaces, so that data can be passed to
+  functions without fear of it being modified. The compiler enforces
+  constness. "Do not modify in this scope".
+- `constexpr` : "to be evaluated at compile time". Primarily to specify
+  constants. A function to be used in constant expressions must be declared
+  `constexpr` (such functions must be "simple").
 
 To express this notion of immutability after initialization, we can add const to
 the definition of an object. An object declared const cannot be assigned to, it
