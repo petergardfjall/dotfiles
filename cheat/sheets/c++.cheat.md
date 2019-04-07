@@ -220,9 +220,9 @@ redundant):
   value like the value returned by a function. R-values can be used to implement
   efficient *move operations* (construction, assignment) where a "destructive
   read" of the right-hand side R-value *transfers ownership* of its state to the
-  left-hand side. Move construction is a "steal" operation (leaves the rhs
-  empty), and move assignment is a swap operation (the lhs gets destroyed after
-  the assignment).
+  left-hand side. *Move construction* is a "steal" operation (leaves the rhs
+  empty), and *move assignment* is a swap operation (the lhs gets destroyed
+  after the assignment).
 
 ## Lifetimes
 
