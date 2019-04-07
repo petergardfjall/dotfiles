@@ -118,12 +118,7 @@ String literals:
     auto S3 =  u"hello"s; // std::u16string
     auto S4 =  U"hello"s; // std::u32string
 
-We can construct other types using declarator operators:
-- Pointer types: `int∗`
-- Array types: `char[]`
-- Reference types: `double&`, `vector<int>&&`
-
-A user can also define user-defined types:
+User-defined types can be declared with:
 - Classes: `struct`s and `class`es
 - Enumeration types (specific sets of values): `enum`, `enum class`
 
@@ -217,23 +212,17 @@ redundant):
     complex<double> z = { 0, pi };  // uses constructor
     vector<int> v = { 0, 1, 2, 3 }; // uses list constructor
 
-## decltype
-To deduce a type we can use `decltype(expr)`. This is typically used in generic
-programming to express types that depend on template parameters:
-
-    // return type can be deduced since C++14
-    template<typename T, typename U>
-    auto add(T t, U u) -> decltype(t + u)
-    {
-        return t+u;
-    }
-
 ## L-values and R-values
 
-- L-value: an expression that refers to an object. ("something that can be on
-  the left-hand side of an assignment").
+- L-value: an expression that refers to an object. "Something that can be on the
+  left-hand side of an assignment".
 - R-value: roughly means "a value that is not an lvalue", such as a temporary
-  value like the value returned by a function.
+  value like the value returned by a function. R-values can be used to implement
+  efficient *move operations* (construction, assignment) where a "destructive
+  read" of the right-hand side R-value *transfers ownership* of its state to the
+  left-hand side. Move construction is a "steal" operation (leaves the rhs
+  empty), and move assignment is a swap operation (the lhs gets destroyed after
+  the assignment).
 
 ## Lifetimes
 
@@ -274,20 +263,17 @@ An older syntax with `typedef` fulfills the same purpose:
     typedef void(∗PtoF)(int); // equivalent to "using PtoF = void(*)(int);"
 
 
-
-
 # Pointers, Arrays, References
 (The C++ Programming Language, Chapter 7)
 
      T a[n];  // T[n]: array of n Ts
      T∗ p;    // T*: pointer to T
      T& r;    // T&: reference to T
-     T f(A);  // T(A): function taking argument of type A and returning T
 
 In an expression, prefix unary `∗` means "contents of" and prefix unary `&`
 means "address of". In a declaration, `&` means "reference to".
 
-    char∗ p = &v[3]; // p points to v's four th element
+    char∗ p = &v[3]; // p points to v's fourth element
     char x = ∗p;     // *p is the object that p points to
     char& r = x;
 
@@ -375,7 +361,7 @@ the first dimension as an explicit argument:
     }
 
     int v[3][5] = { {0,1,2,3,4}, {10,11,12,13,14}, {20,21,22,23,24} };
-    print1(v, 5);
+    print1(v, 3);
     print2(&v[0][0], 3, 5);
 
 For most cases, `std::array` or `std::vector` should be preferred as a safer
@@ -443,9 +429,10 @@ to hold a machine address of an object (no performance overhead compared to
 pointers). There is no "null reference" - a reference always refers to an
 object.
 
-To reflect the lvalue/rvalue and const /non- const distinctions, there are three kinds of references:
+To reflect the lvalue/rvalue and `const`/non-`const` distinctions, there are
+three kinds of references:
 
-- *lvalue references*: refers to object whose value we want to change
+- *lvalue references*: refers to an object (whose value we want to change)
 - *const references*: refers to object whose value we do not want to change
 - *rvalue references*: refers to objects whose value we do not need to preserve
   after we have used it (e.g., a temporary). We want to know if a reference
@@ -991,11 +978,21 @@ A function declaration can contain a variety of specifiers and modifiers:
 
         auto to_string(int a) −> string;   // suffix return type
 
-  A suffix return type is needed in function template declarations in which the
-  return type depends on the arguments.
+  In C++11, a suffix return type is needed in function template declarations in
+  which the return type depends on the arguments. The return type can be deduced
+  in C++14.
 
+        // in C++11
+        template<typename T, typename U>
+        auto add(T t, U u) -> decltype(t + u) {
+            return t+u;
+        }
+
+        // in C++14
         template<class T, class U>
-        auto product(const vector<T>& x, const vector<U>& y) −> decltype(x∗y);
+        auto add(T t, U u) {
+            return t + u;
+        }
 
 - `inline`: hint to have function calls implemented by inlining the body.
 - `constexpr`: possible to evaluate the function at compile time if given
@@ -2320,11 +2317,26 @@ Some general advice:
   compiler generate it (`= default`).
 - Make sure that copy assignments are safe for self-assignment.
 
+
+# Operator Overloading
+(The C++ Programming Language, Chapter 18,19)
+
+
+# Inheritance and polymorphism
+(The C++ Programming Language, Chapter 20-22)
+
+
+# Templates
+(The C++ Programming Language, Chapter 23)
+
+
 # Tools
 - Compiler: clang, g++
 - Build/packaging: CMake
 
+
 # Project structure
+
 
 # CMake
 CMake is a build file generator that uses a compiler-independent configuration
