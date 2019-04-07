@@ -221,7 +221,7 @@ redundant):
   efficient *move operations* (construction, assignment) where a "destructive
   read" of the right-hand side R-value *transfers ownership* of its state to the
   left-hand side. *Move construction* is a "steal" operation (leaves the rhs
-  empty), and *move assignment* is a swap operation (the lhs gets destroyed
+  empty), and *move assignment* is a swap operation (the old lhs gets destroyed
   after the assignment).
 
 ## Lifetimes
