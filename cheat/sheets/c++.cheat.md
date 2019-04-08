@@ -1,20 +1,18 @@
-## The tour
-
-## Language basics
+# Language basics
 
 C++ is a compiled language. Each source file is processed by a compiler,
-producing object files, which are combined by a linker into an executable.
+producing *object files*, which are combined by a *linker* into an *executable*.
 
 An executable program is created for a specific hardware/system combination; it
-is not portable, say, from a Mac to a Windows PC. When we talk about portability
-of C++ programs, we usually mean portability of source code; that is, the source
-code can be successfully compiled and run on a variety of systems.
+is not portable, say, from a Mac to Windows. Portability of a C++ program
+usually means portability of source code; that is, the source code can be
+successfully compiled and run on a variety of systems.
 
-The ISO C++ standard defines two kinds of entities:
+The ISO C++ standard defines
 - Core language features (built-in types, language constructs).
 - The standard library.
 
-C++ is statically typed. The type of every entity (e.g., object, value, name,
+C++ is *statically typed*. The type of every entity (e.g., object, value, name,
 and expression) must be known to the compiler at its point of use.
 
 - A *type* defines a set of possible values and operations (for an object).
@@ -23,10 +21,9 @@ and expression) must be known to the compiler at its point of use.
 - A *variable* is a named object.
 
 Each *fundamental type* corresponds directly to hardware facilities and has a
-fixed size that deter- mines the range of values that can be stored in it.
-
-The size of a type is implementation-defined and can be found out with the
-`sizeof` operator.
+fixed size that deter- mines the range of values that can be stored in it. The
+size of a type is implementation-defined and can be found with the `sizeof`
+operator.
 
     sizeof(int)  // often 4
 
@@ -42,74 +39,8 @@ Sizes of C++ objects are expressed in terms of multiples of the size of a
     cout << "size of long: " << sizeof(1L) << "\n";
     cout << "largest float: " << std::numeric_limits<float>::max() << "\n";
 
-## Initialization
 
-C++ offers different notations for expressing initialization, such as the
-universal form based on *initializer lists* `{}` and `=`. The `{}`-list form
-prevents narrowing conversions (that would lose information):
-
-    double d1 = 2.3;
-    double d2 {2.3};
-    std::complex<double> z = 1;
-    std::complex<double> z2 {d1,d2};
-    std::complex<double> z3 = {1,2};  // the = is optional
-    std::vector<int> v {1,2,3,4,5,6}; // a vector of ints
-
-`auto` can be used as type when the type can be deduced from the initializer:
-
-    auto b = true;    // a bool
-    auto ch = 'x';    // a char
-    auto i = 123;     // an int
-    auto d = 1.2;     // a double
-    auto z = sqrt(y); // z has the type of whatever sqr t(y) returns
-
-    // place a copy of each value in v in x
-    int v[] = {0,1,2}
-    for (auto x : v) {
-        cout << x << "\n";
-    }
-
-    // have x refer to each element in v
-    int v[] = {0,1,2}
-    for (auto& x : v) {
-        x++;
-    }
-
-    // modifiers such as const can be used
-    for (const auto& x : v) { ... }
-
-## Constants
-
-C++ supports two notions of immutability:
-- `const`: primarily used to specify interfaces, so that data can be passed to
-  functions without fear of it being modified. The compiler enforces constness.
-- `constexpr` : "to be evaluated at compile time". Primarily to specify
-  constants. A function to be used in constant expressions must be declared
-  `constexpr` (such functions must be "simple").
-
-## Pointers, arrays, loops
-
-     T a[n];  // T[n]: array of n Ts
-     T∗ p;    // T*: pointer to T
-     T& r;    // T&: reference to T
-     T f(A);  // T(A): function taking argument of type A and returning T
-
-In an expression, prefix unary `∗` means "contents of" and prefix unary `&`
-means "address of". In a declaration, `&` means "reference to".
-
-    char∗ p = &v[3]; // p points to v's four th element
-    char x = ∗p;     // *p is the object that p points to
-    char& r = x;
-
-`nullptr` is used to represent "no object available". `0` and `NULL` are often
-seen in older code.
-
-
----------
-
-
-
-## Types and declarations
+# Types and declarations
 (The C++ Programming Language, Chapter 6)
 
 C++ has a set of *fundamental types* corresponding to the most common basic
@@ -187,23 +118,52 @@ String literals:
     auto S3 =  u"hello"s; // std::u16string
     auto S4 =  U"hello"s; // std::u32string
 
-We can construct other types using declarator operators:
-- Pointer types: `int∗`
-- Array types: `char[]`
-- Reference types: `double&`, `vector<int>&&`
-
-A user can also define user-defined types:
+User-defined types can be declared with:
 - Classes: `struct`s and `class`es
 - Enumeration types (specific sets of values): `enum`, `enum class`
 
 
-*Initialization*:
-An initializer can use one of four syntactic styles:
+## Initialization
+C++ offers different notations for expressing initialization. An initializer can
+use one of four syntactic styles:
 
     X a1 {v};    // recommended: introduced in C++11. no narrowing conversions.
     X a2 = {v};  // common in C
     X a3 = v;    // common in C
-    X a4(v);     // function-style initializer (use constructor)
+    X a4(v);     // function-style initializer (uses constructor)
+
+The `{}`-list form prevents narrowing conversions (that would lose information).
+A few examples:
+
+    double d1 = 2.3;
+    double d2 {2.3};
+    std::complex<double> z = 1;
+    std::complex<double> z2 {d1,d2};
+    std::complex<double> z3 = {1,2};  // the = is optional
+    std::vector<int> v {1,2,3,4,5,6}; // a vector of ints
+
+`auto` can be used as type when the type can be deduced from the initializer:
+
+    auto b = true;    // a bool
+    auto ch = 'x';    // a char
+    auto i = 123;     // an int
+    auto d = 1.2;     // a double
+    auto z = sqrt(y); // z has the type of whatever sqr t(y) returns
+
+    // place a copy of each value in v in x
+    int v[] = {0,1,2}
+    for (auto x : v) {
+        cout << x << "\n";
+    }
+
+    // have x refer to each element in v
+    int v[] = {0,1,2}
+    for (auto& x : v) {
+        x++;
+    }
+
+    // modifiers such as const can be used
+    for (const auto& x : v) { ... }
 
 Prefer initializer `{}` unless the type is `auto`, then use `=`.
 
@@ -252,25 +212,19 @@ redundant):
     complex<double> z = { 0, pi };  // uses constructor
     vector<int> v = { 0, 1, 2, 3 }; // uses list constructor
 
-*decltype*:
-To deduce a type we can use `decltype(expr)`. This is typically used in generic
-programming to express types that depend on template parameters:
+## L-values and R-values
 
-    // return type can be deduced since C++14
-    template<typename T, typename U>
-    auto add(T t, U u) -> decltype(t + u)
-    {
-        return t+u;
-    }
-
-*L-values and R-values*:
-
-- L-value: an expression that refers to an object. ("something that can be on
-  the left-hand side of an assignment").
+- L-value: an expression that refers to an object. "Something that can be on the
+  left-hand side of an assignment".
 - R-value: roughly means "a value that is not an lvalue", such as a temporary
-  value like the value returned by a function.
+  value like the value returned by a function. R-values can be used to implement
+  efficient *move operations* (construction, assignment) where a "destructive
+  read" of the right-hand side R-value *transfers ownership* of its state to the
+  left-hand side. *Move construction* is a "steal" operation (leaves the rhs
+  empty), and *move assignment* is a swap operation (the old lhs gets destroyed
+  after the assignment).
 
-*Lifetimes*:
+## Lifetimes
 
 The *lifetime* of an object starts when its constructor completes and ends when
 its destructor starts executing. Objects of types without a declared
@@ -292,7 +246,7 @@ We can classify objects based on their lifetimes:
 - Thread-local objects; that is, objects declared `thread_local`: such
   objects are created and destroyed with their thread.
 
-*Type aliases*:
+## Type aliases
 
 The `using` keyword can be used to define type aliases:
 
@@ -309,12 +263,25 @@ An older syntax with `typedef` fulfills the same purpose:
     typedef void(∗PtoF)(int); // equivalent to "using PtoF = void(*)(int);"
 
 
-
-
-## Pointers, Arrays, References
+# Pointers, Arrays, References
 (The C++ Programming Language, Chapter 7)
 
-*Pointers*:
+     T a[n];  // T[n]: array of n Ts
+     T∗ p;    // T*: pointer to T
+     T& r;    // T&: reference to T
+
+In an expression, prefix unary `∗` means "contents of" and prefix unary `&`
+means "address of". In a declaration, `&` means "reference to".
+
+    char∗ p = &v[3]; // p points to v's fourth element
+    char x = ∗p;     // *p is the object that p points to
+    char& r = x;
+
+`nullptr` is used to represent "no object available". `0` and `NULL` are often
+seen in older code.
+
+
+## Pointers
 
 For a type `T` , `T∗` is the type "pointer to T". In declarations, `*` is a
 suffix to the type name. In expressions, it's the dereference operator.
@@ -349,7 +316,7 @@ Use `nullptr` (instead of `NULL` or `0`) to make code more readable.
 
     int* pi = nullptr;
 
-*Arrays*:
+## Arrays
 
 Arrays are can be accessed with pointers (and pointer arithmetic):
 
@@ -394,17 +361,21 @@ the first dimension as an explicit argument:
     }
 
     int v[3][5] = { {0,1,2,3,4}, {10,11,12,13,14}, {20,21,22,23,24} };
-    print1(v, 5);
+    print1(v, 3);
     print2(&v[0][0], 3, 5);
 
 For most cases, `std::array` or `std::vector` should be preferred as a safer
 alternative.
 
-*Const*:
+## Const
 
-C++ offers two related meanings of "constant":
-- `constexpr`: Evaluate at compile time.
-- `const`: Do not modify in this scope.
+C++ supports two notions of immutability:
+- `const`: primarily used to specify interfaces, so that data can be passed to
+  functions without fear of it being modified. The compiler enforces
+  constness. "Do not modify in this scope".
+- `constexpr` : "to be evaluated at compile time". Primarily to specify
+  constants. A function to be used in constant expressions must be declared
+  `constexpr` (such functions must be "simple").
 
 To express this notion of immutability after initialization, we can add const to
 the definition of an object. An object declared const cannot be assigned to, it
@@ -451,16 +422,17 @@ to, a constant, we use the *declarator operator* `∗const` instead of plain `�
     cpc = p;      // error: cpc is constant
 
 
-*References*:
+## References
 
 Like a pointer, a reference is an alias for an object. It is usually implemented
 to hold a machine address of an object (no performance overhead compared to
 pointers). There is no "null reference" - a reference always refers to an
 object.
 
-To reflect the lvalue/rvalue and const /non- const distinctions, there are three kinds of references:
+To reflect the lvalue/rvalue and `const`/non-`const` distinctions, there are
+three kinds of references:
 
-- *lvalue references*: refers to object whose value we want to change
+- *lvalue references*: refers to an object (whose value we want to change)
 - *const references*: refers to object whose value we do not want to change
 - *rvalue references*: refers to objects whose value we do not need to preserve
   after we have used it (e.g., a temporary). We want to know if a reference
@@ -525,7 +497,8 @@ used both on the left-hand and right-hand sides of an assigmnent.
     cout << l[0];   // uses const int& operator[]
     l[0] = 1;       // uses int& operator[]
 
-## Structures, unions, and enumerations
+
+# Structures, unions, and enumerations
 (The C++ Programming Language, Chapter 8)
 
     struct Address {
@@ -653,7 +626,7 @@ In general, prefer `enum class`es because they cause fewer surprises.
     Warning a4 = Warning::green;  // OK
 
 
-## Statements
+# Statements
 (The C++ Programming Language, Chapter 9)
 
 It is usually a good idea to introduce the variable into the smallest scope
@@ -666,7 +639,7 @@ possible. A variable can be declared in a condition:
 
 A `break` breaks out of the nearest enclosing switch or iteration statement.
 
-## Expressions and operations
+# Expressions and operations
 (The C++ Programming Language, Chapter 10 and 11)
 
 A few less obvious operators:
@@ -689,7 +662,7 @@ is equivalent to:
     bool b = !(x || y) && z;
     int x4 = ~(x1 | x2) & x3;
 
-*Order of evaluation*:
+## Order of evaluation
 The order of evaluation of subexpressions within an
 expression is undefined. In particular, you cannot assume that the expression is
 evaluated left-to-right.
@@ -700,13 +673,13 @@ evaluated left-to-right.
 The operators `,` (comma), `&&` (logical and), and `||` (logical or) guarantee
 that their left-hand operand is evaluated before their right-hand operand.
 
-*Constant expressions*:
+## Constant expressions
 
 C++ offers two related meanings of "constant":
 - `constexpr`: Enables/ensures compile-time evaluation.
 - `const`: Do not modify in this scope -- specify immutability in interfaces.
 
-*Conversions*:
+## Conversions
 
 The fundamental types can be implicitly converted in too many ways. For example:
 
@@ -746,13 +719,11 @@ Some conversion rules:
   part is discarded. Loss of precision occurs if an integral value cannot be
   represented exactly as a value of the floating type.
 
-*Free store*:
+## Memory management
 
 The operator `new` creates objects, and the operator `delete` can be used to
 destroy them. Objects allocated by new are said to be "on the free store" (also,
 "on the heap" or "in dynamic memory").
-
-*Memory management*:
 
 The main problems with free store are:
 - *Leaked objects*: People use `new` and then forget to `delete` the allocated
@@ -799,7 +770,7 @@ specify what new should do upon memory exhaustion by defining a *new handler*:
 One can override the `new` operator to allocate objects somewhere other than the
 free store (default).
 
-*Lambda Expressions*:
+## Lambda Expressions
 
 A lambda expression ("lambda function", "lambda"), is a simplified notation for
 defining and using an anonymous function object. Instead of defining a named
@@ -963,7 +934,7 @@ appropriate type:
 
     double (∗p1)(double) = [](double a) { return sqrt(a); };
 
-*Explicit Type Conversion*:
+## Explicit Type Conversion
 
 C++ offers explicit type conversion operations of varying
 convenience and safety. In order of preference/safety:
@@ -999,7 +970,7 @@ convenience and safety. In order of preference/safety:
   conversions.
 
 
-## Functions
+# Functions
 (The C++ Programming Language, Chapter 12)
 
 A function declaration can contain a variety of specifiers and modifiers:
@@ -1007,11 +978,21 @@ A function declaration can contain a variety of specifiers and modifiers:
 
         auto to_string(int a) −> string;   // suffix return type
 
-  A suffix return type is needed in function template declarations in which the
-  return type depends on the arguments.
+  In C++11, a suffix return type is needed in function template declarations in
+  which the return type depends on the arguments. The return type can be deduced
+  in C++14.
 
+        // in C++11
+        template<typename T, typename U>
+        auto add(T t, U u) -> decltype(t + u) {
+            return t+u;
+        }
+
+        // in C++14
         template<class T, class U>
-        auto product(const vector<T>& x, const vector<U>& y) −> decltype(x∗y);
+        auto add(T t, U u) {
+            return t + u;
+        }
 
 - `inline`: hint to have function calls implemented by inlining the body.
 - `constexpr`: possible to evaluate the function at compile time if given
@@ -1194,7 +1175,7 @@ pointers to member functions and pointers to data members.
         f_display_obj(18);
     }
 
-*Macros*:
+## Macros
 
 Macros are very important in C but have far fewer uses in C++. The first rule
 about macros is: don't use them unless you have to. One use of macros is almost
@@ -1221,7 +1202,7 @@ A few macros are predefined by the compiler:
 
 
 
-## Exceptions
+# Exceptions
 (The C++ Programming Language, Chapter 13)
 
 An exception can be of any type that can be copied, but it is strongly
@@ -1314,7 +1295,7 @@ exceptions. For example:
   `delete`s), rather than relying on some systematic scheme, such as resource
   handles (e.g., string and vector).
 
-*Resource Acquisition Is Initialization (RAII)*:
+## Resource Acquisition Is Initialization (RAII)
 
 When a function acquires a resource - that is, it opens a file, allocates some
 memory from the free store, acquires a mutex, etc. - it is often essential for
@@ -1400,7 +1381,8 @@ There is a fundamental language rule that when an exception is thrown from a
 constructor, subobjects (including bases) that have already been completely
 constructed will be properly destroyed.
 
-## Namespaces
+
+# Namespaces
 (The C++ Programming Language, Chapter 14)
 
 C++ does not provide a single language feature supporting the notion of a
@@ -1512,7 +1494,7 @@ Namespaces can be nested:
         X::Y::f();  // OK
     }
 
-## Source Files and Programs
+# Source Files and Programs
 (The C++ Programming Language, Chapter 15)
 
 A user presents a *source file* to the compiler. The file is then preprocessed;
@@ -1604,7 +1586,7 @@ both translation units.
 The intent of the ODR is to allow inclusion of a class definition in different
 translation units from a common source file.
 
-*Include guards*:
+## Include guards
 
 For larger programs a header containing class definitions or inline functions
 can easily get `#include`d twice in the same compilation unit. To prevent such
@@ -1671,7 +1653,8 @@ the number of atexit functions. A nonzero value returned by atexit() indicates
 that the limit is reached. These limitations make `atexit()`, in essence, a C
 workaround for the lack of destructors.
 
-## Classes (user-defined types)
+
+# Classes (user-defined types)
 (The C++ Programming Language, Chapter 16)
 
 A very brief summary of classes:
@@ -1809,7 +1792,7 @@ members appear in the initializer list.
 
 A reference or `const` member *must* be initialized.
 
-*Explicit Constructors*:
+## Explicit Constructors
 
 By default, a constructor invoked by a single argument acts as an implicit
 conversion from its argument type to its type. For example:
@@ -1851,7 +1834,7 @@ initialization and explicit conversions.
 By default, declare a constructor that can be called with a single argument
 `explicit`. You need a good reason not to do so (as for `complex`).
 
-*Immutability via const member functions*:
+## Immutability via const member functions
 
 The `const` specifier declares that a member function does not modify the state
 of its object (it provides immutability).
@@ -1874,7 +1857,7 @@ A member *can* be defined as `mutable` to allow it to be modified even in a
 in a separate object and access it indirectly (`const` does not apply
 transitively to objects accessed through pointers or references).
 
-*Static Members*:
+## Static Members
 
 Class members declared `static` exist on the class-level. For a static variable
 there is exactly one copy (not one per object). A `static` member function can
@@ -1911,7 +1894,7 @@ member.
      }
 
 
-*Member Types (nested class)*:
+## Member Types (nested class)
 
 Types and type aliases can be members of a class. A *member class* (often called
 a *nested class*) can refer to types and static members of its enclosing class.
@@ -1952,7 +1935,8 @@ Member classes are more a notational convenience than a feature of fundamental
 importance. On the other hand, member aliases are important as the basis of
 generic programming techniques relying on associated types.
 
-## Construction, Cleanup, Copy and Move
+
+# Construction, Cleanup, Copy and Move
 (The C++ Programming Language, Chapter 17)
 
     string ident(string arg) { // string passed by value (copied into arg)
@@ -2101,7 +2085,7 @@ a definition outside the class.
      int Node::node_count = 0;  // definition
 
 
-*Copy vs Move*:
+## Copy vs Move
 
 When we need to transfer a value from `a` to `b`, we usually have two options:
 - Copy is the conventional meaning of `x=y;` that is, the effect is that the
@@ -2123,7 +2107,7 @@ When we need to transfer a value from `a` to `b`, we usually have two options:
   (like pointers or resource handles which would, for instance, be copied
   memberwise).
 
-*Copy*:
+### Copy
 
 Copy for a class X is defined by two operations:
 - Copy constructor: `X(const X&)`
@@ -2171,7 +2155,7 @@ derived class you have to copy its bases:
     };
 
 
-*Move*:
+### Move
 
 Consider the obvious implementation of `swap()`:
 
@@ -2238,7 +2222,7 @@ functions. Performance-wise, it is perfectly fine to return a large
 stack-allocated object if it defines a move constructor, the "return by value"
 is both simple to use and efficient.
 
-*Generated Default Constructors and Operators*:
+## Generated Default Constructors and Operators
 
 Writing conventional operations, such as a copy and a destructor, can be tedious
 and error-prone, so the compiler can generate them for us as needed. By default,
@@ -2333,13 +2317,28 @@ Some general advice:
   compiler generate it (`= default`).
 - Make sure that copy assignments are safe for self-assignment.
 
-## Tools
+
+# Operator Overloading
+(The C++ Programming Language, Chapter 18,19)
+
+
+# Inheritance and polymorphism
+(The C++ Programming Language, Chapter 20-22)
+
+
+# Templates
+(The C++ Programming Language, Chapter 23)
+
+
+# Tools
 - Compiler: clang, g++
 - Build/packaging: CMake
 
-## Project structure
 
-## CMake
+# Project structure
+
+
+# CMake
 CMake is a build file generator that uses a compiler-independent configuration
 language. It enables building, testing and packaging of software. It is
 cross-platform and can generate build files for different tools (make, xcode,
