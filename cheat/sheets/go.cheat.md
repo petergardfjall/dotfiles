@@ -1126,6 +1126,17 @@ code, the following pattern can be used.
         })
     }
 
+Note that helper types are available to read (`Scan`) database columns which may
+have `NULL` values. For example, `sql.NullString`, `sql.NullInt`
+
+    var nick  sql.NullString
+    _ = db.QueryRow("SELECT nick FROM users WHERE name = $1", name).Scan(&nick)
+    if nick.Valid {
+        fmt.Printf("%s's nickname is %s", name, nick)
+    } else {
+        fmt.Printf("%s does not have a nickname", name)
+    }
+
 
 ## Logging
 
