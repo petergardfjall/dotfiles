@@ -135,12 +135,30 @@ use one of four syntactic styles:
 The `{}`-list form prevents narrowing conversions (that would lose information).
 A few examples:
 
+    int n{2};
     double d1 = 2.3;
     double d2 {2.3};
+
     std::complex<double> z = 1;
     std::complex<double> z2 {d1,d2};
     std::complex<double> z3 = {1,2};  // the = is optional
-    std::vector<int> v {1,2,3,4,5,6}; // a vector of ints
+
+    std::string s{"foobar"};
+
+    std::vector<int> v {1,2,3,4,5,6};
+    std::vector<string> fruits = {"apple","melon"};
+
+    std::map<string,string> m {
+        {"England","London"},
+        {"Hungary","Budapest"},
+        {"Romania","Bucharest"}
+    };
+
+    struct Person{
+        string name;
+        int age;
+    };
+    Person p{"John Brown", 42};
 
 `auto` can be used as type when the type can be deduced from the initializer:
 
@@ -373,6 +391,12 @@ C++ supports two notions of immutability:
 - `const`: primarily used to specify interfaces, so that data can be passed to
   functions without fear of it being modified. The compiler enforces
   constness. "Do not modify in this scope".
+
+        void sayHello(const string& who){
+            cout << "Hello, " + who <<endl;
+            who = "new name";    // error from compiler!
+        }
+
 - `constexpr` : "to be evaluated at compile time". Primarily to specify
   constants. A function to be used in constant expressions must be declared
   `constexpr` (such functions must be "simple").
@@ -994,7 +1018,10 @@ A function declaration can contain a variety of specifiers and modifiers:
             return t + u;
         }
 
-- `inline`: hint to have function calls implemented by inlining the body.
+- `inline`: hint to have function calls implemented by inlining the body.  This
+  can be used to speed up critical execution paths of programs. The compiler
+  replaces the *function call* with the *function code* (no function
+  call!). Advantage: speed, disadvantage: code bloat.
 - `constexpr`: possible to evaluate the function at compile time if given
   constant expressions as arguments.
 - `noexcept`: may not throw an exception.
@@ -1586,6 +1613,18 @@ both translation units.
 The intent of the ODR is to allow inclusion of a class definition in different
 translation units from a common source file.
 
+## Header files
+The most common preprocessor directives found in header files are:
+
+- `#include [file]`: the specified file is inserted into the code.
+- `#define [key] [value]`: every occurrence of the specified `key` is replaced
+  with the specified `value`
+
+        #define TABLE_SIZE 100
+        #define getmax(a,b) a>b?a:b
+
+- `#ifndef [key] ... #endif`: code block is conditionally included.
+
 ## Include guards
 
 For larger programs a header containing class definitions or inline functions
@@ -1703,6 +1742,12 @@ initializer list is given:
 
     Date d1;
     Date d2 {};
+
+A copy constructor gets called for these cases:
+
+    Date d2(d1);      //copy-constructor called
+    Date d3 = d2;     //copy-constructor called
+    void foo(Date d); //copy-constructor called
 
 When a class has a constructor, all objects of that class will need to be
 initialized by a constructor call (and a default constructor is no longer
@@ -2052,7 +2097,7 @@ temporary) and does nothing with it.
 
       X() { X{42}; } // likely error
 
-We can specify an initializer for a non- static data member in the class
+We can specify "in-class initializers" for a non-static data member in the class
 declaration.
 
     class A {
@@ -2061,13 +2106,13 @@ declaration.
       int b = 77;
     };
 
-A constructor will use such an in-class initializer, so that the above code is
-equivalent to:
+From such a declaration, the compiler generates a constructor with the proper
+initializer list:
 
     class A {
     public:
       int a; int b;
-    A() : a{7}, b{77} {};
+      A() : a{7}, b{77} {};
 
 If a member is initialized by both an in-class initializer and a constructor,
 only the constructor's initialization is done (it "overrides" the default).
@@ -2134,6 +2179,57 @@ correctly deal with an object that has already been constructed and may own
 resources. In some cases, copy assignment should protect against
 self-assignment, `m=m`.
 
+
+Consider:
+
+    class Stack{
+      public:
+        Stack(const Stack&);             // copy constructor
+        Stack(const Stack&&);            // move constructor
+        Stack& operator=(const Stack&);  // copy assignment
+        Stack& operator=(const Stack&&); // move assignment
+      private:
+        int mCapacity;
+        double *mElements;
+        double *mTop;
+    };
+
+A copy constructor:
+
+    Stack::Stack(const Stack& rhs){
+        mCapacity = rhs.mCapacity;
+        mElements = new double[rhs.mCapacity];
+        int nr = rhs.mTop - rhs.mElements;
+        std::copy(rhs.mElements, rhs.mElements + nr, mElements);
+        mTop = mElements + nr;
+    }
+
+A copy assignment operator:
+
+    Stack& Stack::operator=(const Stack& rhs) {
+        // check for self-assignment
+        if (this != &rhs) {
+            // delete lhs
+            delete [] mElements;
+            mCapacity = 0;
+            mElements = nullptr; // in case next line throws
+
+            //copy rhs
+            mCapacity = rhs.mCapacity;
+            mElements = new double[mCapacity];
+            int nr = rhs.mTop - rhs.mElements;
+            std::copy(rhs.mElements, rhs.mElements + nr, mElements);
+            mTop = mElements + nr;
+        }
+        return *this;
+    }
+
+
+    Stack s1{1,2,3};        // uses constructor
+    Stack s2 = s1;          // uses copy constructor
+    Stack s3(s2);           // uses copy constructor
+    s1 = s2;                // uses copy assignment operator
+
 For the purposes of copying, a base is just a member: to copy an object of a
 derived class you have to copy its bases:
 
@@ -2174,7 +2270,7 @@ values.
 The idea behind a move assignment is to handle lvalues separately from rvalues:
 copy assignment and copy constructors take lvalues whereas move assignment and
 move constructors take rvalues. For a return value, the move constructor is
-chosen.  We can define Matrix ’s move constructor to simply take the
+chosen. We can define `Matrix`’s move constructor to simply take the
 representation from its source and replace it with an empty Matrix (which is
 cheap to destroy).
 
@@ -2186,6 +2282,31 @@ cheap to destroy).
         a.elem = nullptr;
     }
 
+A move constructor is essentially a steal operation:
+
+    // string&& is an rvalue reference to a string
+    string::string(string&& that) {
+        data = that.data;     // shallow copy of the argument
+        that.data = nullptr;  // ownership transfer to the new object
+    }
+
+    ...
+    // constructor called
+    string s=”apple”;
+
+    // copy constructor called: s is an lvalue.
+    // effect: deep copy.
+    string s1 = s;
+
+    // move constructor called: right side is an rvalue.
+    // effect: shallow copy + ownership transfer.
+    string s2 = s + s1;
+
+    // move constructor called: right side is an rvalue.
+    // note: do NOT use s1 from here on.
+    string s3 = std::move(s1);
+
+
 For move assignment, we can do a swap (the idea behind using a swap to implement
 a move assignment is that the source is just about to be destroyed, so we can
 just let the destructor for the source do the necessary cleanup work for us):
@@ -2193,14 +2314,40 @@ just let the destructor for the source do the necessary cleanup work for us):
     template<class T>
     Matrix<T>& Matrix<T>::operator=(Matrix&& a)
     {
-        std::swap(dim,a.dim);      // swap representations
-        std::swap(elem,a.elem);
+        std::swap(dim, a.dim);      // swap representations
+        std::swap(elem, a.elem);
 
         return ∗this;
     }
 
 
-In a few cases, such as for a return value, the language rules say that tje
+A move assignment operator for the `Stack` can also take care of reclaiming the
+LHS resources itself:
+
+    Stack& Stack::operator=(Stack&& rhs) noexcept {
+        if (this != &rhs) {
+            // delete lhs
+            delete [] mElements;
+
+            // move rhs to this
+            mCapacity = rhs.mCapacity;
+            mTop = rhs.mTop;
+            melements = rhs.mElements;
+
+            //leave rhs in valid state
+            mElements = nullptr;
+            rhs.mCapacity = 0;
+            rhs.mTop = 0;
+
+            // alternative implementation with swap
+            // std::swap(mCapacity, rhs.mCapacity);
+            // std::swap(mElements, rhs.mElements);
+            // std::swap, rhs.mTop);
+
+       return *this;
+    }
+
+In a few cases, such as for a return value, the language rules say that the
 compiler can use a move operation (because the next action is defined to destroy
 the element). However, in general we have to tell it by giving an rvalue
 reference argument. For example:
@@ -2221,6 +2368,22 @@ Having move operations affects the idiom for returning large objects from
 functions. Performance-wise, it is perfectly fine to return a large
 stack-allocated object if it defines a move constructor, the "return by value"
 is both simple to use and efficient.
+
+    vector<int> selectOdd( const vector<int>& v){
+        vector<int> odds;
+        for(int a: v) {
+            if (a % 2 == 1){
+                odds.push_back( a );
+            }
+        }
+        return odds;
+    }
+
+    ...
+    vector<int> result = selectOdd(v);  // efficient: uses move constructor
+                                        // C++03: would have used the copy ctor
+
+
 
 ## Generated Default Constructors and Operators
 
@@ -2318,16 +2481,124 @@ Some general advice:
 - Make sure that copy assignments are safe for self-assignment.
 
 
+# The rule of 0-3-5
+(See https://cpppatterns.com)
+
+RAII is an old principle (from the 90s) teaching the simple rule that a
+constructor must leave an object in a usable state, that we should be able to
+copy it, and that the destructor must clean all owned resources, no matter what.
+
+The *Rule of Three* reminds everyone that if they customize either the copy
+constructor, assignment operator or destructor, they should most likely also do
+something about the other two. Then came C++11 and with move semantics it became
+the *Rule of Five* which is basically the same, but adds the move constructor
+and move assignment operator to the list.
+
+These days prefer the *Rule of Zero* which basically says that when in doubt,
+use `= default`. When using STL containers and smart pointers, your compiler
+will generate suitable defaults for most classes, even the ones that hold
+resources.
+
+
+# Copy-and-swap
+(See https://cpppatterns.com)
+
+Copy/move constructors, copy/move assignment operators and destructors are the
+key parts of an objects' lifecycle. If one is wrong, users will get dangling
+references, leaks, double deletes and other problems. And of course they need to
+work without leaking anything if an exception occurs.
+
+The best way to avoid bugs is to write no code at all, so the *Rule of Zero* is
+obviously an excellent solution. Except sometimes we cannot rely on it (for
+example when writing custom containers). In those cases we will need to follow
+the *Rule of Five*.
+
+The *copy-and-swap* idiom identifies that we can implement a class'es copy/move
+assignment operators in terms of its copy/move constructor and achieve strong
+exception safety. The only time an exception can be thrown is when the copy
+constructor gets called, while passing `other` to the assignment operator. This,
+however, leaves the left-hand side in a unmodified state (no leakage nor
+inconsistencies are introduced).
+
+    class resource {
+    public:
+      int x;
+      resource(int value) : x{value} {}
+    };
+
+    class foo {
+    private:
+      resource *p;
+
+    public:
+      foo() : p{new resource{0}} {}
+      foo(int value) : p{new resource{value}} {}
+
+      ~foo() { delete p; }
+
+      // copy constructor
+      foo(const foo &other) : p{new resource{*(other.p)}} {}
+
+      // move constructor
+      foo(foo &&other) : p{other.p} { other.p = nullptr; }
+
+      // move AND copy assignment operator: NOTE the pass-by-vale!!
+      foo &operator=(foo other) {
+        this->swap(other);
+        return *this;
+      }
+
+      void swap(foo &other) {
+        using std::swap;
+        swap(this->p, other.p);
+      }
+
+      int get_p() const { return p->x; }
+    };
+
+    int main(int argc, char *argv[]) {
+      foo f0{};
+      foo f1{1};
+      foo f2{2};
+
+      std::cout << "f0: " << f0.get_p() << "\n";  // -> 0
+      std::cout << "f1: " << f1.get_p() << "\n";  // -> 1
+      std::cout << "f2: " << f2.get_p() << "\n";  // -> 2
+
+      f0 = f1;            // copy assignment
+      f1 = std::move(f2); // move assignment
+
+      std::cout << "f0: " << f0.get_p() << "\n";  // -> 1
+      std::cout << "f1: " << f1.get_p() << "\n";  // -> 2
+      std::cout << "f2: " << f2.get_p() << "\n";  // -> segmentation fault
+
+      return 0;
+    }
+
+The class `foo`, has an implementation similar to the rule of five, yet its copy
+and move assignment operators have been replaced with a single assignment
+operator. This assignment operator takes its argument by value, making use of
+the existing copy and move constructor implementations.
+
+To implement the assignment operator, we simply need to swap the contents of
+`this` and the argument, `other`. When `other` goes out of scope at the end of
+the function, it will destroy any resources that were originally associated with
+the current object (following the principles of RAII).
+
+
 # Operator Overloading
 (The C++ Programming Language, Chapter 18,19)
+TODO
 
 
 # Inheritance and polymorphism
 (The C++ Programming Language, Chapter 20-22)
+TODO
 
 
 # Templates
 (The C++ Programming Language, Chapter 23)
+TODO
 
 
 # Tools
