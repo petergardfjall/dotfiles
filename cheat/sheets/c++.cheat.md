@@ -2586,6 +2586,37 @@ the function, it will destroy any resources that were originally associated with
 the current object (following the principles of RAII).
 
 
+A less compact forumlation explicitly declares both the copy and move assignment
+operators and introduce a temporary within those (instead of using a single
+assigmnent operator with pass-by-value):
+
+    // destructor that deletes any owned resource
+    ~T();
+
+    // copy constructor: duplicates any owned resource and takes ownership of it
+    T(const T &other);
+
+    // non-throwing swap that will exchange the contents of two containers by
+    // swapping the internal bits
+    void swap(T& other);
+
+    // make a temporary copy of the source object, then swap the copy with this
+    T& operator=(const T& rhs)
+    {
+      T tmp(rhs);  // this is the only place that can throw
+      this->swap(tmp);
+      return *this;
+    }  // old value of this destroyed here
+
+    // make a temporary copy of the source object, then swap the copy with this
+    T& operator=(T&& rhs)
+    {
+      T tmp(std::move(rhs)); // this is the only place that can throw
+      this->swap(tmp);
+      return *this;
+    } // old value of this destroyed here
+
+
 # Operator Overloading
 (The C++ Programming Language, Chapter 18,19)
 TODO
