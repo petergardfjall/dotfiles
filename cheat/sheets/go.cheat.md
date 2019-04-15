@@ -1332,6 +1332,64 @@ As an example:
             mockRunner.AssertExpectations(t)
     }
 
+
+## Versioning
+
+It is common to want a semantic version for a program (and to have the git
+commit part of that version string). This can be achieved by having the linker
+set a version field at compile-time. For example, add a `pkg/version/version.go`
+like this:
+
+    package version
+
+    import (
+        "github.com/Masterminds/semver"
+    )
+
+    // Versioning metadata.
+    var (
+        // Version is the release version of the program, such as '1.2.3'. The
+        // version must follow the semantic version format (https://semver.org)
+        // `MAJOR.MINOR.PATCH`, optionally followed by a hyphen and an
+        // additional string, for example `1.2.3-alpha.1`.  The complete program
+        // version, will be produced by appending GitCommit to Version, to
+        // produce somehting like `1.2.3-alpha.1+c282415`.
+        Version = "0.0.1"
+
+        // GitCommit is a piece of version metadata (a git commit) that will be
+        // appended to the Version to form the complete version. This is
+        // intended to be set by the linker at build-time to a unique commit
+        // prefix such as `c282415` (produce via `git rev-parse --short HEAD`).
+        GitCommit string
+    )
+
+    // FullVersion returns the full semantic version of the program. It is a
+    // concatenation of the Version (`1.2.3-alpha.1`) and the GitCommit (if one is
+    // set), for example: `1.2.3-alpha.1+c282415`.
+    func FullVersion() *semver.Version {
+        versionString := Version
+        if GitCommit != "" {
+            versionString += "+" + GitCommit
+        }
+
+        return semver.MustParse(versionString)
+    }
+
+Then add something like this to your build (in this case, using `Makefile`):
+
+    # GIT_COMMIT is the GitCommit that will be "injected" into the program version
+    # to form the full version. It can be passed directly from the command line via:
+    # "make compile GIT_COMMIT=abc1234".
+    GIT_COMMIT?=$(shell git rev-parse --short HEAD)
+
+    ...
+
+    build:
+        go build -ldflags "-X github.com/my/service/pkg/version.GitCommit=$(GIT_COMMIT)";
+    ...
+
+
+
 ## Profiling
 https://golang.org/pkg/runtime/pprof/
 https://jvns.ca/blog/2017/09/24/profiling-go-with-pprof/
