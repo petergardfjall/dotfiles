@@ -1,0 +1,11 @@
+# Make packages installed locally under ~/.npm-packages
+# available for execution and to have their man pages inspected.
+#
+# NOTE: this relies on ~/.npmrc containing
+#
+#  prefix=${HOME}/.npm-packages
+#
+
+export NPM_PACKAGES="${HOME}/.npm-packages"
+export PATH=${PATH}:${NPM_PACKAGES}/bin
+#export MANPATH="${NPM_PACKAGES}/share/man:$(manpath)"
