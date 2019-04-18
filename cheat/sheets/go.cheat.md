@@ -83,10 +83,56 @@ exported names in the package can use that fact to avoid stutter. For instance,
 the buffered reader type in the `bufio` package is called `Reader`, not
 `BufReader`, because users see it as `bufio.Reader`.
 
+
 ### Package organization
 
-TODO: how to organize domain types, services (interfaces) to optimize for
-testing, readability and avoid circular imports
+It is important to organize code for readability, testing, etc. But how can
+domain types, services (interfaces) and packages be structured to produce more
+well-structured code?
+
+One strategy, presented by Ben Johnson
+(https://medium.com/@benbjohnson/standard-package-layout-7cdbc8391fc1,
+https://talks.bjk.fyi/gcru18-best.html#/) pushes the domain model to the top of
+the project and separates subpackages by dependency.
+
+It involves 4 simple tenets:
+
+1. Root package is for domain types. Your application has a logical, high-level
+   language that describes how data and processes interact. This is your
+   *domain*. Place domain types in the root package. This package only contains
+   simple data types like a `User` struct for holding user data or a
+   `UserService` interface for fetching or saving user data. *The root package
+   should not depend on any other package in your application!*
+
+2. Group subpackages by (external) dependency. Subpackages exist as an adapter
+   between your domain and your implementation. Your `UserService` might be
+   backed by PostgreSQL. You can introduce a postgres subpackage in your
+   application that provides a `postgres.UserService`. No imports should occur
+   between subpackages. Instead, they are connected to via interfaces/types in
+   the domain model. Dependencies communicate solely through our common domain
+   language. One can use the same approach and group packages by dependency even
+   for standard library dependencies. For instance, the `net/http` package is
+   just another dependency. We can isolate it as well by including an `http`
+   subpackage in our application.
+
+3. Use a shared `mock` subpackage. Since dependencies are isolated from other
+   dependencies by domain interfaces, we can use these connection points to
+   inject mock implementations.
+
+4. Main package ties together dependencies. It wires the dependencies together
+   by injecting domain interface implementations.
+
+A concrete example: https://github.com/benbjohnson/wtf
+
+
+### Package renaming
+
+The `gomvpkg` comes in handy when you want to rename a package and have all
+references updated (very tedious when done manually).
+
+    gomvpkg -from github.com/softsense/cve-db/pkg/cpemapping -to github.com/softsense/cve-db/pkg/domain/cpe -vcs_mv_cmd "git mv {{.Src}} {{.Dst}}"
+
+Note: it appears to only work when the project is on your `GOPATH`.
 
 
 ## The init function
