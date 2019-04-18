@@ -83,6 +83,11 @@ exported names in the package can use that fact to avoid stutter. For instance,
 the buffered reader type in the `bufio` package is called `Reader`, not
 `BufReader`, because users see it as `bufio.Reader`.
 
+### Package organization
+
+TODO: how to organize domain types, services (interfaces) to optimize for
+testing, readability and avoid circular imports
+
 
 ## The init function
 Each source file can define one or more `init` functions to set up whatever
@@ -750,6 +755,45 @@ There are a few intersting functions:
   replacing matches of the `Regexp` with the replacement string `repl`. Inside
   `repl`, `$` signs are interpreted so that `$1` represents the text of the
   first submatch (capture group).
+- `FindStringSubmatch`: returns a slice of strings holding the text of the
+  leftmost match of the regular expression and the matches, if any, of its
+  subexpressions, as defined by the 'Submatch' description in the package
+  comment. A return value of `nil` indicates no match.
+
+        pattern := regexp.MustCompile(`lastModifiedDate:(\S+)`)
+        m := pattern.FindStringSubmatch("lastModifiedDate:2018-05-01")
+        if m == nil {
+            fmt.Println("no match")
+        } else {
+            fmt.Printf("matched: '%s'\n", m[1])
+        }
+
+## Time
+
+Parsing time is carried out via `time.Parse`:
+
+    func Parse(layout, value string) (Time, error)
+
+Parses a formatted string and returns the time value it represents. The layout
+defines the format via a reference time: `Mon Jan 2 15:04:05 -0700 MST 2006`.
+
+    time1 := "2018-01-12T12:15:45"
+    time2 := "24/12 2019 15:00:10"
+    time3 := "2019-04-18T00:25:38-04:00"
+    time4 := "2019-04-18T00:25:38.000Z"
+
+    t1, _ := time.Parse("2006-01-02T15:04:05", time1)
+    fmt.Println(t1.UTC())
+
+    t2, _ := time.Parse("02/1 2006 15:04:05", time2)
+    fmt.Println(t2.UTC())
+
+    t3, _ := time.Parse("2006-01-02T15:04:05-07:00", time3)
+    fmt.Println(t3.UTC())
+
+    t4, _ := time.Parse(time.RFC3339, time4)
+    fmt.Println(t4.UTC())
+
 
 ## Enumerations
 
