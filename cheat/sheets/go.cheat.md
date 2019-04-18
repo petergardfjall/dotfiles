@@ -130,7 +130,7 @@ A concrete example: https://github.com/benbjohnson/wtf
 The `gomvpkg` comes in handy when you want to rename a package and have all
 references updated (very tedious when done manually).
 
-    gomvpkg -from github.com/softsense/cve-db/pkg/cpemapping -to github.com/softsense/cve-db/pkg/domain/cpe -vcs_mv_cmd "git mv {{.Src}} {{.Dst}}"
+    gomvpkg -from github.com/myapp/pkg/types -to github.com/myapp/pkg/pkg/domain/app -vcs_mv_cmd "git mv {{.Src}} {{.Dst}}"
 
 Note: it appears to only work when the project is on your `GOPATH`.
 
