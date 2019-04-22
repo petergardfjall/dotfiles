@@ -95,6 +95,11 @@ usability, testability, and functionality of your code:
 The goal should be to write code that is easy to understand, easy to refactor,
 and easy for someone else to maintain.
 
+Regarding naming, name your packages after what they provide, not what they
+contain. Remember that a package's name is both a description of its purpose,
+and a name space prefix.
+
+
 #### Library organization
 For *libraries*, packages should contain code with a single purpose (look at the
 standard library): `archive`, `container`, `math`, `path`, `net`, `io`.
