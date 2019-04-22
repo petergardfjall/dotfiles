@@ -86,14 +86,62 @@ the buffered reader type in the `bufio` package is called `Reader`, not
 
 ### Package organization
 
-It is important to organize code for readability, testing, etc. But how can
-domain types, services (interfaces) and packages be structured to produce more
-well-structured code?
+Two key areas of code organization that will make a huge impact on the
+usability, testability, and functionality of your code:
 
-One strategy, presented by Ben Johnson
+- Package Naming
+- Package Organization
+
+The goal should be to write code that is easy to understand, easy to refactor,
+and easy for someone else to maintain.
+
+#### Library organization
+For *libraries*, packages should contain code with a single purpose (look at the
+standard library): `archive`, `container`, `math`, `path`, `net`, `io`.
+
+- Packages names describe their purpose
+- It's very easy to see what a package does by looking at the name
+- Names are generally short
+- When necessary, use a descriptive parent package and several children
+  implementing the functionality - like the `encoding` package (`encoding/json`,
+  `encoding/pem`)
+
+#### Application organization
+For *applications*, the package organization is subtly different. The difference
+is the command, the executable that ties all of those packages together. Most
+libraries focus on providing a singularly scoped function; logging, encoding,
+network access. Your application will tie all of those libraries together to
+create a tool or service, which will be much larger in scope.
+
+When building an *application*, you should organize your code into packages, but
+those packages should be centered on two categories:
+- Domain Types
+- Services
+
+*Domain Types* model your business functionality and objects. *Services* are
+packages that operate on or with the domain types.
+
+A domain type is the substance of your application. If you have an inventory
+application, your domain types might include `Product` and `Supplier`. The
+package containing your domain types should also define the interfaces between
+your domain types and the rest of the world. These interfaces define the things
+you want to do with your domain types (`ProductService`, `SupplierStorage`).
+
+Your domain type package should be the root of your application repository. This
+makes it clear to anyone opening the codebase what types are being used, and
+what operations will be performed on those types. The domain type package, or
+root package of your application should not have any external dependencies. It
+exists for the sole purpose of describing your types and their behaviors. The
+implementations of your domain interfaces should be in separate packages,
+organized by dependency. Here, dependencies include external data sources and
+transport logic (http, RPC). You should have one package per dependency. This
+makes testing simple, allows for easy substitution/replacement and avoids
+circular dependencies.
+
+A strategy to achive this is presented by Ben Johnson
 (https://medium.com/@benbjohnson/standard-package-layout-7cdbc8391fc1,
-https://talks.bjk.fyi/gcru18-best.html#/) pushes the domain model to the top of
-the project and separates subpackages by dependency.
+https://talks.bjk.fyi/gcru18-best.html#/). It pushes the domain model to the top
+of the project and separates subpackages by dependency.
 
 It involves 4 simple tenets:
 
@@ -123,6 +171,10 @@ It involves 4 simple tenets:
    by injecting domain interface implementations.
 
 A concrete example: https://github.com/benbjohnson/wtf
+
+
+Inside a package separate code into logical concerns. If the package deals with
+multiple types, keep the logic for each type in its own source file.
 
 
 ### Package renaming
