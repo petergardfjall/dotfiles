@@ -19,7 +19,8 @@ collaborating with different teams. For example, add aliases to your
     alias passred="PASSWORD_STORE_DIR=~/.pass/red pass"
     alias passblue="PASSWORD_STORE_DIR=~/.pass/blue pass"
 
-Add these for bash-completion to your ~/.bash_completion and make sure bash-completion is installed:
+Add these for bash-completion to your `~/.bash_completion` and make sure
+`bash-completion` is installed:
 
     source /usr/share/bash-completion/completions/pass
 
@@ -34,8 +35,14 @@ Add these for bash-completion to your ~/.bash_completion and make sure bash-comp
     complete -o filenames -o nospace -F _passblue passblue
 
 Now you can initialize into `~/.pass/red` and `~/.pass/blue` and have two pass
-contexts with the passred and passblue aliases. You can generalize this further
-into as many contexts as you like.
+contexts with the `passred` and `passblue` aliases. You can generalize this
+further into as many contexts as you like.
+
+    # get password in red context
+    passred /red/pass
+
+    # insert context in blue context
+    passblue insert /blue/password
 
 
 ## Basic usage
