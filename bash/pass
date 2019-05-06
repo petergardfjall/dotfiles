@@ -1,0 +1,12 @@
+#
+# Set up pass context
+#
+
+alias passme="PASSWORD_STORE_DIR=~/.pass/me pass"
+
+# bash completion
+source /usr/share/bash-completion/completions/pass
+_passme(){
+    PASSWORD_STORE_DIR=~/.pass/me/ _pass
+}
+complete -o filenames -o nospace -F _passme passme
