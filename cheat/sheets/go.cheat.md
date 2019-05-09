@@ -85,7 +85,7 @@ the buffered reader type in the `bufio` package is called `Reader`, not
 
 
 ### Package organization
-
+(source: https://www.brianketelsen.com/slides/gcru18-best/)
 Two key areas of code organization that will make a huge impact on the
 usability, testability, and functionality of your code:
 
