@@ -1291,12 +1291,80 @@ have `NULL` values. For example, `sql.NullString`, `sql.NullInt`
 
 
 ## Command-line parsing
+Simple command-line parsing can be done with the standard librar `flag` package:
 
-- TODO: viper/cobra
-  - root.go
-  - persistent flags
-  - flags
-  - environment variable binding (support env variables in place of flags)
+    var flagvar int
+
+    func init() {
+        flag.IntVar(&flagvar, "flagname", 1234, "help message for flagname")
+    }
+
+    func main() {
+        flag.Parse()
+        fmt.Printf("flag value: %d\n", flagvar)
+    }
+
+For more complex command-line tools, with sub-commands, and which allows flags
+to be input either via command-line options or environment variables, the
+`viper/cobra` packages are useful:
+
+    // main.go
+    func main() {
+        Execute()
+    }
+
+    // root.go
+    func init() {
+        // persistent: can be used in sub-commands
+        rootCmd.PersistentFlags().String("host", "localhost", "Server host")
+        rootCmd.PersistentFlags().Int("port", 1234, "Server port.")
+
+        // Viper to access command-line flags (this allows us to also support
+        // passing environment variables in place of flags).
+        viper.BindPFlag("host", rootCmd.PersistentFlags().Lookup("host"))
+        viper.BindPFlag("port", rootCmd.PersistentFlags().Lookup("port"))
+        // Allow --port to be given as FTPCLIENT_PORT.
+        viper.SetEnvPrefix("ftpclient")
+        // environment variables use undescores ("_") rather than dashes ("-")
+        viper.SetEnvKeyReplacer(strings.NewReplacer("-", "_"))
+        viper.BindEnv("host")
+        viper.BindEnv("port")
+    }
+
+    // rootCmd represents the base command when called without any subcommands
+    var rootCmd = &cobra.Command{
+        Use:   "ftpclient",
+        Short: "An FTP client.",
+        Long: `Longer description ...`,
+    }
+
+    func Execute() {
+        if err := rootCmd.Execute(); err != nil {
+            fmt.Println(err)
+            os.Exit(1)
+        }
+    }
+
+    // get.go : ftpclient get <path>
+    func init() {
+        rootCmd.AddCommand(getCmd)
+
+        getCmd.Flags().String("mode", "binary", "Download mode")
+        viper.BindPFlag("mode", getCmd.PersistentFlags().Lookup("mode"))
+        viper.BindEnv("mode")
+    }
+
+    var getCmd = &cobra.Command{
+        Use:   "get <path>",
+        Short: "Get a file path from server.",
+        Args:  cobra.ExactArgs(1),
+        Run: func(cmd *cobra.Command, args []string) {
+            c := ftp.NewClient(viper.GetString("host"), viper.GetInt("port"))
+            defer c.Close()
+            c.Download(viper.GetString("mode"))
+            ...
+        },
+    }
 
 
 ## User input from stdio
