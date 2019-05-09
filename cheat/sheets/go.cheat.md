@@ -1399,7 +1399,7 @@ to be input either via command-line options or environment variables, the
     }
 
 
-## Goroutines and channels
+## Concurrency: Goroutines and channels
 
 A *goroutine* is lightweight, costing little more than the allocation of stack
 space. And the stacks start small, so they are cheap, and grow by allocating
@@ -1411,6 +1411,8 @@ Besides the well-known thread synchronization primitives such as `sync.Mutex`
 and `sync.Cond` Go offers a message-passing synchronization mechanism in
 *channels*. Go channels can be viewed as a type-safe generalization of Unix
 pipes.
+
+TODO
 
 
 ## Tests
