@@ -22,7 +22,9 @@
 
 - Reload configuration:           `M-x load-file ~/.emacs`
 
-
+## Appearance
+- Increase buffer font size:      `C-x C-+`
+- Decrease buffer font size:      `C-x C--`
 
 ## Packages
 - Refresh and list packages: `M-x list-packages`
