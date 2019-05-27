@@ -103,5 +103,6 @@
     // "rewrap.wrappingColumn": 80,
     // wrap a whole comment block when a text cursor is inside it
     "rewrap.wholeComment": true,
+    "go.useLanguageServer": true,
 }
 
