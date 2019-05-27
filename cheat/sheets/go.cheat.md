@@ -1460,6 +1460,24 @@ Table-driven tests are common in Go:
         }
     }
 
+Sometimes, it is necessary to perform setup and/or teardown before or after
+testing. A
+
+    func TestMain(m *testing.M)
+
+function can be used for this purpose. If found, the generated test will call
+`TestMain(m)` instead of running the tests directly. TestMain runs in the main
+goroutine and can do whatever setup and teardown is necessary around a call to
+`m.Run`. It should then call `os.Exit` with the result of `m.Run`.
+
+    func TestMain(m *testing.M) {
+        setUp()
+        c := m.Run()
+        tearDown()
+        os.Exit(c)
+    }
+
+
 ## stretchr/testify
 Libraries like https://github.com/stretchr/testify can be used to simplify
 testing:
