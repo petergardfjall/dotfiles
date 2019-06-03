@@ -1414,6 +1414,8 @@ pipes.
 
 TODO
 
+TODO: context.Context
+
 
 ## Tests
 Tests are written in files ending in `_test.go` and use the `testing` package.
