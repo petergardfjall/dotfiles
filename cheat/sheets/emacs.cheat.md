@@ -19,6 +19,7 @@
 
 - Customize/select theme:         `M-x customize-themes`
 - Customize variables and faces:  `M-x customize`
+- Set a customizable var:         `M-x customize-set-variable <var>`
 
 - Reload configuration:           `M-x load-file ~/.emacs`
 
