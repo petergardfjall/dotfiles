@@ -1,1 +1,1 @@
-export EDITOR="TERM=xterm-24bit emacs26"
+export EDITOR="TERM=xterm-24bit emacs26 --no-desktop"
