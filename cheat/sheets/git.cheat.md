@@ -80,6 +80,27 @@ To restore the project's history as it was at that moment in time:
 
     git reset --hard <sha>
 
+If you have a sequence of commits but realize that some of your unstaged changes
+belong in an older (not yet pushed) commit, you can apply your current changes
+to the prior commit as follows:
+
+    # store the changes to add to the old commit
+    git stash
+
+    # if the old commit to update is three commits back
+    git rebase -i HEAD~3
+    # this opens a rebase editor: mark the commit in question for edit
+    # by changing 'pick' into 'edit' and save
+
+    # apply the changes, and add the updated files
+    git stash pop
+    git add <file> ...
+    # amend the commit with the changes
+    git commit --amend --no-edit
+    
+    # rewrite the rest of the commits against the new one
+    git rebase --continue
+
 
 ### A simple Git workflow
 
@@ -88,7 +109,7 @@ Get repo
     git clone <repo-path> repo.git
     cd repo.git
 
-Create a local branch.
+Create a local branch (from `master`).
 
     git checkout -b ticket123
     ... work on branch, commit, etc...
@@ -124,6 +145,29 @@ Merge with master branch and push to remote origin server.
     git merge ticket123
     git push origin master:master
 
+While working on a local fork you may sometimes want to pull in changes from the
+upstream repo:
+
+    # assuming we're in our own fork ...
+    $ git remote -v
+    origin https://github.com/johndoe/projx.git (fetch)
+    origin https://github.com/johndoe/projx.git (push)
+
+    # add upstream repo as a remote
+    $ git remote add upstream https://github.com/projx/projx
+    $ git remote -v
+    origin https://github.com/johndoe/projx.git (fetch)
+    origin https://github.com/johndoe/projx.git (push)
+    upstream https://github.com/projx/projx (fetch)
+    upstream https://github.com/projx/projx (push)
+
+    # fetch upstream changes
+    $ git fetch upstream
+    # rebase your changes on master onto the changes from upstream/master.
+    $ git checkout master
+    $ git rebase upstream/master
+
+
 
 ### Patching
 Divide a large changeset into smaller commits. Git will now ask you, for each
@@ -148,15 +192,24 @@ Apply patch.
     patch -p0 < patchfile
 
 Produce a patch from an old commit
+
     git format-patch -1 <sha>
+
 Show stats for patchfile.
+
     git apply --stat patchfile
+
 Check for errors before applying.
+
     git apply --check patchfile
+
 Apply patch
+
     git am < patchfile
+
 OR apply patch using three-way merge (lets you resolve conflicts manually or
 using git mergetool).
+
     git am -3 < patchfile
 
 
@@ -165,8 +218,7 @@ List local branches:  `git branch`
 List remote branches: `git branch -r`
 Switch local branch:  `git checkout <otherbranch>`
 Delete local branch:  `git branch -d ticket123`
-Delete remote branch: `git push origin :ticket123
-`
+Delete remote branch: `git push origin :ticket123`
 Rename local branch:
 
     # if on the branch to rename
@@ -176,9 +228,9 @@ Rename local branch:
     # replace the old remote branch with the new
     git push origin :old-name new-name
 
-Checkout a remote branch:
-    git fetch && git checkout ticket123
-    git fetch && git checkout -b x origin/x
+Check out a remote branch:
+
+    git fetch && git checkout -b remotebranch origin/remotebranch
 
 Merge in branch updates from remote repository `origin` to your local copy of
 the branch.
@@ -191,7 +243,6 @@ Show all changes introduced on a branch that aren't on the master branch (`-p`
 gives diffs in addition to commits).
 
     git log <branch> -p --not origin/master
-
 
 
 
