@@ -1407,12 +1407,147 @@ space. And the stacks start small, so they are cheap, and grow by allocating
 OS threads so if one should block, such as while waiting for I/O, others
 continue to run.
 
+When starting a new goroutine
+
+    go f(x, y, z)
+
+the evaluation of `f`, `x`, `y`, and `z` happens in the current goroutine and
+the execution of `f` happens in the new goroutine.
+
 Besides the well-known thread synchronization primitives such as `sync.Mutex`
 and `sync.Cond` Go offers a message-passing synchronization mechanism in
 *channels*. Go channels can be viewed as a type-safe generalization of Unix
 pipes.
 
-TODO
+Channels are a typed conduit through which you can send and receive values with
+the channel operator, `<-` (data flows in the direction of the arrow).
+
+    ch <- v    // Send v to channel ch.
+    v := <-ch  // Receive from ch, and
+               // assign value to v.
+
+Channels:
+- must be created before use (via `make`)
+- channels can be typed to only allow sending (`s chan<- int`) or receiving of
+  values (`r <-chan int`)
+- can be buffered (blocking) or unbuffered (non-blocking for sends until full
+  and for reads until empty)
+- `for i := range c` can be used to read values until `c` is closed.
+- closing is only necessary when the receiver must be told there are no more
+  values coming, such as to terminate a range loop. Only the sending side should
+  ever close a channel, since trying to send on a closed channel will panic.
+  Receivers can test whether a channel has been closed by assigning a second
+  parameter to the receive expression:
+
+        // ok is false => no more values to receive and ch has been closed
+        v, ok := <-ch
+
+A simple producer/consumer example:
+
+    func main() {
+        // unbuffered: sends and receives block until other side is ready.
+        c := make(chan int)
+
+        fib := func(n int, out chan<- int) {
+            a, b := 0, 1
+            for i := 0; i < n; i++ {
+                // send value to channel (blocks)
+                out <- b
+                a, b = b, a+b
+            }
+            close(c)
+        }
+        go fib(20, c)
+
+        printer := func(in <-chan int) {
+            // receive values from the channel until it is closed
+            for val := range in {
+                fmt.Println(val)
+            }
+            fmt.Println("channel closed!")
+        }
+        go printer(c)
+
+        time.Sleep(5 * time.Second)
+    }
+
+A buffered channel:
+
+    ch := make(chan int, 2)
+    ch <- 1
+    ch <- 2
+    // would block forever
+    // ch <- 3
+    fmt.Println(<-ch)
+    fmt.Println(<-ch)
+
+
+A `select` statement lets a goroutine wait on multiple communication
+operations. It blocks until one of its cases can run, then it executes that
+case. If multiple are ready one is chosen pseudo-randomly.
+
+A `default` case in a select is run if no other case is ready, and can therefore
+be used to try a send or receive without blocking.
+
+    func fib(n int, out chan<- int, quit <-chan bool) {
+        a, b := 0, 1
+        for i := 0; i < n; i++ {
+            select {
+            // send value to channel (blocks)
+            case out <- b:
+                fmt.Printf("fib: sent work (%d).\n", b)
+                time.Sleep(1000 * time.Millisecond)
+            case <-quit:
+                fmt.Printf("fib: told to stop!\n")
+                close(out)
+                return
+            }
+            a, b = b, a+b
+        }
+    }
+
+    func processor(c <-chan int) {
+        for {
+            select {
+            // non-blocking receive (due to default case)
+            case num, ok := <-c:
+                if !ok {
+                    fmt.Printf("processor: no more work!\n")
+                    return
+                }
+                fmt.Printf("processor: crunching %d ...\n", num)
+                time.Sleep(200 * time.Millisecond)
+                fmt.Printf("processor: done with %d!\n", num)
+            default:
+                fmt.Printf("processor: no jobs, resting ...\n")
+                time.Sleep(400 * time.Millisecond)
+            }
+        }
+    }
+
+    func main() {
+        c := make(chan int)
+        quit := make(chan bool)
+
+        go fib(20, c, quit)
+        go processor(c)
+
+        time.Sleep(5 * time.Second)
+        quit <- true
+        time.Sleep(1 * time.Second)
+    }
+
+
+A `nil` channel is never ready.
+
+    var c chan int // nil
+    select {
+    case x := <-c:
+        fmt.Println("will never happen, c is nil", x)
+    default:
+        fmt.Println("will always happen")
+    }
+
 
 TODO: context.Context
 
