@@ -1442,6 +1442,25 @@ Channels:
         // ok is false => no more values to receive and ch has been closed
         v, ok := <-ch
 
+- A channel `close` is broadcast to all receivers:
+
+        func worker(work <-chan int, quit chan bool) {
+            for {
+                select {
+                    case w := <-work:
+                        // do work ...
+                    case <-quit:
+                        return
+                }
+            }
+        }
+
+        ...
+        quit := make(chan bool)
+        go worker(workqueue, quit)
+        go worker(workqueue, quit)
+        close(quit)  // broadcast to all workers, which will return
+
 A simple producer/consumer example:
 
     func main() {
@@ -1547,6 +1566,9 @@ A `nil` channel is never ready.
     default:
         fmt.Println("will always happen")
     }
+
+
+
 
 
 TODO: context.Context
