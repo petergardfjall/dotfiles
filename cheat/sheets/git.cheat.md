@@ -97,7 +97,7 @@ to the prior commit as follows:
     git add <file> ...
     # amend the commit with the changes
     git commit --amend --no-edit
-    
+
     # rewrite the rest of the commits against the new one
     git rebase --continue
 
@@ -325,6 +325,10 @@ Show info about the remotes of this repo.
 Show a short hash (like `ceba11f`) for current commit:
 
     git rev-parse --short HEAD
+
+Show any tags that are attached to current commit:
+
+    git tag -l --points-at HEAD
 
 ### Remove sensitive files
 
