@@ -17,6 +17,7 @@ expression, like `(+ 1 1)`, and run `C-j` to have the last expression
 evaluated. Or, in any buffer, place the cursor after an expression and evaluate
 it with `C-x C-e`.
 
+
 ## Language basics
 
 Lisp is short for `LIS`t `P`rocessing language. Lists are the basis of Lisp.
@@ -51,16 +52,32 @@ The printed representation of both atoms and lists are called *symbolic
 expressions* or, more concisely, `sexp`.
 
 
-## Language primitives
+## Atoms and basic types
 
 The simplest objects in Elisp are called *atoms*. These evaluate to themselves
 and come in three forms:
 
 - Integers: `42`
 - Floats:   `3.0`
-- Strings:  `"foobar"`
-- TODO: boolean?
-- TODO: symbols
+- Strings:  `"foobar"`. Always double-quoted.
+- Booleans: the symbol `t` or the symbol `nil`. In Emacs Lisp, every value is
+  *truthy* except `nil` and the empty list `()` (which are equivalent). Notably,
+  `0` and `""` are both truthy.
+
+  The functions `and`, `or`, and `not` are used as logical operators.
+
+        ;; => 7. returns the last argument, if they're all truthy (else nil)
+        (and t "" 0 7)
+
+        ;; => "foo". returns the first truthy value (else nil).
+        (or nil "foo" '() "bar")
+
+        ;; => t
+        (not nil)
+
+- Symbols: a symbol can serve as a variable, as a function name, to hold a
+  property list, or it may serve as a distinct value with a particular meaning
+  (such as `nil`).
 
 Lisp expressions are either atoms or function calls (there are also *macros*
 though: a macro translates a Lisp expression into another expression that is to
@@ -76,6 +93,10 @@ the applies the function to those arguments.
     ;; => (+ 6 2) => 8
     (+ (* 2 3)
        (/ 8 4))
+
+
+Emacs Lisp has several built-in data structures such as vectors, hashtables, and
+bit-vectors but there's no syntax for them; they're created with function calls.
 
 
 ## Lists
@@ -150,10 +171,67 @@ There are several functions that can be used to manipulate lists:
         ;; => (1 2 3 4)
         (append '(1 2) '(3 4))
 
-## Variables
+## Pairs and Associative Lists
 TODO
 
+## Variables
+
+Trying to evaluate an undefined variable raises an error:
+
+    ;; error: Symbol's value as variable is void: some-list
+    some-list
+
+The error means that the symbol `some-list` doesn't point to a variable. The
+`set` function is used to assign values to variables.
+
+    (set 'some-list '(1 2 3))
+
+`set` takes the name of a variable (quoted, so it's not evaluated) and a value,
+and sets the variable to that value. In practice, it's more common to use the `setq` macro, which wraps the first variable in a call to `quote`.
+
+    (setq some-list '(1 2 3))
+
+    ;; equivalent
+    (set  (quote some-list) '(1 2 3))
+
+`setq` defines a variable *globally*.
+
+Locally scoped variables are defined with a `let` expression.
+
+    (let ((a 1)
+          (b 5))
+        (message "a is %d" a)
+        (message "b is %d" b))
+
+`let` doesn't allow an earlier defined variable to be referenced when defining
+another. For such cases, use `let*`.
+
+    (let* ((a 1)
+           (b (+ a 1))
+        (message "a is %d" a)
+        (message "b is %d" b))
+
+
 ## Functions
+TODO
+
+*Predicates*: functions, such as `=` or `null`, that just return `t` or
+`nil`. They are often suffixed with `-p`.
+
+    ;; => t
+    (= (+ 2 2) 4)
+
+*Lambdas*: TODO
+
+## Equality
+TODO
+
+
+## Conditionals
+TODO
+
+
+## Looping
 TODO
 
 ## Emacs library
