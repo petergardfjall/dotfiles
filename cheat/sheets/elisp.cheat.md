@@ -19,6 +19,11 @@ There are two common ways to evaluate Lisp expressions:
   to have the last expression evaluated and output on the next line.
 
 
+## Documentation
+To open the Emacs Lisp reference manual inside Emacs, type `C-h i` and search
+for `lisp`.
+
+
 ## Language basics
 
 Lisp is short for `LIS`t `P`rocessing language. Lists are the basis of Lisp.
@@ -64,6 +69,10 @@ and come in three forms:
 
         (message "A string with
         a line-break")
+
+  Some functions that operate on strings: `concat`, `upcase`, `substring`.
+  More can be found in the Elisp reference (`C-h i`).
+
 
 - Booleans: the symbol `t` or the symbol `nil`. In Emacs Lisp, every value is
   *truthy* except `nil` and the empty list `()` (which are equivalent). Notably,
@@ -222,8 +231,8 @@ There are several functions to work on alists: `assoc`, `rassoc`, `assq`,
 There is also hash tables in elisp, which are much more efficient for large data
 structures (`make-hash-table`, `gethash`, `puthash`, `remhash`, `clrhash`, etc).
 
-## Variables
 
+## Variables
 Trying to evaluate an undefined variable raises an error:
 
     ;; error: Symbol's value as variable is void: some-list
@@ -252,12 +261,19 @@ and sets the variable to that value. In practice, it's more common to use the
 
 Note that `setq` defines a variable *globally*.
 
-Locally scoped variables are defined with a `let` expression.
+Locally scoped variables are defined with a `let` expression. Unbound variables
+can also be declared; their initial value will be `nil`.
 
     (let ((a 1)
-          (b 5))
+          b
+          (c 5))
         (message "a is %d" a)
-        (message "b is %d" b))
+        (message "b is %s" b)
+        (message "c is %d" c))
+
+After `let` has created and bound the variables, it executes the code in the
+body of the `let`, and returns the value of the last expression in the body, as
+the value of the whole expression.
 
 `let` doesn't allow an earlier defined variable to be referenced when defining
 another. For such cases, use `let*`.
@@ -279,28 +295,277 @@ change.
     (defvar lsp-clients (make-hash-table :test 'eql)
       "Hash table server-id -> client.")
 
+The doc string of a variable is available via `M-x describe-variable`.
+
+You can find the source of a variable definition with `M-x find-variable`.
+
+
+## Equality
+There are different functions for testing different types of equality:
+
+- `=` tests numbers (and markers) for equality. E.g. `(= 2 (+ 1 1))` is `t`.
+- `string=` (`string-equal`): tests strings for equality.
+- `equal`: deep (structural) equality comparison between two objects. Similar to
+  Java's `Object.equals`.
+
+        (equal '(1 2 (3 4)) (list 1 2 (list 3 (* 2 2))))  ; true
+
+- `eq`: returns true if two objects are the same. Works for ints, symbols,
+  interned strings, and object references.
+
+
+## Comparison
+- Numeric comparison: `=`, `/=`, `<`, `>`, `<=`, `>=`, `min`, `max`
+- String comparison: `string=`, `string<` (`string-lessp`)
+
+
+## Flow control
+
+
+### Conditional execution
+If expression:
+
+    (if (>= 3 2)
+      (message "hello there"))
+
+If you need multiple expressions (statements) in the then-expr, use `progn`:
+
+    (if (zerop 0)
+        (progn
+          (do-something)
+          (do-something-else)
+          (etc-etc-etc)))
+
+Alternatively, one can use a `when` expression (there is also an `unless`):
+
+    (when (zerop 0)
+        (do-something)
+        (do-something-else)
+        (etc-etc-etc))
+
+If-else expression:
+
+    (if (today-is-friday)         ; test-expr
+        (message "yay, friday")   ; then-expr
+      (message "boo, other day")) ; else-expr
+
+If-elseif-else:
+
+    (if 'sunday
+        (message "sunday!")      ; then-expr
+      (if 'saturday              ; else-if
+          (message "saturday!")  ; next then-expr
+        (message ("weekday!")))) ; final else
+
+There are two `switch`-like statements: `cond` and `case`. `cond` is really just
+a flat way of expressing multi-arm if statements:
+
+    (cond
+       ((= n 1) "one")
+       ((= n 2) "two")
+       ((= n 3) "three")
+       (t "many!"))
+
+The `'cl` (Common Lisp) package bundled with Emacs provides a more switch-like
+construct for comparing numbers or symbols:
+
+    (case n
+      (1 "one")
+      (2 "two")
+      (3 "three")
+      (otherwise "many!"))
+
+
+### Looping
+While:
+
+    (setq x 10)
+    (while (plusp x)   ; while x is positive
+      (message "%d" x)
+      (decf x))        ; subtract 1 from x
+
+Iterate over a list with `while`:
+
+    (setq animals '(gazelle giraffe lion tiger))
+    (while animals
+        (print (car animals))
+        (setq animals (cdr animals)))
+
+Iterate over a list with `dolist` (a third argument can be given to `dolist`
+which becomes the symbol to return when the iteration completes):
+
+    (dolist (a animals)
+      (print a))
+
+Use `dotimes` to loop a particular number of iterations (can be used with only
+two argumetns, the third argument is what `dotimes` will return on completion):
+
+    (let (values)
+      (dotimes (i 3 values)
+        (setq values (cons i values))))
+
+Lisp's `catch/throw` can be used to achieve `break` and `continue` in loops.
+
+Breaking out of a loop:
+
+    (setq x 0 total 0)
+    (catch 'break
+      (while t
+        (incf total x)
+        (if (> (incf x) 10)
+            (throw 'break total))))
+
+To `continue` a loop, put a `catch` expression just inside the loop, at the top.
+
+    (setq x 0 total 0)
+    (while (<= x 10)
+      (catch 'continue
+        (incf x)
+        (if (zerop (% x 2))
+            (throw 'continue nil))
+        (incf total x)))
+
+
+### Errors
+Emacs Lisp has a `try/catch` like error handling via its condition system and
+the `condition-case` expression:
+
+    (condition-case nil
+        (progn
+          (do-something)
+          (do-something-else))
+      (error
+       (message "oh no!")
+       (do-recovery-stuff)))
+
+A `finally`-like construct is provided via `unwind-protect`.
+
+    (unwind-protect
+        (progn
+          (do-something)
+          (do-something-else))
+      (first-finally-expr)
+      (second-finally-expr))
+
 
 ## Functions
-TODO
+A function is defined with the `defun` macro:
+
+    (defun function-name (arguments...)
+      "optional-documentation..."
+      (interactive argument-passing-info)
+      (body ...))
+
+A function always returns a value when it is evaluated (unless it gets an
+error). A lisp function by default returns the value of the last expression
+executed in the function.
+
+Note: early returns in Emacs Lisp can be achieved the same way you do `break`
+and `continue` using `catch/throw`.
+
+    (defun day-name ()
+      (let ((date (calendar-day-of-week (calendar-current-date))))  ; 0-6
+        (catch 'return
+          (case date
+            (0
+             (throw 'return "Sunday"))
+            (6
+             (throw 'return "Saturday"))
+            (t
+             (throw 'return "weekday"))))))
+
+If you want your function to be available as a `M-x <function>` command, put
+`(interactive)` as the first expression in the body after the doc string. If the
+function takes arguments, there are several ways to tell `(interactive)` about
+these argumetns and their kind (e.g. a file, buffer).
+
+The doc string of a function is available via `M-x describe-function`.
+
+You can find the source of a function definition with `M-x find-function`.
+
+As an example, a recursive definition of a linear search with an
+`if-elseif-else`:
+
+    (defun contains-p (values val)
+      "Finds out if val is a member of the values list."
+      (if (not values)
+          nil
+        (if (= (car values) val)
+            t
+          (contains-p (cdr values) val))))
 
 *Predicates*: functions, such as `=` or `null`, that just return `t` or
-`nil`. They are often suffixed with `-p`.
+`nil`. They are often suffixed with `p`.
 
     ;; => t
     (= (+ 2 2) 4)
 
-*Lambdas*: TODO
+Emacs Lisp does not have reference arguments, but has *dynamic scope*, which
+means that a function can modify variables on the callers stack. Use with
+caution!
 
-## Equality
-TODO
+    (defun foo ()
+      (let ((x 6))  ; define a local (i.e., stack) variable x initialized to 6
+        (bar)       ; call bar
+        x))         ; return x
+
+    (defun bar ()
+      (setq x 7))   ; finds and modifies x in the caller's stack frame
+
+If you invoke `(foo)` the return value is `7`.
 
 
-## Conditionals
-TODO
+*Lambdas* (or anonymous functions) can be declared via the `lambda` macro:
+
+    ; declare a lambda (to no use...)
+    (lambda (x) (* x x x))
+
+    ; call a lambda: => 25
+    ((lambda (x) (* x x)) 5)
+
+Like `set` binds a variable to a value, `fset` binds a function to a symbol:
+
+    ; assign to a symbol
+    (fset 'sq (lambda (x) (* x x)))
+    ; => 9
+    (sq 3)
+
+Lambdas are most useful when combined with higher-order functions (`mapcar`
+applies a function to each element of a list):
+
+    ; => (1 4 9 16)
+    (mapcar (lambda (x) (* x x)) '(1 2 3 4))
+    (mapcar 'sq '(1 2 3 4))
+
+`funcall` can be used to create higher-order functions:
+
+    (defun apply-to (fn values)
+      "Apply function fn to each element of values list."
+      (let
+          ((out nil))
+        (while values
+          (push (funcall fn (car values)) out)
+          (setq values (cdr values)))
+        (reverse out)))
+
+    ; => (1 4 9)
+    (apply-to (lambda (x) (* x x)) '(1 2 3))
+
+There are some useful built-in higher-order functions:
+
+    ;; common lisp library
+    (require 'cl)
+
+    ; => (0 2 4 6 8)
+    (remove-if 'oddp '(0 1 2 3 4 5 6 7 8 9))
+    ; => (1 3 5 7 9)
+    (remove-if-not 'oddp '(0 1 2 3 4 5 6 7 8 9))
+
+    ; => ("FOO" "BAR" "BAZ")
+    (mapcar 'upcase '("foo" "bar" "baz"))
 
 
-## Looping
-TODO
+
 
 ## Emacs library
 
@@ -309,10 +574,14 @@ The `message` function outputs a (possibly formatted) string in the echo area.
     (message "The name of this buffer is: %s." (buffer-name))
 
 
-- hooks
+TODO: Emacs supports the notion of *buffer-local* variables. You can use the
+function `make-variable-buffer-local` to declare a variable as buffer-local.
+
+
+TODO: hooks
+
 
 
 ## References
-https://www.gnu.org/software/emacs/manual/html_mono/eintr.html#index-Evaluating-inner-lists-38
 http://steve-yegge.blogspot.com/2008/01/emergency-elisp.html?m=1
 https://harryrschwartz.com/2014/04/08/an-introduction-to-emacs-lisp.html
