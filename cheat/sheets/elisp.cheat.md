@@ -1,16 +1,13 @@
 # Emacs Lisp
 
-Emacs can be thought of as a giant REPL. Like, e.g., bash and python, it Reads
-in an expression, Evaluates it, Prints the results, and Loops to read the next
-expression.
+Emacs can be thought of as a giant REPL -- it Reads an expression, Evaluates it,
+Prints the results, and Loops to read the next expression.
 
-In Emacs’ case, the REPL is started when we launch the Emacs application. Every
-time we interact with the editor, we're just executing some code in the context
-of that REPL. Every keystroke, mouse click, and menu action correspond to
-evaluating an expression in this REPL.
-
-Similarly, your `.emacs` file is just the first code that's executed by that
-REPL after it starts.
+In Emacs’ case, the REPL is started when we launch the Emacs application. Your
+`.emacs` file is the first code that's executed by that REPL after it
+starts. Every interaction with the editor executes a piece of code in the
+context of that REPL. Every keystroke, mouse click, and menu action correspond
+to evaluating an expression in this REPL.
 
 There are two common ways to evaluate Lisp expressions:
 - Place the cursor after an expression (in any buffer) and then evaluate it with
@@ -25,14 +22,13 @@ for `lisp`.
 
 
 ## Language basics
-
-Lisp is short for `LIS`t `P`rocessing language. Lists are the basis of Lisp.
-Lists are always enclosed by parenthesis.
+Lisp is short for `LIS`t `P`rocessing language. Lists, enclosed by parentheses,
+are the basis of Lisp.
 
 In Lisp, both data and programs are represented the same way; they are both
-lists of words, numbers, or other lists, separated by whitespace and surrounded
-by parentheses. (Since a program looks like data, one program may easily serve
-as data for another; this is a very powerful feature of Lisp.)
+lists of words, numbers, or other lists. Since a program looks like data, one
+program may easily serve as data for another. This is a very powerful feature of
+Lisp.
 
     ;; the empty list
     ()
@@ -51,7 +47,7 @@ as data for another; this is a very powerful feature of Lisp.)
 
 Lisp programs are made up of *expressions* (sometimes called *forms*), which are
 either single *atoms* or *lists* of atoms. Atoms can be thought of as expression
-leaf nodes and are strings (`"foo bar"`), numbers (`3`, `3.0`), symbols (`+`,
+leaf nodes and may be strings (`"foo bar"`), numbers (`3`, `3.0`), symbols (`+`,
 `foo`, `forward-line`).
 
 The printed representation of both atoms and lists are called *symbolic
@@ -59,9 +55,8 @@ expressions* or, more concisely, `sexp`.
 
 
 ## Atoms and basic types
-
 The simplest objects in Elisp are called *atoms*. These evaluate to themselves
-and come in three forms:
+and come in several forms, with a few notable ones being:
 
 - Integers: `42`
 - Floats:   `3.0`
@@ -72,7 +67,6 @@ and come in three forms:
 
   Some functions that operate on strings: `concat`, `upcase`, `substring`.
   More can be found in the Elisp reference (`C-h i`).
-
 
 - Booleans: the symbol `t` or the symbol `nil`. In Emacs Lisp, every value is
   *truthy* except `nil` and the empty list `()` (which are equivalent). Notably,
@@ -100,9 +94,9 @@ and come in three forms:
         ; => (rose lily)
         flowers
 
-Lisp expressions are either atoms or function calls (there are also *macros*
-though: a macro translates a Lisp expression into another expression that is to
-be evaluated in place of the original expression). Function calls use prefix
+Lisp expressions are either atoms or function calls (some functions are actually
+*macros*: a macro translates a Lisp expression into another expression that is
+to be evaluated in place of the original expression). Function calls use prefix
 notation and are enclosed in parenthesis:
 
     ;; call 1 + 2 + 3
