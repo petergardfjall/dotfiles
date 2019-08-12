@@ -1170,10 +1170,6 @@ The special `'static` lifetime means that a reference lives for the entire
 duration of the program.
 
 
-## Generics
-TODO
-
-
 ## Traits
 Traits are similar to interfaces in other languages. A lot of functionality in
 Rust is modelled via traits. For example, the `Display` trait allows a value to
@@ -1293,8 +1289,95 @@ Similarly, we can accept trait objects as function arguments via
     }
 
 
+## Generics
+TODO
+
+
 ## Modules
 TODO
+
+
+## Unsafe
+Unsafe Rust exists because, by nature, static analysis is conservative - it's
+better for it to reject some valid programs rather than accept some invalid
+programs. `unsafe` let's you do things that you know are correct, but which the
+compiler fails to see. Also, it is necessary when writing/interacting with low
+level systems. One major use case is when interfacing with C code.
+
+`unsafe` blocks allow us to:
+
+- Dereference a raw pointer.
+- Call an `unsafe` function or method.
+- Access or modify a mutable static variable.
+- Implement an *unsafe trait*.
+
+Note: `unsafe` doesn't turn off the borrow checker or disable any other of
+Rust's safety checks: if you use a reference in `unsafe` code, it will still be
+checked. The `unsafe` keyword only gives you access to the above four features
+that are then not checked by the compiler for memory safety.
+
+You will know that any errors related to memory safety must be within an
+`unsafe` block, so keep `unsafe` blocks small. To isolate unsafe code as much as
+possible, it's best to enclose unsafe code within a safe abstraction and provide
+a safe API (parts of the standard library are implemented as safe abstractions
+over unsafe code).
+
+Unsafe Rust has two new types called *raw pointers*: `*const T` and `*mut T`.
+
+    let mut num = 5;
+
+    // cast references to raw pointer
+    let r1 = &num as *const i32;
+    let r2 = &mut num as *mut i32;
+
+    // cast arbitrary memory location to raw pointer
+    let address = 0x012345usize;
+    let r = address as *const i32;
+
+These raw pointers
+
+- Are allowed to ignore the borrowing rules by having both immutable and mutable
+  pointers or multiple mutable pointers to the same location.
+- Aren't guaranteed to point to valid memory.
+- Are allowed to be `null`.
+- Don't implement any automatic cleanup.
+
+We can create raw pointers in safe code; we just can't dereference raw pointers
+outside an `unsafe` block.
+
+
+    unsafe {
+        println!("r1 is: {}", *r1);
+        println!("r2 is: {}", *r2);
+    }
+
+*Unsafe functions* and methods look exactly like regular functions and methods,
+but they have an extra `unsafe` before the rest of the definition, which
+indicates the function has requirements we need to uphold when we call this
+function:
+
+    unsafe fn dangerous() { ... }
+
+    unsafe {
+        dangerous();
+    }
+
+Rust has a keyword, `extern`, that facilitates the creation and use of a Foreign
+Function Interface (FFI) for when you want to interface with a different
+language.
+
+    // The "C" part defines which application binary interface (ABI)
+    // the external function uses: the ABI defines how to call the function
+    // at the assembly level
+    extern "C" {
+        fn abs(input: i32) -> i32;
+    }
+
+    fn main() {
+        unsafe {
+            println!("Absolute value of -3 according to C: {}", abs(-3));
+        }
+    }
 
 
 # Documentation and references
