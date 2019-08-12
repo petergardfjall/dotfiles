@@ -55,7 +55,7 @@ expression. Constants can be declared in any scope.
     const THRESHOLD: i32 = 10;
 
 
-# Primtive Types
+# Primitive Types
 All primitive types use copy semantics and are stored on the stack.
 
 - Integer types. Signed (`i8`, `i16`, `i32`, `i64`, `isize`) and unsigned (`u8`,
@@ -66,7 +66,7 @@ All primitive types use copy semantics and are stored on the stack.
 
         // hex, octal, binary
         let hex = 0xff;
-        let oct = 0p77;
+        let oct = 0o77;
         let bin = 0b1111_1111;
         let byte = b'A'; // only for u8
 
@@ -565,7 +565,7 @@ match arm that must also match:
     }
 
 The at operator (`@`) lets us create a variable that holds a value at the same
-time we’re testing that value to see whether it matches a pattern.
+time we're testing that value to see whether it matches a pattern.
 
     let x = 1;
 
@@ -1170,20 +1170,131 @@ The special `'static` lifetime means that a reference lives for the entire
 duration of the program.
 
 
-## Traits
-
 ## Generics
+TODO
 
-## Smart pointers
-- regular references: &T &mut T
-- Box<T>: for heap memory, takes ownership, compatible with regular references
-- Rc<T>
-- Cell<T>
-- RefCell<T>
-- Arc<T>
+
+## Traits
+Traits are similar to interfaces in other languages. A lot of functionality in
+Rust is modelled via traits. For example, the `Display` trait allows a value to
+be written to be (`println!`) formatted via `{}` (it is similar to `toString()`
+in Java). As another example, you can give your user-defined type copy semantics
+by implementing the `Copy` trait.
+
+As shown in the below example, function parameters can also have *trait bounds*
+(`impl Speaker`).
+
+    pub trait Speaker {
+        fn speak(&self) -> String;
+    }
+
+    #[derive(Debug)]
+    struct Human {
+        name: String,
+    }
+
+    #[derive(Debug)]
+    struct Parrot {
+        name: String,
+        age: u32,
+    }
+
+    impl Speaker for Human {
+        fn speak(&self) -> String {
+            return format!("hello!");
+        }
+    }
+
+    impl Speaker for Parrot {
+        fn speak(&self) -> String {
+            return format!("polly!");
+        }
+    }
+
+    // A parameter with some type that implements the Speaker trait.
+    fn listen_to(s: impl Speaker) {
+        println!("{}", s.speak());
+    }
+
+    fn main() {
+        let h = Human {
+            name: String::from("barry"),
+        };
+        let p = Parrot {
+            name: String::from("polly"),
+            age: 20,
+        };
+
+        listen_to(h);
+        listen_to(p);
+    }
+
+
+The `impl Speaker` syntax works for straightforward cases but is only syntactic
+sugar for *trait bound syntax*:
+
+    pub fn listen_to<T: Speaker>(s: T) { ... }
+
+With trait bound syntax it's possible to specify several bounds
+
+    pub fn listen_to<T: Speaker + Display>(s: T) { ... }
+
+or with a `where` clause, for improved readability in more complex cases:
+
+    fn some_function<T, U>(t: T, u: U) -> i32
+        where T: Display + Clone,
+              U: Clone + Debug
+
+One restriction to note with trait implementations is that we can implement a
+trait on a type only if either the trait or the type is local to our crate. But
+we can't implement external traits on external types. Without the rule, two
+crates could implement the same trait for the same type, and Rust wouldn't know
+which implementation to use.
+
+Trait methods can have a default implementation. Default implementations can
+call other methods in the same trait, even if those other methods don't have a
+default implementation.
+
+One can also implement traits conditionally, depending on what other traits are
+implemented. These are called *blanket implementations*. For example, the
+standard library implements the `ToString` trait on any type that implements the
+`Display` trait.
+
+Rust provides polymorphism/dynamic dispatch through a feature called *trait
+objects*. Trait objects, like `&dyn Foo` or `Box<dyn Foo>`, store a value of any
+type that implements the given trait, where the precise type can only be known
+at runtime. Since it can be seen as "erasing" the compiler's knowledge about the
+specific type of the pointer, trait objects are sometimes referred to as "type
+erasure".
+
+To have a function return a trait object, one can use the `Box<dyn Trait>`,
+`&dyn Trait`, or `&mut dyn Trait` syntax.
+
+    // Return some type that implements the Trait trait, but don't specify
+    // exactly what the type is.
+    fn function() -> Box<dyn Trait> {
+    }
+
+Similarly, we can accept trait objects as function arguments via
+`Box<dyn Trait>`, `&dyn Trait`, or `&mut dyn Trait` syntax.
+
+    fn listen_to(s: &dyn Speaker) {
+        println!("{}", s.speak());
+    }
+
+    fn main() {
+        let human = Human { name: String::from("barry"), };
+        let parrot = Parrot { name: String::from("polly"), age: 20, };
+
+        let vec: Vec<Box<dyn Speaker>> = vec![Box::new(human), Box::new(parrot)];
+        for v in vec {
+            listen_to(&*v);
+        }
+    }
+
 
 ## Modules
-
+TODO
 
 
 # Documentation and references
