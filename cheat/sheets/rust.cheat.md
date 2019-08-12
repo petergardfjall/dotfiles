@@ -1290,7 +1290,49 @@ Similarly, we can accept trait objects as function arguments via
 
 
 ## Generics
-TODO
+Generics are used to define general functions, `enum`s and `struct`s, which can
+then be parameterized ("instantiated") with different concrete types. Either to
+hold any type `T` (such as collections) or limited to types satisfying a certain
+contract (i.e. trait bounds).
+
+    #[derive(Debug)]
+    struct Point<T, U> {
+        x: T,
+        y: U,
+    }
+
+    impl<T, U> Point<T, U> {
+        fn x(&self) -> &T {
+            &self.x
+        }
+
+        fn y(&self) -> &U {
+            &self.y
+        }
+    }
+
+    fn main() {
+        let both_int = Point { x: 5, y: 10 };
+        let int_and_float = Point { x: 5, y: 4.0 };
+
+        println!("{:?}", both_int);
+        println!("{:?}. x is {}, y is {}", int_and_float, int_and_float.x(), int_and_float.y());
+    }
+
+The standard library `Error` is another example:
+
+    enum Result<T, E> {
+        Ok(T),
+        Err(E),
+    }
+
+Or generic functions:
+
+    fn count<T>(list: &[T]) -> i32
+
+With trait bounds:
+
+    fn largest<T: PartialOrd>(list: &[T]) -> T
 
 
 ## Modules
