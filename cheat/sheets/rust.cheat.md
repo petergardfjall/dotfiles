@@ -1335,6 +1335,113 @@ With trait bounds:
     fn largest<T: PartialOrd>(list: &[T]) -> T
 
 
+## Closures
+A *closure* is a function-like construct that you can store in a
+variable. Closures don't need to have their parameters/return type-annotated
+like normal `fn` functions do. The compiler infers the types (as for variables
+in `let x = <val>`. For example, the following function:
+
+    fn  add_one_v1   (x: u32) -> u32 { x + 1 }
+
+can be represented as a closure by either of the following:
+
+    let add_one_v2 = |x: u32| -> u32 { x + 1 };
+    let add_one_v3 = |x|             { x + 1 };
+    let add_one_v4 = |x|               x + 1  ;
+
+    println!("10 + 1 = {}", add_one_v4(10));
+
+Types for closures, allowing them to be passed as function parameters or stored
+in `struct`s, are provided through the: `Fn`, `FnMut`, or `FnOnce`
+traits. `add_one_v4` above has type trait bound `Fn(u32) -> u32`. Note that
+regular `fn` functions implement the `Fn` trait too.
+
+    use std::collections::HashMap;
+
+    struct Cacher<T>
+    where
+        T: Fn(u32) -> u32,
+    {
+        calculation: T,
+        cache: HashMap<u32, u32>,
+    }
+
+    impl<T> Cacher<T>
+    where
+        T: Fn(u32) -> u32,
+    {
+        fn new(calc: T) -> Cacher<T> {
+            Cacher {
+                calculation: calc,
+                cache: HashMap::new(),
+            }
+        }
+
+        fn calculate(&mut self, val: u32) -> u32 {
+            println!(
+                "cached result for argument {}: {}",
+                val,
+                self.cache.contains_key(&val)
+            );
+            let val = self.cache.entry(val).or_insert((self.calculation)(val));
+            *val
+        }
+    }
+
+    fn main() {
+        let add_one = |x| x + 1;
+
+        let mut cacher = Cacher::new(add_one);
+
+        println!("10 + 1 = {}", cacher.calculate(10));
+        println!("10 + 1 = {}", cacher.calculate(10)); // cached
+        println!("11 + 1 = {}", cacher.calculate(11));
+    }
+
+
+A closure can capture its environment and access variables from the scope in
+which they're defined. Closures can capture variables:
+
+- by reference: `&T`
+- by mutable reference: `&mut T`
+- by value (move): `T`
+
+Variables are captured by reference and only go lower when required.
+
+    let color = "green";
+
+    // Will borrow (`&`) 'color' and store the borrow and closure in the 'print'
+    // variable. It remains borrowed until 'print' goes out of scope.
+    let print = || println!("`color`: {}", color);
+    print();
+    print();
+
+    let mut count = 0;
+    // Takes `&mut count`
+    //
+    // A `mut` is required on `incr` because a `&mut` is stored inside.
+    // Thus, calling the closure mutates the closure which requires a `mut`.
+    let mut incr = || {
+        count += 1;
+        println!("`count`: {}", count);
+    };
+
+    incr();
+
+Using `move` before the vertical pipes forces a closure to take ownership of
+captured variables:
+
+    fn main() {
+        // `Vec` has non-copy semantics.
+        let haystack = vec![1, 2, 3];
+
+        let contains = move |needle| haystack.contains(needle);
+
+        println!("{}", contains(&1));
+        println!("{}", contains(&4));
+    }
+
+
 ## Projects, packages, crates and modules
 Cargo is the idiomatic way to build Rust programs. It is Rust's package manager
 (manages dependencies) and uses `rustc` under the hood to build Rust packages.
