@@ -1335,8 +1335,164 @@ With trait bounds:
     fn largest<T: PartialOrd>(list: &[T]) -> T
 
 
-## Modules
-TODO
+## Projects, packages, crates and modules
+Cargo is the idiomatic way to build Rust programs. It is Rust's package manager
+(manages dependencies) and uses `rustc` under the hood to build Rust packages.
+`crates.io` is the Rust community's central package registry.
+
+The Rust *module system* includes these concepts:
+
+- *Package*: consists of one or more *crates* that provide a set of
+  functionality. A package is defined by a `Cargo.toml` file that describes how
+  to build those crates. Dependencies to the project are declared in
+  `Cargo.toml` and downloaded by `cargo`. A `use` statement is needed to bring
+  paths from the crate into scope.
+
+- *Crate*: a tree of *modules* that produces a library or a binary/binaries. The
+  crate root is a source file (defaults to `src/main.rs` for a binary crate and
+  `src/lib.rs` for a library crate) that Cargo passes to `rustc` to build the
+  library or binary.
+
+- *Modules*: let you control the organization, scope, and privacy of paths. A
+  module groups related definitions and control their visibility through the
+  `pub` keyword (items are private to a module by default). Items in a parent
+  module can't use the private items inside child modules, but items in child
+  modules can use the items in their ancestor modules.
+
+- *Path*: a way of naming an item, such as a struct, function, or module. The
+  `use` keyword brings a path into scope (adding `use` and a path in a scope is
+  similar to creating a symbolic link in the filesystem).
+
+        extern crate postgres; // when using crate external to our package
+
+        use postgres::{Connection, TlsMode};
+
+  An alias can be substituted for a path with `use ...  as x`. `pub use ...`
+  re-exports an item such that it also becomes available to clients of our
+  module.
+
+A sample project layout:
+
+    .
+    ├── Cargo.lock
+    ├── Cargo.toml
+    ├── benches
+    │   └── large-input.rs
+    ├── examples
+    │   └── simple.rs
+    ├── src
+    │   ├── bin
+    │   │   └── another_executable.rs
+    │   ├── lib.rs
+    │   └── main.rs
+    └── tests
+        └── some-integration-tests.rs
+
+- `Cargo.toml` and `Cargo.lock` are stored in the root of your package (package
+  root).
+- Source code goes in the `src` directory.
+- The default library file is `src/lib.rs`.
+- The default executable file is `src/main.rs`.
+- Other executables can be placed in `src/bin/*.rs`.
+- Integration tests go in the `tests` directory (unit tests go in each file
+  they're testing).
+- Examples go in the `examples` directory.
+- Benchmarks go in the `benches` directory.
+
+There are a few options options for organizing modules.
+
+1. Keep modules in the same file (crate root: `src/main.rs` or `src/lib.rs`):
+
+        fn main() {
+           greetings::hello();
+        }
+
+        mod greetings {
+          pub fn hello() {
+            println!("Hello, world!");
+          }
+        }
+
+2. A module goes into its own file under `src/<module>.rs`.
+
+        // ↳ main.rs
+        mod greetings; // import greetings module
+
+        fn main() {
+          greetings::hello();
+        }
+
+
+        // ↳ greetings.rs
+        // No need to wrap the code with a mod declaration.
+        // The file itself acts as a module.
+        pub fn hello() {
+          println!("Hello, world!");
+        }
+
+   If `hello` is wrapped in a `mod` declaration, that will act as a nested
+   module:
+
+        // ↳ main.rs
+        mod phrases;
+
+        fn main() {
+          phrases::greetings::hello();
+        }
+
+        // ↳ phrases.rs
+        pub mod greetings {
+          pub fn hello() {
+            println!("Hello, world!");
+          }
+        }
+
+3. A module goes into its own directory under `src/<module>`. `mod.rs` in the
+   module root acts as entry point.
+
+        // ↳ main.rs
+        mod greetings;
+
+        fn main() {
+          greetings::hello();
+        }
+
+        // ↳ greetings/mod.rs
+        pub fn hello() {
+          println!("Hello, world!");
+        }
+
+    Other files in the directory module act as sub-modules for `mod.rs`.
+
+        // ↳ main.rs
+        mod phrases;
+
+        fn main() {
+          phrases::hello()
+        }
+
+        // ↳ phrases/mod.rs
+        mod greetings;
+
+        pub fn hello() {
+          greetings::hello()
+        }
+
+        // ↳ phrases/greetings.rs
+        pub fn hello() {
+          println!("Hello, world!");
+        }
+
+
+We can construct relative paths that begin in the parent module by using `super`
+at the start of the path. This is especially useful in tests (which typically go
+into their own `tests` module and need to import the items in the module under
+test with `use super::*;`).
+
+A few notes on visibility:
+- can set `pub` on `mod`, `fn`, `struct`, `struct` fields, `enum`.
+- `struct` fields need to be made public on a field-by-field basis.
+- a `pub enum` will have all variants public.
 
 
 ## Unsafe
