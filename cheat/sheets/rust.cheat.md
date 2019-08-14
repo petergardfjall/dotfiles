@@ -1033,7 +1033,7 @@ freed.
 
 
 
-## Lifetimes
+# Lifetimes
 Every reference in Rust has a *lifetime*, which is the scope for which that
 reference is valid. Most of the time, lifetimes are implicit and inferred (just
 like types are inferred most of the time). We must annotate types when multiple
@@ -1170,7 +1170,7 @@ The special `'static` lifetime means that a reference lives for the entire
 duration of the program.
 
 
-## Traits
+# Traits
 Traits are similar to interfaces in other languages. A lot of functionality in
 Rust is modelled via traits. For example, the `Display` trait allows a value to
 be written to be (`println!`) formatted via `{}` (it is similar to `toString()`
@@ -1289,7 +1289,7 @@ Similarly, we can accept trait objects as function arguments via
     }
 
 
-## Generics
+# Generics
 Generics are used to define general functions, `enum`s and `struct`s, which can
 then be parameterized ("instantiated") with different concrete types. Either to
 hold any type `T` (such as collections) or limited to types satisfying a certain
@@ -1335,7 +1335,7 @@ With trait bounds:
     fn largest<T: PartialOrd>(list: &[T]) -> T
 
 
-## Closures
+# Closures
 A *closure* is a function-like construct that you can store in a
 variable. Closures don't need to have their parameters/return type-annotated
 like normal `fn` functions do. The compiler infers the types (as for variables
@@ -1402,9 +1402,9 @@ regular `fn` functions implement the `Fn` trait too.
 A closure can capture its environment and access variables from the scope in
 which they're defined. Closures can capture variables:
 
-- by reference: `&T`
-- by mutable reference: `&mut T`
-- by value (move): `T`
+- by reference: `&T` (trait `Fn`)
+- by mutable reference: `&mut T` (trait `FnMut`)
+- by value (move): `T` (trait `FnOnce`: consumes value from environment)
 
 Variables are captured by reference and only go lower when required.
 
@@ -1442,7 +1442,176 @@ captured variables:
     }
 
 
-## Projects, packages, crates and modules
+# Concurrency
+Classic concurrency issues include race conditions (threads accessing data in an
+inconsistent order) and deadlocks (two threads wait for each other). Rust's
+ownership and type systems can, to some degree, help avoid these issues. Rust's
+memory safety also benefits us when we need to write concurrent code.
+
+Rust standard library only maps directly to OS-level threads ("1:1 threading"),
+to avoid the need for a (larger) runtime (note: runtime is the code that is
+included by the language in every binary; this code can be large or small
+depending on the language, but every non-assembly language will have some amount
+of runtime code, so when a language is said to have "no runtime", they often
+mean "small runtime").
+
+`thread::spawn` creates a new thread. Takes a closure (`FnOnce`). The return
+type of is `JoinHandle`.
+
+    use std::thread;
+
+    fn greet() {
+        println!("hello from function")
+    }
+
+    fn greet_name(name: &str) {
+        println!("hello {}", name)
+    }
+
+    fn main() {
+        let t1 = thread::spawn(move || println!("hello from closure"));
+        let t2 = thread::spawn(greet);
+        let t3 = thread::spawn(move || greet_name("foo"));
+        t1.join().unwrap();
+        t2.join().unwrap();
+        t3.join().unwrap();
+    }
+
+A move closure is often used with `thread::spawn` because it allows you to use
+data from one thread in another thread.
+
+Note that without the `move`, the compiler will warn us that the reference may
+outlive the data.
+
+
+
+    fn main() {
+        let name = "foo";
+        let t1 = thread::spawn(|| println!("hello {}", name));
+        t1.join().unwrap();
+    }
+
+    |     let t1 = thread::spawn(|| println!("hello {}", name));
+    |                            ^^                      ---- `name` is borrowed here
+    |                            |
+    |                            may outlive borrowed value `name`
+
+Rust's standard library provides a channel construct for message passing between
+threads.
+
+    use std::sync::mpsc;
+    use std::thread;
+    use std::time::Duration;
+
+    fn main() {
+        let (tx, rx) = mpsc::channel(); // mpsc: multi-producer, single-consumer
+
+        let mut threads = vec![];
+        for sender_id in 0..2 {
+            // tx can be cloned to get multiple producerscw
+            let txc = tx.clone();
+            let t = thread::spawn(move || {
+                for num in 0..5 {
+                    txc.send(format!("{}-{}", sender_id, num)).unwrap();
+                    thread::sleep(Duration::from_millis(10));
+                }
+            });
+            threads.push(t);
+        }
+
+        threads.push(thread::spawn(move || {
+            // rx can be used as an iterator
+            for val in rx {
+                println!("thread received {}", val);
+            }
+        }));
+
+        for t in threads {
+            t.join().unwrap();
+        }
+    }
+
+
+The `send` function takes ownership of its parameter, and when the value is
+moved, the receiver takes ownership of it.
+
+Message passing is one way of coordinating threads. Shared state concurrency is
+another. Mutexes is one primitive for controlling access to a critical
+section. A Rust `Mutex<T>` is a smart pointer. It provides interior mutability,
+just like `RefCell` pointers. A call to `lock` returns a smart pointer called
+`MutexGuard` (wrapped in a `LockResult`). The `MutexGuard` smart pointer
+implements `Deref` to point at our inner data; the smart pointer also has a
+`Drop` implementation to release the lock when the MutexGuard goes out of scope.
+
+    use std::sync::Mutex;
+
+    fn main() {
+        let counter = Mutex::new(0);
+
+        {
+            let mut count = counter.lock().unwrap();
+            *count += 1;
+        } // <- mutex lock released
+
+        println!("Result: {}", *counter.lock().unwrap());
+    }
+
+To share a mutex between threads we wrap it with a `Arc` (atomic reference
+counted) pointer. Note that a regular `Rc` is not safe (it adds to the reference
+count for each call to `clone` without concurrency protection). Much in the same
+way we use `RefCell<T>` to mutate contents inside an `Rc<T>`, we use `Mutex<T>`
+to mutate contents inside an `Arc<T>`.
+
+    use std::sync::{Mutex, Arc};
+    use std::thread;
+
+    fn main() {
+        let counter = Arc::new(Mutex::new(0));
+        let mut threads = vec![];
+
+        for _ in 0..10 {
+            let counter = counter.clone();
+            let t = thread::spawn(move || {
+                let mut count = counter.lock().unwrap();
+                *count += 1;
+            });
+            threads.push(t);
+        }
+
+        for t in threads {
+            t.join().unwrap();
+        }
+
+        println!("Result: {}", *counter.lock().unwrap());
+    }
+
+Note that with multiple mutexes there is always a risk of introducing a
+deadlock, Rust cannot protect us here.
+
+There are two marker traits that enables data to be passed between threads:
+`std::marker::{Send,Sync}`.
+
+- The `Send` marker trait indicates that ownership of the implementing type can
+  be transferred between threads (it is safe to send it to another thread). Any
+  type composed entirely of `Send` types is also `Send`. Primitive types (aside
+  from raw pointers) are `Send`, as are types composed of `Send`. `Rc<T>` is a
+  notable example of a type that is not `Send` (having clones of a same `Rc<T>`
+  in two separate threads and having them both call `clone` could cause both to
+  update the reference count at the same time, with undefined behavior as
+  result).
+
+- The `Sync` marker trait indicates that it is safe for the type to be
+  referenced from multiple threads. In other words, any type `T` is `Sync` if
+  `&T` (an immutable reference to `T`) is `Send`, meaning the reference can be
+  sent safely to another thread. Types that are not `Sync` are those that have
+  "interior mutability" in a non-thread-safe form (like `*Cell`). These types
+  allow for mutation of their contents even through an immutable, shared
+  reference. Primitive types are `Sync`, as are types composed of `Sync`s.
+
+So generally speaking, we don’t have to implement those traits manually.
+
+
+# Projects, packages, crates and modules
 Cargo is the idiomatic way to build Rust programs. It is Rust's package manager
 (manages dependencies) and uses `rustc` under the hood to build Rust packages.
 `crates.io` is the Rust community's central package registry.
@@ -1602,7 +1771,7 @@ A few notes on visibility:
 - a `pub enum` will have all variants public.
 
 
-## Unsafe
+# Unsafe
 Unsafe Rust exists because, by nature, static analysis is conservative - it's
 better for it to reject some valid programs rather than accept some invalid
 programs. `unsafe` let's you do things that you know are correct, but which the
