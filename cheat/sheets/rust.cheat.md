@@ -1257,9 +1257,11 @@ standard library implements the `ToString` trait on any type that implements the
 `Display` trait.
 
 Rust provides polymorphism/dynamic dispatch through a feature called *trait
-objects*. Trait objects, like `&dyn Foo` or `Box<dyn Foo>`, store a value of any
-type that implements the given trait, where the precise type can only be known
-at runtime. Since it can be seen as "erasing" the compiler's knowledge about the
+objects*. You have trait objects when you have a pointer to a trait (`Box`,
+`Arc`, `Rc` and the reference `&` are all, at their core, pointers).  Trait
+objects, like `&dyn Foo` or `Box<dyn Foo>`, store a value of any type that
+implements the given trait, where the precise type can only be known at
+runtime. Since it can be seen as "erasing" the compiler's knowledge about the
 specific type of the pointer, trait objects are sometimes referred to as "type
 erasure".
 
@@ -1333,6 +1335,96 @@ Or generic functions:
 With trait bounds:
 
     fn largest<T: PartialOrd>(list: &[T]) -> T
+
+
+# Iterators
+In Rust, iterators are lazy, meaning they have no effect until you call methods
+that consume the iterator to use it up.
+
+    fn main() {
+        let v1 = vec![1, 2, 3];
+        // only creates the iterator, doesn't consume it
+        let v1_iter = v1.iter();
+    }
+
+The `for in` loop makes use of the iterator protocol. We can separate creation
+of the iterator from its use:
+
+    fn main() {
+        let v1 = vec![1, 2, 3];
+
+        // short form
+        for val in v1 {
+            println!("Got: {}", val);
+        }
+
+        // ... really a shorthand for
+        let v1_iter = v1.iter();
+        for val in v1_iter {
+            println!("Got: {}", val);
+        }
+    }
+
+All iterators implement a trait named `Iterator` defined in the standard
+library.
+
+    pub trait Iterator {
+        type Item;
+
+        fn next(&mut self) -> Option<Self::Item>;
+
+        // more methods with default implementations ...
+    }
+
+The `next` method can be called directly on iterators:
+
+    #[test]
+    fn iterator_demonstration() {
+        let v1 = vec![1, 2, 3];
+
+        let mut v1_iter = v1.iter();
+
+        assert_eq!(v1_iter.next(), Some(&1));
+        assert_eq!(v1_iter.next(), Some(&2));
+        assert_eq!(v1_iter.next(), Some(&3));
+        assert_eq!(v1_iter.next(), None);
+    }
+
+Note that the values we get from the calls to `next` are immutable references to
+the values in the vector. The `iter` method produces an iterator over immutable
+references. If we want to create an iterator that takes ownership of v1 and
+returns owned values, we can call `into_iter`. Similarly, if we want to iterate
+over mutable references, we can call `iter_mut`.
+
+Methods that call `next` are called *consuming adaptors*, because calling them
+uses up the iterator. One example is the `sum` method. Another is `collect`.
+
+    fn main() {
+        let v1 = vec![1, 2, 3];
+        println!("sum: {}", v1.iter().sum::<i32>());
+
+        let v2: Vec<i32> = v1.into_iter().collect();
+        println!("collect: {:?}", v2);
+    }
+
+Other methods defined on the `Iterator` trait, known as *iterator adaptors*,
+allow you to change iterators into different kinds of iterators. You can chain
+multiple calls to iterator adaptors.
+
+    fn main() {
+        let v1 = vec![1, 2, 3, 4, 5];
+        println!(
+            "sum: {}",
+            v1.iter()
+                .filter(|x| *x % 2 == 0)
+                .map(|x| x * x)
+                .sum::<i32>()
+        );
+    }
+
+Implementing iterators for custom types is easy. Implement the `Iterator` trait
+by defining a `next` method. All other methods have default implementations
+provided by the `Iterator` trait.
 
 
 # Closures
