@@ -7,6 +7,27 @@ Initialize a password store with a particular PGP key:
 
     pass init <gpg-id or email>
 
+Note that you need to trust the key:
+
+    $ gpg --edit-key <gpg-id or email>
+    ...
+    gpg> trust
+    ...
+    Please decide how far you trust this user to correctly verify other users' keys
+    (by looking at passports, checking fingerprints from different sources, etc.)
+
+      1 = I don't know or won't say
+      2 = I do NOT trust
+      3 = I trust marginally
+      4 = I trust fully
+      5 = I trust ultimately
+      m = back to the main menu
+
+    Your decision? 5
+    Do you really want to set this key to ultimate trust? (y/N) y
+    ...
+    gpg> save
+
 Environment variables can be used to alter where `pass` looks to do store and
 `git` operations via:
 
@@ -85,8 +106,8 @@ create a bare repository you can push to.
     pass git push -u --all
 
 Now you can use the standard `git` commands, prefixed by `pass`. For example:
-`pass git push`, or `pass git pull`. Pass will automatically create commits when
-you use it to modify your password store.
+`pass git add`, `pass git commit`, `pass git push`, or `pass git pull`. Pass
+will automatically create commits when you use it to modify your password store.
 
 ## More details
 
