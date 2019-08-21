@@ -151,10 +151,17 @@ Once you have a dependencies file, you can run `helm dependency update` and it
 will use your dependency file to download all the specified charts into your
 `charts/` directory for you.
 
-Template files follow the conventions for writing Go templates. See
-https://helm.sh/docs/developing_charts/#template-files. Besides the values
-passed to the chart via `values.yaml` files, there are also some predefined
-values https://helm.sh/docs/developing_charts/#predefined-values.
+Template files follow the conventions for writing Go templates. See the
+documentation for developing charts for details. Besides the values passed to
+the chart via `values.yaml` files, there are also some predefined values such as
+`.Relase.Name`.
+
+To debug one can render a particular template with a given set of values, e.g.:
+
+    # render all templates
+    helm template -f somve-values.yaml /path/to/chart
+    # render a particular template
+    helm template -f somve-values.yaml /path/to/chart -x templates/deployment.yaml
 
 After editing a chart `helm lint` can be used to ensure that it's
 well-formatted.
