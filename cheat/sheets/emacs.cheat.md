@@ -112,6 +112,16 @@
 - List bookmarks:         `C-x r l`
 - Delete bookmark:        `M-x bookmark-delete`
 
+## Terminal
+- Open a terminal:        `M-x ansi-term`
+
+In a terminal there are two modes: `char mode` (each character is captured by
+the shell, meaning that normal emacs keybindings `C-x *` wont be available) and
+`line mode` (works like a normal emacs buffer).
+
+- Switch to `char mode`:  `C-c C-k`
+- Switch to `line mode`:  `C-c C-j`
+
 ## Shell commands
 - Execute a shell command:       `M-!`
 - Open shell in `*shell*` buffer:  `M-x shell`
