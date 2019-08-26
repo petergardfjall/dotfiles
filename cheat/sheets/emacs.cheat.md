@@ -112,41 +112,29 @@
 - List bookmarks:         `C-x r l`
 - Delete bookmark:        `M-x bookmark-delete`
 
-## Terminal
-- Open a terminal:        `M-x ansi-term`
+## Shell/terminal
+There are a couple of ways to open a subshell and run external (to emacs)
+commands: `shell` and (`ansi-`)`term`.
 
-In a terminal there are two modes: `char mode` (each character is captured by
-the shell, meaning that normal emacs keybindings `C-x *` wont be available) and
-`line mode` (works like a normal emacs buffer).
+In a `shell`, emacs is used to edit a command-line (the subprocess doesn't see
+any input until you present return). It's easy to move around the buffer, mark
+output, copy, etc just like a normal buffer.
 
-- Switch to `char mode`:  `C-c C-k`
-- Switch to `line mode`:  `C-c C-j`
+In a `terminal`, each keypress is captured by the subprocess. Or, to be precise,
+there are two modes: `char mode` (each character is captured by the shell,
+meaning that normal emacs keybindings `C-x *` aren't be available) and `line
+mode` (which works like a normal emacs buffer).
+
+
+- Open a shell:             `M-x shell`
+- Open a terminal:          `M-x ansi-term`
+  - Switch to `char mode`:  `C-c C-k`
+  - Switch to `line mode`:  `C-c C-j`
 
 ## Shell commands
 - Execute a shell command:       `M-!`
 - Open shell in `*shell*` buffer:  `M-x shell`
 
-## Programming
-*General*:
-- comment-line:                 `C-c c`
-- commen-region:                `<mark> + C-c c`
-- list-flycheck-errors:         `C-c e`
-
-*LSP-mode*:
-- lsp-find-definition           `<M-down>`
-- xref-pop-marker-stack         `<M-up>`
-- lsp-ui-peek-find-definitions  `C-c p d`
-- lsp-ui-peek-find-references   `C-c p r`
-- lsp-hover                     `C-c h`
-- lsp-find-definition           `C-c f d`
-- lsp-find-references           `C-c f r`
-- lsp-rename                    `C-c C-r`
-- lsp-describe-thing-at-point   `C-c C-d`
-- restart lsp server:           `M-x lsp-restart-workspace`
-
-*Snippets*
-- Expand snippet:                 `<type trigger><TAB>`
-- Show available snippets:        `M-x yas-describe-tables`
 
 ## Web browser
 - Open web page:       `M-x eww <URL>`
@@ -155,3 +143,61 @@ the shell, meaning that normal emacs keybindings `C-x *` wont be available) and
 ## Lisp
 Go to the *scratch* buffer, enter an expression, like `(+ 1 1)`, and run `C-j`
 to have the last expression evaluated.
+
+## Custom keybindings
+Navigation:
+- `Shift-<arrow>`: `windmove-{up|down|left|right}` (move between windows)
+
+Enter "IDE mode":
+- `F7`: `projectile-mode`
+- `F8`: `toggle-treemacs`
+
+Formatting:
+- `C-c c`: `comment-line`
+- `C-c w`: `delete-trailing-whitespace`
+
+General find definition of thing at point (if supported by mode):
+- `M-<down>`:   `xref-find-definitions`
+- `M-<up>`:     `xref-pop-marker-stack`
+- `C-c f d`:    `xref-find-definitions`
+- `C-c f r`:    `xref-find-references`
+- `C-c C-d`:    `describe-symbol` (any docs for thing at point?)
+
+Find file (in project)
+- `C-c f f`   `projectile-find-file`
+
+Undo:
+- `C-x u`:  `undo`
+- `C-z`:    `undo-tree-undo`
+- `C-Z`:    `undo-tree-redo`
+- `C-c u t` `undo-tree-visualize` (show undo tree: select state and press 'q')
+
+Auto-completion:
+- `C-<tab>` `company-complete`
+
+Show errors in current buffer:
+- `C-c s e`:  `list-flycheck-errors`
+
+"Find type" ("find tag"), requires `gtags` to have been run on project.
+- `C-c f t`: `ggtags-find-definition`
+
+Language Server Protocol interactions:
+- `<M-down>`   `lsp-find-definition`
+- `<M-up>`     `xref-pop-marker-stack`
+- `C-c p d`    `lsp-ui-peek-find-definitions`
+- `C-c p r`    `lsp-ui-peek-find-references`
+- `C-c h`      `lsp-document-highlight`
+- `C-c f d`    `lsp-find-definition`
+- `C-c f i`    `lsp-goto-implementation`
+- `C-c f r`    `lsp-find-references`
+- `C-c C-r`    `lsp-rename`
+- `C-c C-d`    `lsp-describe-thing-at-point`
+- `C-c d`      `lsp-ui-doc-show`
+- `C-c e`      `lsp-ui-doc-hide` ("end doc show")
+
+Snippets:
+- `<type trigger><TAB>`: expand snippet
+- `M-x yas-describe-tables`: show available snippets
+
+Markdown-mode:
+- `C-c p m`    `markdown-preview-mode`
