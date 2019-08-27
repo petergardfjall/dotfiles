@@ -181,6 +181,9 @@ Show errors in current buffer:
 "Find type" ("find tag"), requires `gtags` to have been run on project.
 - `C-c f t`: `ggtags-find-definition`
 
+Free-text search (via ag/silversurfer):
+- `C-c s p`: `ag-project` ("search-in-project")
+
 Language Server Protocol interactions:
 - `<M-down>`   `lsp-find-definition`
 - `<M-up>`     `xref-pop-marker-stack`
