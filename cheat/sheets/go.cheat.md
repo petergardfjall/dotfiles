@@ -1568,10 +1568,326 @@ A `nil` channel is never ready.
     }
 
 
+### Concurrency patterns: async APIs with futures/promises
+To await the result/completion of a goroutine, use a result channel.
+
+    type work struct{}
+    type result struct{}
+
+    func doAsync(w work) <-chan result {
+        r := make(chan result)
+
+        go func() {
+            fmt.Printf("working ...\n")
+            time.Sleep(5 * time.Second)
+            r <- result{}
+            fmt.Printf("work done.\n")
+        }()
+
+        return r
+    }
+
+    func main() {
+        future := doAsync(work{})
+        for i := 0; i < 6; i++ {
+            time.Sleep(1 * time.Second)
+            fmt.Printf("doing other stuff ...\n")
+        }
+        fmt.Printf("future result: %v\n", <-future)
+    }
+
+
+### Concurrency patterns: work queue
+A channel is a very natural work queue. To tell the workers that no more work is
+coming (and to quit and reclaim system resources), the work channel can be
+closed.
+
+    func worker(id int, workq <-chan int) {
+        for {
+            w, ok := <-workq
+            if !ok {
+                fmt.Printf("worker%d quitting.\n", id)
+                return
+            }
+            fmt.Printf("worker%d doing work item %d ...\n", id, w)
+            time.Sleep(time.Duration(rand.Intn(3)) * time.Second)
+        }
+    }
+
+    func main() {
+        workq := make(chan int)
+
+        numWorkers := 3
+        for i := 0; i < numWorkers; i++ {
+            go worker(i, workq)
+        }
+
+        for i := 0; i < 10; i++ {
+            workq <- i
+        }
+        close(workq)
+        time.Sleep(1 * time.Second)
+    }
 
 
 
-TODO: context.Context
+### Concurrency patterns: cancellation
+Without a mechanism for cancelling a (infinite loop) goroutine, there is no way
+to reclaim system resources. A quit channel is commonly used.
+
+    func worker(quit <-chan bool) {
+        for {
+            select {
+            case <-quit:
+                fmt.Printf("worker quitting.\n")
+                return
+            default: // when nothing is received on quit
+            }
+            fmt.Printf("continuing operation ...\n")
+            time.Sleep(1 * time.Second)
+        }
+
+    }
+
+    func main() {
+        quit := make(chan bool)
+
+        go worker(quit)
+
+        time.Sleep(3 * time.Second)
+        quit <- true
+    }
+
+### Concurrency patterns: one-time await
+A collection of goroutines waiting for a certain condition can be signalled via
+closing a channel.
+
+    type Worker struct {
+        done chan bool
+    }
+
+    func NewWorker() *Worker { return &Worker{done: make(chan bool)} }
+
+    func (w *Worker) Do() {
+        fmt.Printf("started work ...\n")
+        time.Sleep(time.Duration(rand.Intn(3000)) * time.Millisecond)
+        fmt.Printf("work completed.\n")
+        close(w.done) // broadcast to all waiters
+    }
+
+    func (w *Worker) Await() {
+        fmt.Printf("one waiter arrived.\n")
+        <-w.done
+        fmt.Printf("one waiter left.\n")
+    }
+
+    func main() {
+
+        w := NewWorker()
+
+        go w.Do()
+
+        go func() { w.Await() }()
+        go func() { w.Await() }()
+        go func() { w.Await() }()
+        time.Sleep(3 * time.Second)
+    }
+
+
+### Concurrency patterns: periodical await
+Traditional condition variables have there place as well. For example, as a way
+of signalling many waiting goroutines of a condition/event.
+
+    type Worker struct {
+        nextDone *sync.Cond
+    }
+
+    func NewWorker() *Worker {
+        return &Worker{nextDone: sync.NewCond(&sync.Mutex{})}
+    }
+
+    func (w *Worker) DoPeriodically() {
+        ticker := time.NewTicker(1 * time.Second)
+        for _ = range ticker.C {
+            fmt.Printf("completed work.\n")
+            w.nextDone.L.Lock()
+            w.nextDone.Broadcast()
+            w.nextDone.L.Unlock()
+        }
+    }
+
+    func (w *Worker) AwaitNext(id int) {
+        fmt.Printf("waiter %d arrived.\n", id)
+        w.nextDone.L.Lock()
+        w.nextDone.Wait()
+        w.nextDone.L.Unlock()
+        fmt.Printf("waiter %d left.\n", id)
+    }
+
+    func main() {
+        w := NewWorker()
+        go w.DoPeriodically()
+
+        go func() {
+            for {
+                w.AwaitNext(1)
+                time.Sleep(10 * time.Millisecond)
+            }
+        }()
+        go func() {
+            for {
+                w.AwaitNext(2)
+                time.Sleep(10 * time.Millisecond)
+            }
+        }()
+        time.Sleep(10 * time.Second)
+    }
+
+
+### Concurrency patterns: pub/sub, observer
+A collection of listener channels is one way of achieving pub/sub or
+observer/observable behavior.
+
+    type Event struct{}
+
+    type Publisher struct {
+        subscribers []chan Event
+        lock        sync.Mutex
+    }
+
+    func (p *Publisher) Subscribe() <-chan Event {
+        sub := make(chan Event)
+
+        p.lock.Lock()
+        defer p.lock.Unlock()
+        p.subscribers = append(p.subscribers, sub)
+        return sub
+    }
+
+    func (p *Publisher) Notify(event Event) {
+        p.lock.Lock()
+        defer p.lock.Unlock()
+        for _, s := range p.subscribers {
+            s <- event
+        }
+    }
+
+    func main() {
+        pub := &Publisher{}
+
+        go func() {
+            for {
+                time.Sleep(time.Duration(rand.Intn(2000)) * time.Millisecond)
+                fmt.Printf("notifying ...\n")
+                pub.Notify(Event{})
+            }
+        }()
+
+        go func() {
+            for e := range pub.Subscribe() {
+                fmt.Printf("subscriber 1 received %v.\n", e)
+            }
+        }()
+        go func() {
+            for e := range pub.Subscribe() {
+                fmt.Printf("subscriber 2 received %v.\n", e)
+            }
+        }()
+        time.Sleep(10 * time.Second)
+    }
+
+
+### Concurrency patterns: timeouts
+The `select` statement makes working with timeouts easy. Just forget to cancel
+started work (and release resources).
+
+    func spawnWork() (result chan bool, cancel chan bool) {
+        result = make(chan bool)
+        cancel = make(chan bool)
+        go func() {
+            select {
+            case <-time.After(time.Duration(rand.Intn(2000)) * time.Millisecond):
+                fmt.Printf("work done!\n")
+                result <- true
+            case <-cancel:
+                fmt.Printf("work cancelled.\n")
+                return
+            }
+        }()
+        return result, cancel
+    }
+
+    func doWithTimeout(timeout time.Duration) {
+        fmt.Printf("doing time-consuming task ...\n")
+        result, cancel := spawnWork()
+        select {
+        case r := <-result:
+            fmt.Printf("result received: %v.\n", r)
+        case <-time.After(timeout):
+            fmt.Printf("timed out.\n")
+            // clean up ...
+            cancel <- true
+            return
+        }
+    }
+
+    func main() {
+        doWithTimeout(1 * time.Second)
+        time.Sleep(100 * time.Millisecond)
+    }
+
+
+### Concurrency patterns: context
+The `context` package makes it easy to pass request-scoped values, cancelation
+signals, and deadlines across API boundaries to all the goroutines involved in
+handling a request. It comes in handy when a request needs to access additional
+backend services (database, RPC) using common values (e.g. user credentials) and
+provides a convenient handle to cancel/time out all those related operations
+together to not waste system resources.
+
+It is safe for use by multiple goroutines. Code can pass a
+single `Context` to any number of goroutines and cancel that `Context` to signal
+all of them.
+
+`Background` is the root of any Context tree -- it is never canceled, has no
+deadline, and has no values. `WithCancel` and `WithTimeout` return derived
+`Context` values that can be canceled sooner than the parent
+`Context`. `WithValue` allows request-scoped key-value pairs to be passed along
+(thread context).
+
+An example.
+
+    func fib(ctx context.Context) (result <-chan int) {
+        res := make(chan int)
+        go func() {
+            a, b := 0, 1
+            for {
+                select {
+                case <-ctx.Done():
+                    fmt.Printf("\ninterrupted!\n")
+                    close(res)
+                    return
+                default:
+                    time.Sleep(400 * time.Millisecond)
+                    res <- b
+                    a, b = b, a+b
+                }
+            }
+        }()
+        return res
+    }
+
+    func main() {
+        // set timeout to 3s
+        ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+        // otherwise cancel when we are finished consuming integers
+        defer cancel()
+
+        for val := range fib(ctx) {
+            fmt.Printf("%d ", val)
+        }
+    }
+
 
 
 ## Tests
