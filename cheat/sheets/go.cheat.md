@@ -2113,3 +2113,24 @@ https://golang.org/pkg/net/http/pprof/
 
 https://github.com/elastisys/kube-insight-logserver#run
 https://github.com/elastisys/kube-insight-logserver/blob/master/pkg/server/http.go#L51
+
+
+## Modules
+Go modules is the prefered way of managing project dependencies. When using
+private git repos, we need to pass sufficient credentials to `git` to be able to
+fetch the dependency (over `https`). This can be achieved in a couple of ways.
+
+Both rely on generating a personal access token
+(e.g. https://github.com/settings/tokens). NOTE: give the token read-only access
+to limit the damage if the token ends up in the wrong hands. In github, only
+check the `repo` scope (and its sub-fields).
+
+- Modify the `git` client to use this access token when accesing repos matching
+  a given pattern:
+
+        git config --global url."https://${USER}:${ACCESS_TOKEN}@github.com/${COMPANY}".insteadOf "https://github.com/{COMPANY"}
+
+- Add to `~/.netrc` (remember to `chmod 600`!). This is more suitable for CI
+  servers.
+
+        machine github.com login ${USER} password ${ACCESS_TOKEN}
