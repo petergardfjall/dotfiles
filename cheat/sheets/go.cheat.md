@@ -2101,18 +2101,74 @@ Then add something like this to your build (in this case, using `Makefile`):
 
 
 ## Profiling
-https://golang.org/pkg/runtime/pprof/
-https://jvns.ca/blog/2017/09/24/profiling-go-with-pprof/
-https://coder.today/tech/2018-11-10_profiling-your-golang-app-in-3-steps/
+A Go program can be collect and publish runtime profiling data, to help
+troubleshooting a program and/or get insight into the program's behavior with
+respect to:
 
-TODO: https://github.com/golang/go/wiki/Performance#cpu-profiler
-TODO: https://github.com/golang/go/wiki/Performance#memory-profiler
+- memory (heap) usage
+- CPU usage and bottlenecks
+- mutex contention
 
+The `runtime/pprof` enables profiling and allows you to write profiles from
+code. However, more commonly, one uses the `net/http/pprof` package to enable
+and set up HTTP endpoints for `pprof` as such:
 
-https://golang.org/pkg/net/http/pprof/
+    import _ "net/http/pprof"
 
-https://github.com/elastisys/kube-insight-logserver#run
-https://github.com/elastisys/kube-insight-logserver/blob/master/pkg/server/http.go#L51
+Then, one can download a profile via:
+
+     # view all published profiles (some common ones shown below)
+     http://localhost:6060/debug/pprof
+
+     # cpu profile. Specify profile recording duration with 'seconds'.
+     http://localhost:6060/debug/pprof/profile[?seconds=10]
+     # a sampling of memory allocations of live objects.
+     http://localhost:6060/debug/pprof/heap
+     # stack traces of all current goroutines
+     http://localhost:6060/debug/pprof/goroutine
+     # stack traces of holders of contended mutexes
+     http://localhost:6060/debug/pprof/mutex
+     # shows the command line invocation of the program
+     http://localhost:6060/debug/pprof/cmdline
+
+     # NOTE: CPU trace: needs to be viewed with 'go tool trace'
+     http://localhost:6060/debug/pprof/trace?seconds=5
+
+And, finally profiles can be visualized and analyzed with the pprof tool:
+
+     go tool pprof <profile>
+
+Example: view a CPU profile from a web browser
+
+    go tool pprof -http localhost:8080 http://localhost:6060/debug/pprof/profile?seconds=10
+
+Example: view memory allocations from a web browser:
+
+    go tool pprof -http localhost:8080 http://localhost:6060/debug/pprof/heap
+
+Example: view CPU trace from a web browser:
+
+    curl "http://localhost:6060/debug/pprof/trace?seconds=10"  > /tmp/trace.out
+    go tool trace -http localhost:8080 /tmp/trace.out
+
+To gain more control over on which paths to publish pprof endpoints (for
+example, if we need to share the HTTP server with application endpoints, we can
+set up the handlers like so:
+
+    m := http.NewServeMux()
+    s := &http.Server{Addr: "127.0.0.1:6061", Handler: m}
+
+    m.HandleFunc("/debug/pprof/", pprof.Index)
+    m.HandleFunc("/debug/pprof/cmdline", pprof.Cmdline)
+    m.HandleFunc("/debug/pprof/profile", pprof.Profile)
+    m.HandleFunc("/debug/pprof/symbol", pprof.Symbol)
+    m.HandleFunc("/debug/pprof/trace", pprof.Trace)
+    m.Handle("/debug/pprof/heap", pprof.Handler("heap"))
+    m.Handle("/debug/pprof/goroutine", pprof.Handler("goroutine"))
+    m.Handle("/debug/pprof/threadcreate", pprof.Handler("threadcreate"))
+    m.Handle("/debug/pprof/block", pprof.Handler("block"))
+
+    log.Panic(s.ListenAndServe())
 
 
 ## Modules
