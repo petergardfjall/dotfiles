@@ -1,9 +1,8 @@
 # sets up various path variables
 
 export JAVA_HOME=/opt/java
-export JAVA_OPTS="-Xmx1024m -XX:MaxPermSize=128m"
 export MAVEN_HOME=/opt/maven
-export MAVEN_OPTS="-Xmx1024m -XX:MaxPermSize=128m"
+
 
 export GOROOT=/opt/go
 export GOPATH=${HOME}/dev/go
