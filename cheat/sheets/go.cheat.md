@@ -1430,7 +1430,7 @@ Channels:
 - must be created before use (via `make`)
 - channels can be typed to only allow sending (`s chan<- int`) or receiving of
   values (`r <-chan int`)
-- can be buffered (blocking) or unbuffered (non-blocking for sends until full
+- can be unbuffered (blocking) or buffered (non-blocking for sends until full
   and for reads until empty)
 - `for i := range c` can be used to read values until `c` is closed.
 - closing is only necessary when the receiver must be told there are no more
