@@ -29,7 +29,74 @@ cache.
     docker system prune
 
 
-## Performance troubleshooting (at Netflix)
+## Hardware information commands
+
+List high-level details about your system on a software-level (distro, kernel,
+desktop) and hardware-level (CPU, graphics, audio, networking, drives,
+partitions, sensors).
+
+    # note: -z masks out personally identifying information like MAC/IP address
+    inxi -Fxz
+
+Similar information (but with more details concerning e.g. memory hardware and
+network interfaces) can be obtained with:
+
+    lshw -short
+
+*CPU details*: either `lshw -C cpu` or `lscpu`.
+
+    sudo lshw -C cpu
+    lscpu | grep -i "Model name"
+
+*Memory details*: either `dmidecode -t memory` or `lshw -C memory`
+
+    # list each memory stick and its capacity
+    sudo dmidecode -t memory
+    # show cache sizes and memory cards
+    sudo lshw -short -C memory
+
+*Disks and filesystems*:
+
+    # display one line for each disk device
+    sudo lshw -short -C disk
+
+    # list disks with all their defined partitions and mount points
+    lsblk
+
+    # list disks (devices and mountpoints) with used space
+    df -h
+
+*Network*:
+
+    # shod details about network card
+    sudo lshw -C network
+
+    # show network interfaces
+    ifconfig -a
+
+    # more commonly used these days
+    ip link show
+
+    # show default gateway and routing tables
+    ip route | column -t
+    route -n
+    netstat -r
+
+    # list open tcp and udp listening ports and the owning processes
+    sudo netstat -lnptu
+
+
+*PCI devices*: `lspci` shows information about PCI buses and connected devices.
+
+    # list all PCI devices with domain/bus/device identifiers (like '00:00.0')
+    # in the left-most column. for example search for graphics card
+    $ sudo lspci | grep -i vga
+    01:00.0 VGA compatible controller: NVIDIA Corporation G98 [Quadro NVS 295] (rev a1)
+
+    # now show more details about that card
+    sudo lspci -v -s 01:00.0
+
+## Performance troubleshooting commands
 At the Netflix Performance Engineering team, the first 60 seconds of an
 optimized performance investigation at the command line might look like this:
 
@@ -158,4 +225,8 @@ optimized performance investigation at the command line might look like this:
 
 
 ## Network troubleshooting
-Other tools useful for network troubleshooting: `iftop`, `bmon`
+TODO: Other tools useful for network troubleshooting: `iftop`, `bmon`
+`ifconfig` `ip link show`
+`ip route | column -t`, `route`
+`netstat`
+`lsof`
