@@ -1225,15 +1225,31 @@ To ensure that a transaction is always commited or rolled back (to ensure that
 the underlying database connection isn't leaked), and to reduce the amount of
 code, the following pattern can be used.
 
-    type txFunc func(*sql.Tx) error
+    package tx
 
-    // executes f within a transaction and handles closing of the transaction.
-    func inTx(db *sql.DB, f txFunc) (err error) {
+    // TxFunc is a function that operates on a database through an (opened)
+    // transaction. The function should not close the transaction itself.
+    type TxFunc func(*sql.Tx) error
+
+    // InNewTx executes database operations in function fn within the context
+    // of a single transaction, which gets created and committed/rolled back
+    // when the function completes. InNewTx guarantees that the transaction
+    // completes (rolling back on errors/panics and commiting on success of
+    // fn).
+    func InNewTx(db *sql.DB, fn TxFunc) (err error) {
         tx, err := db.Begin()
         if err != nil {
             return errors.Wrapf(err, "failed to start transaction")
         }
 
+        return InTx(tx, fn)
+    }
+
+    // InTx executes database operations in function fn within the context of
+    // a user-supplied transaction. InTx guarantees that the transaction
+    // completes when the function returns (rolling back on errors/panics or
+    // commiting on success of fn).
+    func InTx(tx *sql.Tx, fn TxFunc) (err error) {
         // make sure that we always end the transaction:
         // - rollback on error from the txFunc or a panic
         // - commit otherwise
@@ -1249,7 +1265,7 @@ code, the following pattern can be used.
             err = tx.Commit()
         }()
 
-        err = f(tx)
+        err = fn(tx)
         return
     }
 
@@ -1258,7 +1274,7 @@ code, the following pattern can be used.
 
     // executes within a transaction with guaranteed cleanup
     func (db *sql.DB) insertAdmin(name string) error {
-        return inTx(db, func(tx *sql.Tx) error {
+        return InTx(db, func(tx *sql.Tx) error {
             _, err := tx.Exec("INSERT INTO people (name) VALUES ($1)", name)
             if err != nil {
                 return err
@@ -1283,6 +1299,163 @@ have `NULL` values. For example, `sql.NullString`, `sql.NullInt`
     } else {
         fmt.Printf("%s does not have a nickname", name)
     }
+
+
+## Database - transactional API
+Oftentimes the service layer needs to be able to handle transaction demarcation,
+composing a transaction of database operations in a mix-and-match manner. For
+such scenarios, a transactional database API can be constructed. Several
+approaches are possible. For example:
+
+*Alternative 1*:
+
+    package mysvc
+
+    // Database is a persistent data store.
+    type Database interface {
+        // Begin opens a transaction that operates on the database.
+        // The caller is responsible for calling Commit/Rollback on the
+        // transaction or the connection will leak.
+        Begin() (Txn, error)
+        // Close closes the database and frees any allocated resource.
+        Close()
+    }
+
+    // Txn performs a sequence of operations on a Database in an atomical
+    // manner. A Txn is started by a call to Database.Begin and must be closed
+    // by a call to Commit or Rollback or the connection will leak.
+    type Txn interface {
+        // Commit saves changes to the Database. A Commit call after Rollback
+        // is a no-op.
+        Commit() error
+
+        // Rollback cancels the changes introduced in the Txn. A call to
+        // Rollback after Commit is a no-op.
+        Rollback() error
+
+        ...
+        InsertUser(u User) error
+        InsertGroup(g Group) error
+        ..
+    }
+
+An implementation might look something like:
+
+    package postgres
+
+    type database struct {
+        *sql.DB
+    }
+
+    func (db *database) Begin() (Txn, error) {
+        tx, err := db.DB.Begin()
+        if err != nil {
+            return nil, err
+        }
+        return &txn{Tx:  tx}, nil
+    }
+
+    // enforce interface at compile time.
+    var _ database.Txn = &txn{}
+
+    // implements mysvc.Txn interface
+    type txn struct {
+        *sql.Tx  // Commit and Rollback come "for free".
+    }
+
+    func (t *txn) InsertUser(u User) error { ... }
+    func (t *txn) InsertGroup(u User) error { ... }
+    ...
+
+Usage of the above API would look something like:
+
+    db, _ := mysvc.OpenDatabase(..)
+    tx, _ := db.Begin()
+    defer tx.Rollback() // note: won't have an effect if Commit gets called.
+    {
+        err := tx.InsertUser(u)
+        if err != nil {
+            return err
+        }
+
+        err := tx.InsertGroup(g)
+        if err != nil {
+            return err
+        }
+
+        if err := tx.Commit(); err != nil {
+            return err
+        }
+    }
+
+*Alternative 2*:
+
+    package mysvc
+
+    type TxnFunc func(tx Txn) error
+
+    // Database is a persistent data store.
+    type Database interface {
+        // InTxn opens a transaction and passes that transaction to the function
+        // fn, which is free to call any database operations and have them
+        // performed within the transaction. The transaction gets closed on
+        // return/panic, either by commiting (on nil return) or by rolling back
+        // (on error return/panic).
+        InTxn(fn TxnFunc) error
+    }
+
+    // Txn is a transactional context for Database created with a call to
+    // Database.InTxn(). A Txn client can execute any combination of operations
+    // within the boundaries of a single transaction. The transaction does not
+    // need to be closed by the client (it is closed by the InTxn function).
+    type Txn interface {
+        InsertUser(u User) error
+        InsertGroup(g Group) error
+        ..
+    }
+
+An implementation might look something like:
+
+    package postgres
+
+    type database struct {
+        *sql.DB
+    }
+
+    func (db *database) InTxn(fn mysvc.TxnFunc) error {
+         return tx.InNewTx(db, func(t *sql.Tx) {
+             fn(&txn{t})
+         })
+    }
+
+    // enforce interface at compile time.
+    var _ mysvc.Txn = &txn{}
+
+    // implements mysvc.Txn interface (while being a sql.Tx)
+    type txn struct {
+        *sql.Tx
+    }
+
+    func (t *txn) InsertUser(u User) error { ... }
+    func (t *txn) InsertGroup(u User) error { ... }
+    ...
+
+Usage of the above API would look something like:
+
+    db, _ := mysvc.OpenDatabase(..)
+    err := db.InTxn(func(tx mysvc.Txn) error {
+        err := tx.InsertUser(u)
+        if err != nil {
+            return err // Rollback will happen
+        }
+
+        err := tx.InsertGroup(g)
+        if err != nil {
+            return err // Rollback will happen
+        }
+
+        return nil     // Commit will happen
+    })
 
 
 ## Logging
