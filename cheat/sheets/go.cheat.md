@@ -1347,7 +1347,7 @@ An implementation might look something like:
         *sql.DB
     }
 
-    func (db *database) Begin() (Txn, error) {
+    func (db *database) Begin() (mysvc.Txn, error) {
         tx, err := db.DB.Begin()
         if err != nil {
             return nil, err
@@ -1356,7 +1356,7 @@ An implementation might look something like:
     }
 
     // enforce interface at compile time.
-    var _ database.Txn = &txn{}
+    var _ mysvc.Txn = &txn{}
 
     // implements mysvc.Txn interface
     type txn struct {
@@ -1423,8 +1423,8 @@ An implementation might look something like:
     }
 
     func (db *database) InTxn(fn mysvc.TxnFunc) error {
-         return tx.InNewTx(db, func(t *sql.Tx) {
-             fn(&txn{t})
+         return tx.InNewTx(db, func(tx *sql.Tx) error {
+             return fn(&txn{tx})
          })
     }
 
