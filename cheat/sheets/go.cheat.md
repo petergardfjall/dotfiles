@@ -1328,7 +1328,6 @@ approaches are possible. For example:
         // Commit saves changes to the Database. A Commit call after Rollback
         // is a no-op.
         Commit() error
-
         // Rollback cancels the changes introduced in the Txn. A call to
         // Rollback after Commit is a no-op.
         Rollback() error
