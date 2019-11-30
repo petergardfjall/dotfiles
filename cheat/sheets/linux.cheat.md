@@ -230,3 +230,9 @@ TODO: Other tools useful for network troubleshooting: `iftop`, `bmon`
 `ip route | column -t`, `route`
 `netstat`
 `lsof`
+
+## Fonts
+List available fonts:
+
+    fc-list
+    fc-list : family style file spacing
