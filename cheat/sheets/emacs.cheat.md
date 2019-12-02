@@ -144,6 +144,15 @@ mode` (which works like a normal emacs buffer).
 Go to the *scratch* buffer, enter an expression, like `(+ 1 1)`, and run `C-j`
 to have the last expression evaluated.
 
+## Theme
+- `M-x customize-create-theme`: opens the theme customization tool that shows
+  all basic faces that need to be filled out by a theme.
+- `M-x customize-face <face>`: allows a particular editor face to be edited
+  (default: `all faces` shows every face)
+- `M-x describe-face`: describe the face at point.
+- `M-x describe-text-properties`: learn all faces being used at point: faces for
+  overlays at point, face which in turn is a list of faces (as in org mode tags)
+
 ## Custom keybindings
 Navigation:
 - `Shift-<arrow>`: `windmove-{up|down|left|right}` (move between windows)
