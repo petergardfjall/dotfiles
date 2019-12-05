@@ -2,8 +2,8 @@
 # rather than under ~/.local/share/virtualenvs/<project>-hash
 export PIPENV_VENV_IN_PROJECT=true
 
-# pip tab completion
-source <(pip completion --bash)
+# pip tab completion (note: a bit time-consuming)
+#source <(pip completion --bash)
 
-# pipenv tab completion
-source <(pipenv --completion)
+# pipenv tab completion (note: a bit time-consuming)
+#source <(pipenv --completion)
