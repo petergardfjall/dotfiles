@@ -28,10 +28,10 @@
 - Decrease buffer font size:      `C-x C--`
 
 ## Packages
-- Refresh and list packages: `M-x list-packages`
+- Refresh and list packages:      `M-x list-packages`
 
-- In package view, press `U` to mark all upgradable packages for upgrade, and `x`
-- to perform the upgrades.
+- In package view, press `U` to mark all upgradable packages for upgrade, and
+  `x` to perform the upgrades.
 
 
 ## Major Mode:
@@ -152,6 +152,35 @@ to have the last expression evaluated.
 - `M-x describe-face`: describe the face at point.
 - `M-x describe-text-properties`: learn all faces being used at point: faces for
   overlays at point, face which in turn is a list of faces (as in org mode tags)
+
+
+## Tramp-mode
+`tramp` brings transparent access to files on remote hosts. `tramp` is triggered
+by the name entered when opening a file.
+
+    C-x C-f /remotehost:filename
+    C-x C-f /method:user@remotehost:filename
+
+When using `tramp` to edit a file on a remote host, `M-x shell` will
+automtically invoke the remote shell.
+
+Tab completion in the minibuffer works for hosts just like for files:
+
+  `C-x C-f` and then enter `/ssh:` and press `TAB`
+
+via completion candidates from `~/.ssh/{config,known_hosts}`. The full list is
+set in `tramp-completion-function-alist`.
+
+You can also edit local files as `root` (note the double colon!)
+
+    C-x C-f /su::/etc/hosts
+    C-x C-f /sudo::/etc/hosts
+
+You can even open files with a "multi-hop" syntax:
+
+    C-x C-f /ssh:bird@bastion|ssh:you@remotehost:/path
+    // open as root on remotehost. NOTE: remote host needs to be given!
+    C-x C-f /ssh:you@remotehost|sudo:remotehost:/path/to/file RET
 
 ## Custom keybindings
 Navigation:
