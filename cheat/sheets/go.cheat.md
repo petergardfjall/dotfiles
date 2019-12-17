@@ -177,10 +177,17 @@ It involves 4 simple tenets:
 
 A concrete example: https://github.com/benbjohnson/wtf
 
-
 Inside a package separate code into logical concerns. If the package deals with
 multiple types, keep the logic for each type in its own source file.
 
+Another example of organizing a go project is found in
+https://github.com/katzien/go-structure-examples. The `domain-hex` show-cases a
+"hexagonal architecture" with the goal of creating loosely coupled application
+components, allowing parts to be modified locally without spreading across
+component boundaries, which only "communicate" via interfaces and a core domain
+model. This makes components exchangeable and facilitates test
+automation. ("clean architecture" is another similar approach, which borrows
+ideas from the hexagonal architecture).
 
 ### Package renaming
 
