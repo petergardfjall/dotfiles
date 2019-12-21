@@ -7,3 +7,5 @@ alias emacsnd="TERM=xterm-24bit emacs26 --no-desktop"
 alias screen="screen -c ~/dotfiles/screen/screenrc"
 alias skubectl="kubectl -n kube-system"
 alias copy="xsel --clipboard"
+# one directory deep and sort by size
+alias du1="du -h --max-depth=1 | sort -h"
