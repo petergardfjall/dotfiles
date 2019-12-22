@@ -1227,9 +1227,13 @@ As shown in the below example, function parameters can also have *trait bounds*
 
 
 The `impl Speaker` syntax works for straightforward cases but is only syntactic
-sugar for *trait bound syntax*:
+sugar for *trait bound syntax* (generic type parameters):
 
     pub fn listen_to<T: Speaker>(s: T) { ... }
+
+Note: `impl Trait` is *not* an example of polymorphism/dynamic dispatch, which
+is achieved with *trait objects* (`Box<dyn Trait>`). `impl Trait` uses generics
+to instantiate different functions, one for each type.
 
 With trait bound syntax it's possible to specify several bounds
 
