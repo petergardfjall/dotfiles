@@ -189,6 +189,11 @@ Navigation:
 - `C-S-<up|down>`: `enlarge-window|shrink-window` (on v-split windows)
 - `C-S-<left|right>`: `{enlarge-window|shrink-window}-horizontally` (on h-split windows)
 
+Text size:
+- `C-x C-+`: `default-text-scale-increase`
+- `C-x C--`: `default-text-scale-decrease`
+- `C-x C-0`: `default-text-scale-reset`
+
 Enter "IDE mode":
 - `F7`: `projectile-mode`
 - `F8`: `toggle-treemacs`
