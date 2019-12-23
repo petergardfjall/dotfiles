@@ -78,6 +78,7 @@
 - set-fill-column                  `C-x f <col>`
 - Uppercase word at cursor         `M-u`
 - Lowercase word at cursor         `M-l`
+- Capitalize word at cursor        `M-c`
 
 *Rectangle*:
 - Start rectangle corner at cursor:     `C-space`
@@ -185,6 +186,8 @@ You can even open files with a "multi-hop" syntax:
 ## Custom keybindings
 Navigation:
 - `Shift-<arrow>`: `windmove-{up|down|left|right}` (move between windows)
+- `C-S-<up|down>`: `enlarge-window|shrink-window` (on v-split windows)
+- `C-S-<left|right>`: `{enlarge-window|shrink-window}-horizontally` (on h-split windows)
 
 Enter "IDE mode":
 - `F7`: `projectile-mode`
