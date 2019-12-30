@@ -15,6 +15,7 @@
 - Display value and doc of *v*ar    `C-h v var <RET>`
 
 - List keyboard shortcuts:        `M-x describe-bindings`
+- List all personal keybindings:  `M-x describe-personal-keybindings`
 - Toggle line numbers:            `M-x linum-mode`
 
 - Customize/select theme:         `M-x customize-themes`
