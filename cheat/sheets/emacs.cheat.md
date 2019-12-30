@@ -196,6 +196,7 @@ Text size:
 - `C-x C-0`: `default-text-scale-reset`
 
 Enter "IDE mode":
+- `F6`:  enable `desktop-save-mode`
 - `F7`: `projectile-mode`
 - `F8`: `toggle-treemacs`
 
