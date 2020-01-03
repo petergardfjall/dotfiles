@@ -151,6 +151,7 @@ to have the last expression evaluated.
   all basic faces that need to be filled out by a theme.
 - `M-x customize-face <face>`: allows a particular editor face to be edited
   (default: `all faces` shows every face)
+- `M-x list-faces-display`: list and customize faces.
 - `M-x describe-face`: describe the face at point.
 - `M-x describe-text-properties`: learn all faces being used at point: faces for
   overlays at point, face which in turn is a list of faces (as in org mode tags)
@@ -230,7 +231,7 @@ Show errors in current buffer:
 - `C-c f t`: `ggtags-find-definition`
 
 Free-text search (via ag/silversurfer):
-- `C-c s p`: `ag-project` ("search-in-project")
+- `C-c s p`: `counsel-projectile-ag` ("search-in-project")
 
 Language Server Protocol interactions:
 - `<M-down>`   `lsp-find-definition`
