@@ -878,6 +878,34 @@ There are a few intersting functions:
             fmt.Printf("matched: '%s'\n", m[1])
         }
 
+One can also use *named capture groups*, for example like so:
+
+    var (
+        metaGopathPattern = regexp.MustCompile(`^(?P<importPrefix>\S+)\s+(?P<vcs>\S+)\s+(?P<repo>\S+)$`)
+    )
+
+
+    ...
+
+        matches := metaGopathPattern.FindStringSubmatch(content)
+        if matches == nil {
+            return "", "", errors.New("unexpected meta content: expected 'import-prefix vcs repo-root'")
+        }
+
+        // used to extract a particular capture group by name
+        getGroup := func(matches []string, groupName string) string {
+            for i, name := range metaGopathPattern.SubexpNames() {
+                if name == groupName && len(matches) > i {
+                    return matches[i]
+                }
+            }
+            return ""
+        }
+
+        vcs = getGroup(matches, "vcs")
+        repoRoot = getGroup(matches, "repo")
+
+
 ## Time
 
 Parsing time is carried out via `time.Parse`:
