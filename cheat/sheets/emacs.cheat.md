@@ -142,9 +142,36 @@ mode` (which works like a normal emacs buffer).
 - Open web page:       `M-x eww <URL>`
 - Reload web page:     `M-x eww-reload`
 
+
 ## Lisp
 Go to the *scratch* buffer, enter an expression, like `(+ 1 1)`, and run `C-j`
 to have the last expression evaluated.
+
+
+## Concepts:
+
+- https://www.gnu.org/software/emacs/manual/html_node/emacs/Screen.html#Screen: frame > window > buffer
+
+- commands (interactive functions)
+
+- modes: https://www.gnu.org/software/emacs/manual/html_node/emacs/Modes.html#Modes
+
+- hooks
+  TODO: https://www.gnu.org/software/emacs/manual/html_node/emacs/Hooks.html
+
+  https://www.gnu.org/software/emacs/manual/html_node/elisp/Standard-Hooks.html
+- `after-init-hook`
+- `emacs-startup-hook`
+- `<modename>-mode-hook`
+- `after-save-hook`, `before-save-hook`
+
+- autoloads
+
+TODO: https://www.emacswiki.org/emacs/AutoLoad
+
+TODO: `auto-mode-alist`: https://www.emacswiki.org/emacs/AutoModeAlist
+TODO: `interpreter-mode-alist`: https://www.emacswiki.org/emacs/InterpreterModeAlist
+
 
 ## Theme
 - `M-x customize-create-theme`: opens the theme customization tool that shows
