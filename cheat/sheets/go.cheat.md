@@ -2400,7 +2400,7 @@ check the `repo` scope (and its sub-fields).
 - Modify the `git` client to use this access token when accesing repos matching
   a given pattern:
 
-        git config --global url."https://${USER}:${ACCESS_TOKEN}@github.com/${COMPANY}".insteadOf "https://github.com/{COMPANY"}
+        git config --global url."https://${USER}:${ACCESS_TOKEN}@github.com/${COMPANY}".insteadOf "https://github.com/${COMPANY}"
 
 - Add to `~/.netrc` (remember to `chmod 600`!). This is more suitable for CI
   servers.
