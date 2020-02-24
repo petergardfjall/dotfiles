@@ -2379,9 +2379,18 @@ set up the handlers like so:
 
 
 ## Modules
-Go modules is the prefered way of managing project dependencies. When using
-private git repos, we need to pass sufficient credentials to `git` to be able to
-fetch the dependency (over `https`). This can be achieved in a couple of ways.
+Go modules is the prefered way of managing project dependencies. When our
+modules are kept in private github repos, we need to specify this with the
+`GOPRIVATE` environment variable:
+
+    # specify that all repos here under are private (can specify multiple with
+    # comma-separation)
+    export GOPRIVATE="github.com/secret-company"
+
+
+When using private git repos, we need to pass sufficient credentials to `git` to
+be able to fetch the dependency (over `https`). This can be achieved in a couple
+of ways.
 
 Both rely on generating a personal access token
 (e.g. https://github.com/settings/tokens). NOTE: give the token read-only access
