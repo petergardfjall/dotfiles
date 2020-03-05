@@ -144,9 +144,9 @@ makes testing simple, allows for easy substitution/replacement and avoids
 circular dependencies.
 
 A strategy to achive this is presented by Ben Johnson
-(https://medium.com/@benbjohnson/standard-package-layout-7cdbc8391fc1,
-https://talks.bjk.fyi/gcru18-best.html#/). It pushes the domain model to the top
-of the project and separates subpackages by dependency.
+(https://medium.com/@benbjohnson/standard-package-layout-7cdbc8391fc1). It
+pushes the domain model to the top of the project and separates subpackages by
+dependency.
 
 It involves 4 simple tenets:
 
