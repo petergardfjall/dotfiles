@@ -212,6 +212,13 @@ You can even open files with a "multi-hop" syntax:
     // open as root on remotehost. NOTE: remote host needs to be given!
     C-x C-f /ssh:you@remotehost|sudo:remotehost:/path/to/file RET
 
+
+## Debugging
+
+- To get a backtrace on errors: `(setq debug-on-error t)` (or in the session:
+  `M-x toggle-debug-on-error`)
+
+
 ## Custom keybindings
 Navigation:
 - `Shift-<arrow>`: `windmove-{up|down|left|right}` (move between windows)
