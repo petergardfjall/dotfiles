@@ -29,7 +29,6 @@ done
 (cat <<EOF
 <Alt>F4            | close_window_key
 <Alt>F6            | stick_window_key
-<Alt>F7            | move_window_key
 <Alt>F8            | resize_window_key
 <Alt>F9            | hide_window_key
 <Alt>F10           | maximize_window_key
@@ -40,6 +39,7 @@ Escape             | cancel_key
 <Alt>Tab           | cycle_windows_key
 <Alt><Shift>Tab    | cycle_reverse_windows_key
 # Ctrl+Alt+arrow => move to a different workspace
+<Primary><Shift><Alt>M | move_window_key
 <Primary><Alt>Right    | right_workspace_key
 <Primary><Alt>Left     | left_workspace_key
 <Primary><Alt>Up       | up_workspace_key
@@ -63,8 +63,8 @@ Escape             | cancel_key
 EOF
 ) | while read row; do
     if echo ${row} | egrep -q '^[ ]*#'; then
-	# skip comments
-	continue
+        # skip comments
+        continue
     fi
     shortcut=$(echo ${row} | awk -F'|' '{print $1}' | xargs)
     command=$(echo ${row}  | awk -F'|' '{print $2}' | xargs)
@@ -102,8 +102,8 @@ Super_L               |  xfce4-appfinder
 EOF
 ) | while read row; do
     if echo ${row} | egrep -q '^[ ]*#'; then
-	# skip comments
-	continue
+        # skip comments
+        continue
     fi
     shortcut=$(echo ${row} | awk -F'|' '{print $1}' | xargs)
     command=$(echo ${row}  | awk -F'|' '{print $2}' | xargs)
