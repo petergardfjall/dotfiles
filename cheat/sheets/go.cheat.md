@@ -2406,3 +2406,20 @@ check the `repo` scope (and its sub-fields).
   servers.
 
         machine github.com login ${USER} password ${ACCESS_TOKEN}
+
+## Module proxy
+
+The central proxy `http://proxy.golang.org` can be used to download modules
+(`go get` uses it by default). It follows this protocol:
+
+- `GET $GOPROXY/<module>/@v/list`: returns a list of all known versions of the
+  given module, one per line.
+
+- `GET $GOPROXY/<module>/@v/<version>.info`: returns JSON-formatted metadata
+  about that version of the given module.
+
+- `GET $GOPROXY/<module>/@v/<version>.mod`: returns the `go.mod` file for that
+  version of the given module.
+
+- `GET $GOPROXY/<module>/@v/<version>.zip`: returns the zip archive for that
+  version of the given module.
