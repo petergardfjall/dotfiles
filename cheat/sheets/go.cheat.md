@@ -1351,7 +1351,7 @@ approaches are possible. For example:
         // Begin opens a transaction that operates on the database.
         // The caller is responsible for calling Commit/Rollback on the
         // transaction or the connection will leak.
-        Begin() (Txn, error)
+        Begin(ctx context.Context) (Txn, error)
         // Close closes the database and frees any allocated resource.
         Close()
     }
