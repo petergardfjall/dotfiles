@@ -114,6 +114,17 @@ Line-by-line processing.
         exit 0
     fi
 
+### Signals and traps
+
+Use `trap` to run code on certain signals:
+
+    trap "{ echo "interrupted ..."; }" SIGINT SIGTERM
+
+or execute commands when the shell exits:
+
+    trap "{ kill ${MY_PID}; }" EXIT
+
+
 ### String manipulation
 
 Substring removal from front:
