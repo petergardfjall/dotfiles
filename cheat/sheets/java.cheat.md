@@ -1,5 +1,11 @@
 # Troubleshooting
 
+## Print JVM flags
+The JVM flags in use can be printed via:
+
+     java -XX:+PrintFlagsFinal -version
+
+
 ## Memory issues
 When it comes to memory leaks, which eventually manifest themselves as an
 `OutOfMemoryError` (OoM) being thrown, one can get the JVM to dump its heap (via
@@ -17,12 +23,12 @@ If you ever need to enter a running Docker container and trigger a heap dump on 
     docker exec -it <container name> /bin/bash
     # .. inside container, determine JVM pid
     ps auxwww | grep java
-   
+
     # dump heap to /tmp/jvm.hprof
     jmap -dump:format=b,file=/tmp/jvm.hprof <jvmpid>
     # ... OR, if that fails, which may happen, try this alternate command
     jcmd <jvmpid> GC.heap_dump /tmp/jvm.hprof
-    
+
     # copy to host for analysis
     docker cp <container>:/tmp/jvm.hprof local.hprof
 
@@ -37,6 +43,7 @@ summary can be produced via `jcmd <jvmpid> VM.native_memory`.
 usage of a running container (given that it can connect to the JMX port of the
 JVM).
 
+
 ## Threading issues
 When a Java process is running, but seemingly not doing any progress (e.g.,
 indicated by an unresponsive API or a log file not receiving any further
@@ -49,6 +56,7 @@ application (to find out if a certain thread have deadlocked/died/been starved,
 etc).
 
     docker exec  <container name> -- jstack <jvmpid>
+
 
 ## Containerization
 Older versions of the JVM did not realize that it was running in a
