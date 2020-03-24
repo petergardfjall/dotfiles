@@ -236,3 +236,13 @@ List available fonts:
 
     fc-list
     fc-list : family style file spacing
+
+
+## Copy changed files
+Sometimes one wants to copy all changes made to a directory in one place (say
+host A) and apply those changes to a different directory (say on host
+B). `rsync` can be used for this:
+
+    # NOTE the trailing slash (it means 'the contents of path' rather than
+    # 'path' itself)
+    rsync --update -av --dry-run user@host:/path/ .
