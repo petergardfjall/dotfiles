@@ -336,3 +336,19 @@ If a file containing sensitive data has been mistakenly added (and pushed)
 history can be rewritten to exclude the file as described here:
 
   https://help.github.com/articles/removing-sensitive-data-from-a-repository/
+
+
+### Migrating a single file/directory (with history) to another repository
+
+To take a file (with entire commit history) and move that to a new repository,
+do something like:
+
+    cd old-repo
+    git log --pretty=email --patch-with-stat --reverse --full-index --binary -- path/to/file_or_folder > patch
+    # might want/need to edit some patches
+    ${EDITOR} patch
+    cd ../new-repository
+    git am --committer-date-is-author-date < ../old-repo/patch
+
+Note that if the file was moved/renamed at some point the history will not
+expand beyond that point.
