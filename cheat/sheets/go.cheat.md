@@ -2424,5 +2424,14 @@ The central proxy `https://proxy.golang.org` can be used to download modules
 - `GET $GOPROXY/<module>/@v/<version>.zip`: returns the zip archive for that
   version of the given module.
 
+NOTE that `<module>` needs to be escaped (every uppercase letter is replaced
+with an exclamation mark and the lowercase letter). For example,
+
+    import "golang.org/x/mod/module"
+    ...
+    p, _ := module.EscapePath("github.com/GoogleCloudPlatform/cloudsql-proxy")
+
+yields `github.com/!google!cloud!platform/cloudsql-proxy`.
+
 New module versions that become available are found in the feed
 `https://index.golang.org/index`.
