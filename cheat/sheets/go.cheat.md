@@ -2409,7 +2409,7 @@ check the `repo` scope (and its sub-fields).
 
 ## Module proxy
 
-The central proxy `http://proxy.golang.org` can be used to download modules
+The central proxy `https://proxy.golang.org` can be used to download modules
 (`go get` uses it by default). It follows this protocol:
 
 - `GET $GOPROXY/<module>/@v/list`: returns a list of all known versions of the
@@ -2423,3 +2423,6 @@ The central proxy `http://proxy.golang.org` can be used to download modules
 
 - `GET $GOPROXY/<module>/@v/<version>.zip`: returns the zip archive for that
   version of the given module.
+
+New module versions that become available are found in the feed
+`https://index.golang.org/index`.
