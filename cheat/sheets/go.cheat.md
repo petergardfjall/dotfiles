@@ -2435,3 +2435,10 @@ yields `github.com/!google!cloud!platform/cloudsql-proxy`.
 
 New module versions that become available are found in the feed
 `https://index.golang.org/index`.
+
+Likewise, module checksums can be looked up via the Go checksum database
+`https://sum.golang.org/`:
+
+- `GET $SUMDB/lookup/<module>@<version`. For example,
+
+        curl 'https://sum.golang.org/lookup/github.com/rs/zerolog@v1.18.0'
