@@ -246,3 +246,22 @@ B). `rsync` can be used for this:
     # NOTE the trailing slash (it means 'the contents of path' rather than
     # 'path' itself)
     rsync --update -av --dry-run user@host:/path/ .
+
+
+## Laptop - prevent machine from suspending when lid is closed
+This can be useful if the laptop is used as a desktop computer, for example
+connected to an external display, and the lid should be closed to keep things
+tidy looking.
+
+1. Add the following setting to `/etc/systemd/logind.conf`
+
+        HandleLidSwitch=ignore
+
+2. Restart the login daemon: `sudo service systemd-logind restart` for the
+   setting to take effect.
+
+Next, we'd like the lock screen to not blank and freeze:
+
+- Update `/usr/bin/xflock4`: make sure it runs the lightdm greeter via:
+
+        dm-tool switch-to-greeter
