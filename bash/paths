@@ -24,3 +24,5 @@ export PATH=${HOME}/bin/scripts/kubernetes:${PATH}
 export PATH=${HOME}/bin/scripts/kubernetes/helm:${PATH}
 
 export PATH=/opt/bin:${PATH}
+
+export PATH=~/.emacs.d/elpasnap:${PATH}
