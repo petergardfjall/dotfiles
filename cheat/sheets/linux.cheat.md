@@ -248,20 +248,26 @@ B). `rsync` can be used for this:
     rsync --update -av --dry-run user@host:/path/ .
 
 
-## Laptop - prevent machine from suspending when lid is closed
-This can be useful if the laptop is used as a desktop computer, for example
-connected to an external display, and the lid should be closed to keep things
-tidy looking.
+## Laptop as desktop
+When the laptop is used as a desktop computer (connected to an external display)
+it's nice to be able to run with the lid closed to keep things tidy looking.
 
-1. Add the following setting to `/etc/systemd/logind.conf`
+1. Prevent machine from suspending when lid is closed. Add the following setting
+   to `/etc/systemd/logind.conf`:
 
         HandleLidSwitch=ignore
 
-2. Restart the login daemon: `sudo service systemd-logind restart` for the
+   Restart the login daemon: `sudo systemctl restart systemd-logind` for the
    setting to take effect.
 
-Next, we'd like the lock screen to not blank and freeze:
+   *NOTE*: also make sure there are no xfce power manager user settings that
+   could interfere.
 
-- Update `/usr/bin/xflock4`: make sure it runs the lightdm greeter via:
+2. Next, we'd like the lock screen to not blank and freeze: Update
+   `/usr/bin/xflock4`: make sure it runs the lightdm greeter by adding this
+   first in the list processed by the `for lock_cmd in` loop:
 
         dm-tool switch-to-greeter
+
+3. For the lightdm greeter to appear on the display where the cursor is at, we
+   set `active-monitor=#cursor` in `/etc/lightdm/lightdm-gtk-greeter.conf`.
