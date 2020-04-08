@@ -1,7 +1,7 @@
 # Packaging
-A python package is a code directory structure, with each py file in that
-structure being a module. Each `module.py` can be included into code via an
-`import package.path.to.module` statement.
+A python *package* is a code directory structure (containing a `__init__.py`),
+with each py file in that structure being a *module*. Each `module.py` can be
+included into code via an `import package.path.to.module` statement.
 
 A package is installed by copying the directory structure to a directory on the
 `PYTHONPATH` (`sys.path`).
@@ -96,6 +96,21 @@ If your code doesn't need to be distributed (personal script, desktop app) you
 don't need a `setup.py` -- just use a `Pipfile`/`Pipfile.lock` combo.
 
 
+## Releasing a package on PyPi
+
+1. Get a PyPi account
+
+2. Upgrade necessary tools, cut a release tag, use `setuptools` to produce an
+   sdist and a bdist, and use `twine` to upload to PyPi (you will need your PyPi
+   credentials).
+
+        pip install -U twine wheel setuptools
+        git tag vX.Y.Z && git push origin vX.Y.Z
+        python setup.py sdist bdist_wheel
+        twine check dist/*
+        twine upload dist/*
+
+
 # Pipenv
 Make `pipenv` create `virtualenv`s in the project dir instead of under
 `~/.local/share/virtualenvs/`.
@@ -115,7 +130,7 @@ Add dependency to Pipfile.
 Add local project dir (as editable) to `Pipfile`. Adding project dir itself
 ("editable") to `PYTHONPATH` is useful during development. Also, for a pipenv
 client of the package, this means that `pipenv install <project-dir>` will also
-include what's specified in `setup.py` (if anything), such as console_scripts.
+include what's specified in `setup.py` (if anything), such as `console_scripts`.
 
     pipenv install '-e .'
 
