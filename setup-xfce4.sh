@@ -36,18 +36,18 @@ pkill xfconfd || warn "xfconfd does not appear to be running ..."
 # ~/.config/xfce4
 for file in $(cd ${src} && find -type f | sed 's#^./##'); do
     if [ -h ${dest}/${file} ]; then
-	info "symlink already exists for ${dest}/${file}. Ignoring ..."
-	continue
+        info "symlink already exists for ${dest}/${file}. Ignoring ..."
+        continue
     fi
 
     if [ -e ${dest}/${file} ]; then
-	# destination exists => take backup
-	warn "${file} file exists in ${dest}. Moving to ${backup} ..."
-	backup_path="${backup}/${ts}-${file}"
-	# ensure backup directory exists
-	backup_dir=$(dirname ${backup_path})
-	mkdir -p ${backup_dir}
-	mv ${dest}/${file} ${backup_path}
+        # destination exists => take backup
+        warn "${file} file exists in ${dest}. Moving to ${backup} ..."
+        backup_path="${backup}/${ts}-${file}"
+        # ensure backup directory exists
+        backup_dir=$(dirname ${backup_path})
+        mkdir -p ${backup_dir}
+        mv ${dest}/${file} ${backup_path}
     fi
 
     destpath="${dest}/${file}"
@@ -62,7 +62,7 @@ info "restarting xfce4-panel (should restart xfconfd) ..."
 # may not be possible when not in X11 mode
 xfce4-panel --restart || warn "could not restart xfce4-panel, not in graphical mode?"
 # this should take care of restarting xfcond when not in X11 mode
-xfconf-query > /dev/null 2>&1
+xfconf-query --list > /dev/null 2>&1
 
 echo "setting up xfce keyboard shortcuts ..."
 ${scriptdir}/setup-xfce4-keyboard-shortcuts.sh
