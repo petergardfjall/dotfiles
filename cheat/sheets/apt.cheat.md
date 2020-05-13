@@ -56,3 +56,8 @@ In some cases one needs to search for the right path. For example:
 
     $ dpkg -S /usr/lib/jvm/default-java/
     default-jre-headless: /usr/lib/jvm/default-java
+
+# Why is a package installed?
+
+    $ aptitude why ruby
+    i   vagrant Depends ruby
