@@ -102,6 +102,14 @@ to the prior commit as follows:
     git rebase --continue
 
 
+### Remove sensitive files
+
+If a file containing sensitive data has been mistakenly added (and pushed)
+history can be rewritten to exclude the file as described here:
+
+  https://help.github.com/articles/removing-sensitive-data-from-a-repository/
+
+
 ### A simple Git workflow
 
 Get repo
@@ -317,25 +325,6 @@ Fetch and merge upstream changes (from origin/master) for _all_ submodules.
 
     git submodule update --remote
 
-### Miscellaneous
-Show info about the remotes of this repo.
-
-    git remote -v
-
-Show a short hash (like `ceba11f`) for current commit:
-
-    git rev-parse --short HEAD
-
-Show any tags that are attached to current commit:
-
-    git tag -l --points-at HEAD
-
-### Remove sensitive files
-
-If a file containing sensitive data has been mistakenly added (and pushed)
-history can be rewritten to exclude the file as described here:
-
-  https://help.github.com/articles/removing-sensitive-data-from-a-repository/
 
 
 ### Migrating a single file/directory (with history) to another repository
@@ -352,3 +341,26 @@ do something like:
 
 Note that if the file was moved/renamed at some point the history will not
 expand beyond that point.
+
+
+
+### Miscellaneous
+Show info about the remotes of this repo.
+
+    git remote -v
+
+Show a short hash (like `ceba11f`) for current commit:
+
+    git rev-parse --short HEAD
+
+Show any tags that are attached to current commit:
+
+    git tag -l --points-at HEAD
+
+Show a particular version/commit of a file:
+
+    git show commit|tag|branch   # general info about an object
+    git show ${rev}:${path}
+    git show somebranch:from/the/root/myfile.txt
+    git show 6b312a3:test/test.py
+    git show HEAD~2:test/test.py
