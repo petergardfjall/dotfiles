@@ -255,15 +255,15 @@ gives diffs in addition to commits).
 
 
 ### Rebasing
-Rebase current branch onto the current head commit of the `master` branch. The
+Rebase current branch onto the current `HEAD` commit of the `master` branch. The
 commits on this branch are replayed on top of `master`. NOTE: be careful, this
 creates new commits (with new sha-1 hashes).
 
     git rebase master
 
 So if you have pushed your branch to remote you will be warned that you're
-behind your remote (since your commits have new ids). Run push with `--force` to
-force an overwrite of the remote branch
+behind your remote (since your commits have new hashes). Run push with `--force`
+to force an overwrite of the remote branch
 
     git push origin <mybr> --force-with-lease
 
@@ -274,6 +274,32 @@ Rebase the `client` branch on `master`, only replaying the patches from the
 on the `master` branch with commits "client - server".
 
     git rebase --onto master server client
+
+Generally speaking, to take some commits on a branch and rebase them onto the
+tip of a different branch `git rebase --onto` can be used. For example,
+
+    git rebase --onto=<new-base-branch> <commit-a> <commit-b>
+
+This will take the range of commits `(commit-a, commit-b]` (that is, excluding
+`<commit-a>` and replay on the `HEAD` of `<new-base-branch>`. Note that
+`<commit-a>` and `<commit-b>` can be replaced with a branch name, which
+translates to the `HEAD` commit of each branch.
+
+
+## Resolving conflicts
+Whenever a `git rebase` is made, there is a risk of conflicting modifications.
+Normally, you would go through conflicts one-by-one, fix them, do `git add` or
+`git rm`, and finally `git rebase --continue`.
+
+In some cases you know that you want to resolve in favor of your changes (or
+don't care). In such cases, a conflicting file can be resolved via:
+
+    git checkout --theirs go.sum   # resolve in favor of your changes
+    git checkout --ours   go.sum   # resolve in favor of their changes
+
+Note that the direction is reversed on `rebase` when compared to `merge` (where
+`ours` really means our changes). On `rebase`, `ours` refers to the anonymous
+rebase branch that the rebase is built on.
 
 
 ### Tags
