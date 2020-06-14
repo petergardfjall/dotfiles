@@ -29,7 +29,10 @@ A package is installed by copying the directory structure to a directory on the
 
 - `setup.py`: project specification file found at root of a project. Used by
   `distutils` and `setuptools`. Its `install_requires` is read by `pip` when
-  installing the package (and its dependencies).
+  installing the package (and its dependencies). Whenevery you need to
+  distribute your code as a _library_, you need to include a `setup.py` for
+  `pip` to install the package. When you build an _application_, you might not
+  need a `setup.py`, for example a `Pipfile[.lock]` could suffice.
 
 - `distutils`: the original python packaging system. Direct use of it is
   discouraged. `setuptools` is now preferred.
@@ -62,7 +65,10 @@ A package is installed by copying the directory structure to a directory on the
 - `pipenv`: a dependency manager for Python that combines the use of `pip` and
   `virtualenv`. It manages a `virtualenv` for your project, adds/removes
   packages from your `Pipfile`, and can generate a `Pipfile.lock` to produce
-  deterministic builds.
+  deterministic builds. Note that `setup.py` vs `Pipfile` is not an either or
+  proposition: if you're writing a _library_ `setup.py` is needed anyway to
+  allow `pip` to install the library (and its dependencies). For an
+  _application_, a `Pipfile` could be sufficient.
 
   - `Pipfile`: declares high-level dependencies (similar to `setup.py`). Here
     you declare *what you want*.
