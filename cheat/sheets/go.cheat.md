@@ -2349,6 +2349,8 @@ Common commands:
 - `funcs`: print list of functions
 - `types`: print list of types
 
+- `source <path>`: executes a file containing a list of `delve` commands
+
 - `restart`: restart process
 
 
