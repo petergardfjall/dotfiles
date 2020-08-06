@@ -2306,6 +2306,52 @@ Then add something like this to your build (in this case, using `Makefile`):
     ...
 
 
+## Debugging
+When debugging Go programs built with the standard toolchain, `delve` is a
+better option than `gdb`, since it understands Go internals better.
+
+To debug a *program*, run `dlv debug` from your `main` package directory:
+
+    $ dlv debug [ -- PROGRAM-ARG ... ]
+    Type 'help' for list of commands.
+    (dlv)
+
+To debug a *test*, run `dlv test` from within your package directory.
+
+Delve compiles the program, starts itself and attaches to the program to start a
+debug session. Once at the prompt you can start interacting with the
+program/debug session.
+
+Common commands:
+- `break <locspec>`: set a breakpoint (`file:lineno`, `function[:lineno]`)
+- `breakpoints`: print all active breakpoints
+- `clear <breakpoint>`: delete a breakpoint
+
+- `continue`: run until breakpoint or program termination
+- `next [N]`: step to [Nth] next source line (don't enter functions)
+- `step`: single step through program (enter function calls).
+- `stepout`: step out of current function
+
+- `goroutines`: list program goroutines
+- `goroutine [n]`: show/change current goroutine
+
+- `ls`: show source around current point
+- `stack`: print stack trace at point
+- `frame <n>`: set current frame
+- `down`: move current frame down
+- `up`: move current frame up
+
+- `[goroutine n] [frame m] args [-v]`:   print function arguments
+- `[goroutine n] [frame m] locals [-v]`: print local variables
+- `vars [-v]`:   print package variables
+
+- `sources`: print list of source files
+- `funcs`: print list of functions
+- `types`: print list of types
+
+- `restart`: restart process
+
+
 
 ## Profiling
 A Go program can be collect and publish runtime profiling data, to help
