@@ -2114,6 +2114,10 @@ Run tests via:
     go test -v
     go test -v ./pkg/...
 
+For tests matching a particular regular expression:
+
+    go test -run TestSomething ./pkg/...
+
 With coverage
 
     go test -v -cover -coverprofile=coverage/coverage.txt ./pkg/... ./cmd/...
