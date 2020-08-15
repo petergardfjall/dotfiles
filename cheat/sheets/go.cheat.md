@@ -2320,7 +2320,11 @@ To debug a *program*, run `dlv debug` from your `main` package directory:
     Type 'help' for list of commands.
     (dlv)
 
-To debug a *test*, run `dlv test` from within your package directory.
+To debug a *test*, run `dlv test` from within your package directory. For
+example:
+
+    dlv test --build-flags "-tags db" ./pkg/my/db/ -- -test.v -test.run TestQuery
+
 
 Delve compiles the program, starts itself and attaches to the program to start a
 debug session. Once at the prompt you can start interacting with the
