@@ -15,13 +15,18 @@ A package is installed by copying the directory structure to a directory on the
   - `sdist`: a `tar.gz` source distribution for a package. Needs to be built
     before being installed (generated via `python setup.py sdist`). Provides
     metadata and source files needed by an installation tool like `pip` or for
-    generating a `bdist`.
+    generating a `bdist`. For pure python-code package that doesn't rely on
+    non-python code, only an `sdist` distribution is necessary. To avoid the
+    need to build a package with non-python code, pre-built `bdist`
+    distributions can be published.
   - `bdist_wheel`: a *built distribution*. `wheel` is the prefered format (over
-    `egg`) and is supported by `pip`. A build distribution can be installed
-    by just moving it to the right location on the target system. While `wheel`
-    is such a format `distutils`' `sdist` format is not as it needs to be
-    built before being installed. A `wheel` can include compiled components
-    built with other languages.
+    `egg`) and is supported by `pip`. A built distribution can be installed by
+    just moving it to the right location on the target system. While `wheel` is
+    such a format `distutils`' `sdist` format is not as it needs to be built
+    before being installed. A `wheel` can include compiled components built with
+    other languages. Depending on reliance on native code and such, each `bdist`
+    may target a specific combination of: python version (`3.5`), platform/os
+    (`linux`/`macosx`/`win32`/`win_amd64`), python implementation (`cpython`).
 
 - *package index*: a repository of package distributions offering discovery and
   consumption. PyPi (`pypi.org`) is the default index for the python community.
