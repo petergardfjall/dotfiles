@@ -7,3 +7,7 @@ export PIPENV_VENV_IN_PROJECT=true
 
 # pipenv tab completion (note: a bit time-consuming)
 #source <(pipenv --completion)
+
+# enable pyenv shims (inserts a directory of proxy commands first in the PATH
+# that forward python command calls to the selected pyenv)
+source <(pyenv init -)
