@@ -143,3 +143,22 @@ include what's specified in `setup.py` (if anything), such as `console_scripts`.
 Enter sub-shell for the virtualenv.
 
     pipenv shell
+
+# pyenv
+Lets you switch betwen multiple versions of Python. It is typically installed
+under `~/.pyenv`. Add `~/.pyenv/bin` to the `PATH` and make sure to add a call
+to `source <(pyenv init -)` in your shell initialization (`~/.bashrc`).
+
+    # show available (and selected python version)
+    pyenv versions
+
+    # install a new version
+    pyenv install 3.8.5
+
+    # use a Python version globally
+    pyenv global 3.8.5
+    # set both python3 and python2 globally
+    pyenv global 3.7.0 2.7.15
+
+    # set a directory-tree local version by writing a .python-version
+    pyenv local 3.7.0
