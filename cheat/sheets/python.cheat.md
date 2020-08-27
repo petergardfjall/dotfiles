@@ -167,3 +167,22 @@ to `source <(pyenv init -)` in your shell initialization (`~/.bashrc`).
 
     # set a directory-tree local version by writing a .python-version
     pyenv local 3.7.0
+
+If you additionally install `pyenv-virtualenv` you can use `pyenv` to manage
+virtual environments (note: to use python2, make sure you've installed
+`virtualenv` for `pyenv global 2.7.10; pip install -U virtualenv`).
+
+
+    # create a virtualenv with the currently set python version
+    pyenv virtualenv 2.7.10 my-project-py2
+
+    # list virtualenvs
+    pyenv virtualenvs
+
+    # activate virtualenv
+    pyenv activate my-project-py2
+    # deactivate
+    pyenv deactivate
+
+    # delete
+    pyenv virtualenv-delete my-project-py2
