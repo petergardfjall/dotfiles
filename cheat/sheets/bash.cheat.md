@@ -60,6 +60,20 @@ Line-by-line processing.
     while read line; do echo $line; done < /dev/stdin
 
 
+## Redirecting output
+
+Redirect `stderr` to a file
+
+    cat nop.txt 2> error.txt
+
+Redirecting `stdout` and `stderr` to separate files:
+
+    ls -al /tmp/somefile 2> /tmp/stderr 1> /tmp/stdout
+
+Redirecting both `stderr` and `stdout` to a file:
+
+    cmd > /tmp/alloutput 2>&1
+
 
 ## Scripting: executing commands over ssh
 
