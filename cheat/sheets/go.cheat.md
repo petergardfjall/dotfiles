@@ -243,6 +243,9 @@ Examples are:
   - `make`: creates slices, maps, and channels only, and it returns an
     initialized (not zeroed) value of type `T` (*not* `*T`).
 
+        a := make([]int, 5)    // len(a)=5, cap(a)=5
+        b := make([]int, 0, 5) // len(b)=0, cap(b)=5
+
         v := make([]int, 10, 100)   // slice of length 10, capacity 100
         ch := make(chan int)        // creates a 'chan int'
         m := make(map[string]int)   // creates a string->int map
