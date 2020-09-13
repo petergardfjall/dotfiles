@@ -65,3 +65,35 @@ Add DNS nameserver.  Not recommended, but temporary setting that is overwritten
 on reboot.
 
     echo "nameserver 8.8.8.8" >> /etc/resolv.conf
+
+
+### SOCKS proxy
+Sometimes it's not possible to reach certain servers from your machine (for
+example, due to firewall settings). In such cases, it can be possible to set up
+a SOCKS proxy on a remote host (reachable via `ssh`) and then configure your app
+(e.g. web browser) to use that proxy (a SOCKS server proxies TCP connections to
+an arbitrary IP address) over an `ssh` tunnel.
+
+    # -D 1234: local listen port that will forward connections to the remote
+    #          ssh server and act as SOCKS proxy server
+    # -C: compress data to save bandwidth
+    # -q: quiet. no local output.
+    # -N: do not execute remote commands
+    # user@edge-server: edge proxy server that will forward tunneled requests
+    ssh -D 1234 -C -q -N user@edge-server
+
+One can also pass `-f` to fork ssh into the background.
+
+Remember to configure the application (such as Chrome or Firefox) to go through
+the SOCKS proxy.
+
+    curl --socks5 localhost:1234 https://api.ipify.org?format=json
+    # note: should show the IP-address of *proxy-server*, not *your* IP
+    # => {"ip":"<ip of proxy-server"}
+
+By default, the local listen port only binds to `127.0.0.1`. To make the proxy
+available to other hosts use:
+
+    ssh -d 0.0.0.0:1234 -CqN user@edge-server
+
+
