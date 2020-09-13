@@ -97,3 +97,37 @@ available to other hosts use:
     ssh -d 0.0.0.0:1234 -CqN user@edge-server
 
 
+### SSH tunnel (local port forward)
+Used to forward connections via an SSH server ("jump node") to a destination
+server.
+
+Set up an SSH tunnel, allowing connections to a port `p` on the local machine to
+be forwarded by machine `Mx` to port `Py` on machine `My`. Now `localhost:p` is
+a proxy for accessing `My:Py` from machine `Mx`.
+
+    ssh -C -L p:My:Py <user>@Mx -N
+
+- `-L`: the given port on the local (client) host is to be forwarded to the
+  given host and port on the remote side.
+
+- `-N`: don't execute a remote command.
+
+Connect with ssh to `connectToHost`, and forward all connection attempts to the
+local `sourcePort` to port `onPort` on the machine called `forwardToHost`, which
+can be reached from the `connectToHost` machine. See
+https://unix.stackexchange.com/a/118650.
+
+    ssh -L sourcePort:forwardToHost:onPort connectToHost
+
+
+### Reverse ssh tunnel (remote port forward)
+Used to forward connections *from* an SSH server via the *ssh client* to a
+destination server.
+
+Allow `foo.com` to access ssh (port 22) on the client computer via local port
+2222.
+
+    ssh -R 2222:localhost:22 foo.com
+
+`-R` Specifies that the given port on the remote (server) host is to be
+forwarded to the given host and port on the local side.
