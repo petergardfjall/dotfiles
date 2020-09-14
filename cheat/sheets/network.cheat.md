@@ -159,3 +159,11 @@ with a simple `proxy.conf` being:
     # Restrict allowed clients
     # Allow 127.0.0.1
     # Allow 192.168.0.1
+
+To configure an application to use it:
+
+    export https_proxy=http://localhost:8888
+    export http_proxy=http://localhost:8888
+    # these should now go through proxy
+    curl http://www.google.se
+    curl https://www.google.se
