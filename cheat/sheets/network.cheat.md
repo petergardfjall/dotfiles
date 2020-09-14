@@ -131,3 +131,31 @@ Allow `foo.com` to access ssh (port 22) on the client computer via local port
 
 `-R` Specifies that the given port on the remote (server) host is to be
 forwarded to the given host and port on the local side.
+
+
+### tinyproxy
+`tinyproxy` is a lightweight http/https proxy daemon. It can be started (in
+foreground, `-d`) like so:
+
+    tinyproxy -d -c proxy.conf
+
+with a simple `proxy.conf` being:
+
+    User nobody
+    Group nogroup
+    # will bind to 0.0.0.0:8888
+    Port 8888
+    Listen 0.0.0.0
+    Timeout 600
+    MaxClients 100
+    LogLevel Info
+    Logfile "./tinyproxy.log"
+    PidFile "./tinyproxy.pid"
+
+    # Allowed destination ports (if none is specified, anyone is OK)
+    # ConnectPort 80
+    # ConnectPort 443
+
+    # Restrict allowed clients
+    # Allow 127.0.0.1
+    # Allow 192.168.0.1
