@@ -94,7 +94,7 @@ the SOCKS proxy.
 By default, the local listen port only binds to `127.0.0.1`. To make the proxy
 available to other hosts use:
 
-    ssh -d 0.0.0.0:1234 -CqN user@edge-server
+    ssh -D 0.0.0.0:1234 -CqN user@edge-server
 
 
 ### SSH tunnel (local port forward)
