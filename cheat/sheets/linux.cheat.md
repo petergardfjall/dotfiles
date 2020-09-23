@@ -20,6 +20,14 @@ System users:
     sudo addgroup --system sysgroup
 
 
+## Key management
+
+Create an `ssh` key:
+
+    ssh-keygen -f mykey
+    ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
+
+
 ## Docker
 
 Remove unused docker data. This will remove all stopped containers, all networks
