@@ -146,6 +146,8 @@ with a simple `proxy.conf` being:
     # will bind to 0.0.0.0:8888
     Port 8888
     Listen 0.0.0.0
+    # require proxy clients to pass basic authentication credentials
+    # BasicAuth user password
     Timeout 600
     MaxClients 100
     LogLevel Info
