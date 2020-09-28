@@ -289,10 +289,10 @@ When you want to share your changes, you push them upstream.
 
     git push origin master
 
-If you want to push your `master` branch to your `origin` remote server. You
-need write-access to the remote, and noone else must have pushed in the
-meantime. If so, your push is rejected and you first need to merge/rebase their
-changes with yours.
+If you want to push your `master` branch to your `origin` remote server you need
+write-access to the remote, and noone else must have pushed in the meantime. If
+so, your push is rejected and you first need to merge/rebase their changes with
+yours.
 
 Some other useful commands on remotes:
 
@@ -342,8 +342,8 @@ To view differences:
     git diff master..feature1 pkg/svc/service.go
 
 
-Record with everything in the staging area in a new commit (snapshot revision),
-and advance `HEAD`:
+Record everything in the staging area in a new commit (snapshot revision), and
+advance `HEAD`:
 
     git commit [-m message]
 
@@ -646,15 +646,14 @@ The tracked branch for a local can be (re)set at any time via:
     # -u or --setup-upstream-to
     git branch -u origin/ticket123
 
-To get
 
 ## Merging and rebasing
-A *merge* bring the contents of another branch into the current branch. A merge
+A *merge* brings the contents of another branch into the current branch. A merge
 can be either *fast-forward* (if merged-in branch is a descendant) or result in
 a *merge-commit* having the tips of the merged branches as parents.
 
-A fast-forward commit just update the branch pointer to match the merged branch:
-when merged-in commit is a descendant of current branch history:
+A fast-forward commit just updates the branch pointer to match the merged
+branch: when merged-in commit is a descendant of current branch history:
 
     #        master
     #          |
@@ -671,7 +670,7 @@ when merged-in commit is a descendant of current branch history:
 
 
 A merge commit is performed when histories have diverged. git will try to do a
-(three-way merge). This may result in a conflict which first must be resolved:
+(three-way) merge. This may result in a conflict which first must be resolved:
 
 
     #    D - E - F  <- ticket123 <- HEAD
@@ -686,7 +685,7 @@ A merge commit is performed when histories have diverged. git will try to do a
     #   /         \
     #  A - B - C - G <- master <- HEAD
 
-A *rebase takes all the changes that were committed on one branch and replays
+A *rebase* takes all the changes that were committed on one branch and replays
 them on another branch. Rebasing makes for a cleaner history. If you examine the
 log of a rebased branch, it looks like a linear history: it appears that all the
 work happened in series, even when it originally happened in parallel.
