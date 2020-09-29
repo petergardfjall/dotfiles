@@ -2256,6 +2256,17 @@ As an example:
             mockRunner.AssertExpectations(t)
     }
 
+To allow for dynamic handling of return values (e.g. to allow a call to return a
+new io.Reader on every call) one can use the following hack:
+
+    // say we're mocking `GetReader(ctx, path) (io.Reader, error)`
+    call := storageMock.On("GetReader", anyCtx, path)
+    call.RunFn = func(args mock.Arguments) {
+        call.ReturnArguments = mock.Arguments{
+            newFileReader("path/to/file.txt")), nil,
+        }
+    }
+
 
 ## Versioning
 
