@@ -758,7 +758,7 @@ Show tags:
     git tag
 
 Add a lightweight tag (a lightweight tag is very much like a branch that doesn't
-change — it's just a pointer to a specific commit):
+change -- it's just a pointer to a specific commit):
 
     git tag v1.0.0
     # equivalently
