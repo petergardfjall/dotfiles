@@ -37,6 +37,33 @@ cache.
     docker system prune
 
 
+## Archiving
+
+### tar
+
+Regular directory compression:
+
+    # gzip-compressed tar with the content of foo.git/ and foo.git/ as the
+    # first entry
+    $ tar czvf foo.tar.gz foo.git/
+    $ tar tzvf foo.tar.gz
+    foo.git/
+    foo.git/HEAD
+    foo.git/hooks/
+    ...
+
+"Ground directory compression" (select a particular subtree):
+
+    # gzip-compressed tar with the content of foo.git/ and foo.git/* as
+    # immediate entries
+    # first entry
+    $ tar czvf foo.tar.gz -C foo.git/ .
+    $ tar tzvf foo.tar.gz
+    ./
+    ./HEAD
+    ./hooks/
+    ...
+
 ## Hardware information commands
 
 List high-level details about your system on a software-level (distro, kernel,
