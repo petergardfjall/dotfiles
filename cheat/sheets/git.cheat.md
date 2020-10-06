@@ -163,7 +163,12 @@ Git as a system manages and manipulates three trees in its normal operation:
 
 
 # Configure
-Check local/global settings:
+Show *all* available config settings:
+
+    # check the `Variables` section
+    git config --help
+
+Show local/global settings:
 
     git config --list [--global]
 
@@ -181,6 +186,10 @@ Set password cache timeout:
 
     git config --global credential.helper 'cache --timeout=3600'
 
+One-time override of a configuration variable for a single call via `git -c`:
+
+    # use a http proxy for this call only
+    git -c "http.proxy=address:port" clone https://...
 
 ## Use basic auth for a repo
 To configure that a particular user/password should be used for certain https
@@ -197,6 +206,17 @@ variable:
 
     # will now clone with the specified ssh command
     git clone git@github.com:project/repo.git
+
+## Use a HTTP proxy
+To have `git` use a HTTP proxy:
+
+    git config --global http.proxy http://user:pass@proxy:8080
+
+To specify a one-time configuration (overriding any global configuration) one
+can use the `-c` flag:
+
+    # use a http proxy for this call only
+    git -c "http.proxy=address:port" clone https://...
 
 
 # Creating a repo
