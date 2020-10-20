@@ -248,6 +248,12 @@ is eligble for consumption by another worker.
 
 A few useful system queries:
 
+- view current settings:
+
+        select name, setting, short_desc from pg_settings where name like '%time%';
+
+        select * from pg_settings where name like '%log%';
+
 - show locks in use
 
         select * from pg_locks;
