@@ -1496,8 +1496,31 @@ Usage of the above API would look something like:
 
 
 ## Logging
+There are many logging frameworks out there. The standard library `log` may
+suffice for simple cases, but when different log levels, output formats and
+structured logging is needed, something like `zerolog` is better.
 
-- TODO: zerolog
+    import (
+            "github.com/rs/zerolog"
+            "github.com/rs/zerolog/log"
+    )
+
+    func init() {
+         // configure the global logger
+         log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr, TimeFormat: time.RFC3339})
+         log.Level(zerolog.DebugLevel)
+
+         // formatted logging
+         log.Debug().Msgf("a value: %s", "val")
+
+         // structured logging
+         log.Info().Str("id", "1").Dur("duration", elapsed).Msg("done")
+
+         // create a sub-logger with a certain context
+         log := log.With().Str("id", "2").Str("rev", "abc123a").Logger()
+         log.Msg("step 1") // => {"id":"2","rev":"abc123a","message":"step 1"}
+         log.Msg("step 2") // => {"id":"2","rev":"abc123a","message":"step 2"}
+    }
 
 
 ## Command-line parsing
