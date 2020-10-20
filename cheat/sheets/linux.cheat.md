@@ -64,6 +64,11 @@ Regular directory compression:
     ./hooks/
     ...
 
+Decrompress a `tar.gz` to a particular destination directory with `-C`:
+
+    tar xzvf foo.tar.gz -C foo/
+
+
 ## Hardware information commands
 
 List high-level details about your system on a software-level (distro, kernel,
