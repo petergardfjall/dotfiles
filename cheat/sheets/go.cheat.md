@@ -210,6 +210,13 @@ package registers HTTP handlers that provide debugging information.
 
     import _ "net/http/pprof"
 
+This automatically adds a pprof server to any running http server. If your
+application doesn't have a http server you need to start it yourself:
+
+    go func() {
+        log.Println(http.ListenAndServe("localhost:6060", nil))
+    }()
+
 Similarly, the `database/sql` drivers often use an `init` method to register
 themselves.
 
