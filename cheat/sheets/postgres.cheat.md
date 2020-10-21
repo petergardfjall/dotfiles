@@ -1,5 +1,6 @@
 ## psql
 
+- Turn off paging:     `\pset pager 0`
 - List databases:      `\l`
 - Connect to database: `\c <database>`
 - List tables:         `\d`
