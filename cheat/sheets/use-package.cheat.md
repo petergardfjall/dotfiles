@@ -228,3 +228,41 @@ the path is relative, it is expanded within `user-emacs-directory`:
     (use-package ess-site
       :load-path "site-lisp/ess/lisp/"
       :commands R)
+
+
+## Key-bindings
+As mentioned above, one can set up a (deferred) autoload of a package for a
+certain command and also bind that command to a key-binding via:
+
+    (use-package org
+      ...
+      :bind (("C-c o o" . my-org-open)
+             ("C-c o l" . org-store-link)
+             ("C-c o c" . org-capture)
+             ("C-c o a" . org-agenda))
+      ...
+
+One can also use `:bind` to set up custom key-bindings _within_ a local keymap
+that only exists after the package is loaded via a `:map` modifier:
+
+    (use-package org
+      ...
+      :bind (("C-c o o" . my-org-open)         ;; global, auto-loading command
+             :map org-mode-map                 ;; local key-bindings after load
+             ("C-c o x" . org-archive-subtree)
+             ("C-c o >" . org-clock-in)
+             ("C-c o <" . org-clock-out)
+      ...
+
+The effect of the `:map` statement is to wait until `org-mode` has loaded, and
+then to bind e.g. `C-c o x` to `org-archive-subtree` within org-mode's local
+keymap, `org-mode-map`. Something similar can also be achieved via:
+
+(define-key projectile-mode-map (kbd "C-c s p") 'counsel-projectile-ag)
+
+    (use-package org
+      ...
+      :bind (("C-c o o" . my-org-open))
+      :config
+      (define-key org-mode-map (kbd "C-c o x") 'org-archive-subtree)
+      ...
