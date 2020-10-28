@@ -32,3 +32,4 @@ Allow traffic from IP/CIDR block to port:
 ### Outgoing connections
 `ufw default deny outgoing`     Deny all outgoing traffic by default.
 `ufw allow out to <dest/cidr>`  Open up for a particular (range) of host(s).
+`ufw deny out from any to <ip>` Deny outgoing traffic to `<ip>`
