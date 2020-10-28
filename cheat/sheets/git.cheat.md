@@ -189,7 +189,9 @@ Set password cache timeout:
 One-time override of a configuration variable for a single call via `git -c`:
 
     # use a http proxy for this call only
-    git -c "http.proxy=address:port" clone https://...
+    git -c "http.proxy=http://address:port" clone https://...
+    # use a socks5 proxy
+    git -c "http.proxy=socks5://address:port" clone https://...
 
 ## Use basic auth for a repo
 To configure that a particular user/password should be used for certain https
