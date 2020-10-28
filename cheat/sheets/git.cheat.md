@@ -936,6 +936,12 @@ using git mergetool).
     git am -3 < patchfile
 
 
+To apply a single commit (or set of commits) from a different branch to your
+local branch, `cherry-pick` can be used.
+
+    # apply the commit to the local branch
+    git cherry-pick c136985
+
 
 # Submodules
 Submodules allow you to keep a git repository as a subdirectory of another Git
