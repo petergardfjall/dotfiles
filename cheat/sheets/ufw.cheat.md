@@ -3,7 +3,7 @@
 - `ufw enable`                    Enable firewall.
 - `ufw disable`                   Disable firewall.
 - `ufw reset`                     Reset firewall settings and revert to defaults.
-- `ufv status verbose`            Show status (active?) and rules (if active).
+- `ufw status verbose`            Show status (active?) and rules (if active).
 - `ufw status numbered`           Show rules numbered.
 
 - `ufw default deny incoming`     Set default (can be overridden per port).
@@ -33,3 +33,24 @@ Allow traffic from IP/CIDR block to port:
 `ufw default deny outgoing`     Deny all outgoing traffic by default.
 `ufw allow out to <dest/cidr>`  Open up for a particular (range) of host(s).
 `ufw deny out from any to <ip>` Deny outgoing traffic to `<ip>`
+
+
+### Emulate an air-gapped scenario
+On the host, run a `tinyproxy` on `0.0.0.0:8888` through which http(s) traffic
+will be allowed to pass. Then run a virtual machine (e.g. via `vagrant`). Within
+that VM set:
+
+    # allow ssh connection from host
+    sudo ufw default allow incoming
+    # disallow all outgoing traffic except for a particular proxy
+    sudo ufw default deny outgoing
+    # here <host-ip> is the private IP of the host such as 192.168.1.158
+    sudo ufw allow out from any to <host-ip> port 8888
+    sudo ufw enable
+
+Now, for example, `curl https://github.com` should fail, whereas going through
+the proxy (running on the host)
+
+    curl --proxy http://admin:secret@192.168.1.158:8888 https://github.com
+
+should succeed.
