@@ -2364,6 +2364,10 @@ To debug a *program*, run `dlv debug` from your `main` package directory:
     Type 'help' for list of commands.
     (dlv)
 
+To debug a *source* run:
+
+    $ dlv debug ./path/to/main.go
+
 To debug a *test*, run `dlv test` from within your package directory. For
 example:
 
