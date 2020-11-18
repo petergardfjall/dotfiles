@@ -28,6 +28,75 @@ Create an `ssh` key:
     ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
 
 
+## Filesystem encryption
+
+Generally speaking, full disk encryption should be used for sensitive data,
+since directory encryption typically misses out on alternative sources where
+sensitive data can be picked up, such as `/tmp`, log/database files (`/var`),
+the file system cache, swap space, etc.
+
+In case of a shared computer, one might not want a single shared password
+between users. Also one might want to complement full disk encryption with
+directory-level encryption (with a secret selected by the user). For these
+cases, there are solutions that operate using a stacked encrypted filesystem
+like `gocryptfs` (which operates in userspace -- FUSE) or one that operates in
+kernel space such as `fscrypt`.
+
+A good overview of options is provided on the Arch Linux wiki page about "data
+at rest".
+
+An example with `gocryptfs`:
+
+    mkdir dir.enc dir
+    # enter secret password and ALSO TAKE NOTE of the "emergency master key"
+    gocryptfs -init dir.enc/
+
+    # mount: need to enter secret password
+    gocryptfs dir.enc/ dir
+
+    # the encrypted directory can stay mounted for the user session, or be
+    # unmounted manually
+    fusermount -u dir
+
+An example with `fscrypt`, which is a high-level tool for managing linux
+filesystem encryption (the kernel part is sometimes also referred to as
+`fscrypt`):
+
+    # Check which directories on our system support encryption
+    fscrypt status
+
+    # first-time initialization to create global configuration files:
+    # `/etc/fscrypt.conf` and `/.fscrypt`
+    sudo fscrypt setup
+
+    # If file system on which encryption is to be used isn't the root file
+    # system, it needs to be prepared for use. This creates the directory
+    # `<mountpoint>/.fscrypt` to store fscrypt policies and protectors.
+    sudo fscrypt setup <mountpoint>     # e.g. `fscrypt setup /home`
+
+    # initialize encryption on a new empty directory
+    mkdir <mountpoint>/dir1
+    # will be prompted for which protector to use, select `pam_passphrase`
+    # to have a protector that uses login password to unlock the directory.
+    fscrypt encrypt <mountpoint>/dir1
+
+    # show encryption status
+    fscrypt status <mountpoint>/dir1
+
+    # lock/unlock an encrypted directory
+    fscrypt lock <mountpoint>/dir1
+    fscrypt unlock <mountpoint>/dir1
+
+To encrypt a home directory:
+
+    sudo -i
+    mv /home/<user>/ /home/<user>.original
+    mkdir /home/<user> && chown -R <user>:<user> /home/<user>/
+    fscrypt encrypt /home/<user> --user <user>
+    cp -a -T /home/<user>.original /home/<user>
+    rm -rf /home/<user>.original
+
+
 ## Docker
 
 Remove unused docker data. This will remove all stopped containers, all networks
@@ -311,3 +380,10 @@ it's nice to be able to run with the lid closed to keep things tidy looking.
 
 3. For the lightdm greeter to appear on the display where the cursor is at, we
    set `active-monitor=#cursor` in `/etc/lightdm/lightdm-gtk-greeter.conf`.
+
+
+## List kernel configuration
+Kernal configuration parameters/variables, such as `CONFIG_FS_ENCRYPTION`, can
+be found via:
+
+    cat /boot/config-$(uname -r)
