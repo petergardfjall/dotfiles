@@ -14,6 +14,19 @@ The service is run with the environment variables specified by the deployment,
 has access to the cluster services (via proxied) DNS, can access volumes and
 secrets.
 
+Alternatively start `telepresence` have it produce an environment file, and then
+run the local binary with that environment file. This allows for an even quicker
+rebuild/restart loop.
+
+     # start telepresence proxy
+     telepresence --namespace dev --swap-deployment rest-backend --expose 8080:80 --env-file telepresence.env
+
+     # in another shell:
+     source telepresence.env
+     # .. then repeat these two steps during development/debuggin
+     make server
+     ./build/rest-backend
+
 
 ## Run a service from a debugger
 
