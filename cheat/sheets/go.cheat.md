@@ -497,6 +497,38 @@ provide stacktrace details we can use:
         return errors.WithStack(err)  // annotate with stacktrace
     }
 
+Since Go 1.13, standard library `errors` can be wrapped and unwrapped to
+include/inspect error causes. Underlying errors can (optionally) be returned if
+the error implements an `Unwrap() error` method. Errors can be wrapped with the
+`%w`format specifier:
+
+    if err != nil {
+        // when "%w" is used, the returned error will have an Unwrap method
+        // that returns the wrapped error.
+        return fmt.Errorf("decompress %v: %w", name, err)
+    }
+
+To inspect an error (chain), `errors.Is` and `errors.As` can be used.  In the
+simplest case, the `errors.Is` behaves like a comparison to a sentinel error,
+and `errors.As` function behaves like a type assertion.
+
+`errors.Is` compares an error to a particular value similar to
+`if err == ErrNotFound`, but does so by recursively unwrapping:
+
+    err := fmt.Errorf("access denied: %w", ErrPermission)
+    ...
+    if errors.Is(err, ErrPermission) ...
+
+`errors.As` tests (throughout the cause chain) if an error is of a specific
+type:
+
+    // Similar to:
+    //   if e, ok := err.(*QueryError); ok { … }
+    var e *QueryError
+    // Note: *QueryError is the type of the error.
+    if errors.As(err, &e) {
+        // err is a *QueryError, and e is set to the error's value
+    }
 
 ## Arrays
 
