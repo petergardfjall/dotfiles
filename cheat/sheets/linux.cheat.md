@@ -387,3 +387,14 @@ Kernal configuration parameters/variables, such as `CONFIG_FS_ENCRYPTION`, can
 be found via:
 
     cat /boot/config-$(uname -r)
+
+
+## Close user processes on logout
+If `systemd` is built with `--without-kill-user-processes`, setting
+`KillUserProcesses` is set to no by default. This setting causes user processes
+not to be killed when the user logs out. To change this behavior in order to
+have all user processes killed on the user's logout, set `KillUserProcesses=yes`
+in `/etc/systemd/logind.conf`
+
+Note that changing this setting breaks terminal multiplexers such as tmux and
+GNU Screen.
