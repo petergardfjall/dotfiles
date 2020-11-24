@@ -2515,14 +2515,51 @@ set up the handlers like so:
 
 
 ## Modules
-Go modules is the prefered way of managing project dependencies. When our
-modules are kept in private github repos, we need to specify this with the
-`GOPRIVATE` environment variable:
+Go modules is the prefered way of managing project dependencies.
+
+    mkdir newproj ; cd newproj
+    git init && go mod init github.com/my/newproj
+
+
+Generally, `go build` will update your `go.mod` file to include the libraries
+you depend on in your code (via `import`s) and make a "sensible" selection of
+version. Some useful commands:
+
+    # versions that will be used in build for all direct and indirect deps
+    go list -m all
+
+    # available minor and patch upgrades for all direct and indirect deps
+    go list -u -m all
+
+    # prune any no-longer-needed dependencies from go.mod
+    go mod tidy
+
+    # shows shortest path in import graph from main module to package
+    go mod why github.com/lib/pq
+
+    # list all dependency edges between modules
+    go mod graph
+
+If you find a need to rely on a particular commit or tag, just do:
+
+    go get github.com/proj/repo@<commitish>
+
+There is also a `replace` keyword you can use to substitute a module with one on
+your local machine.
+
+    replace github.com/proj/repo => ../../my/repo
+
+    require (
+        github.com/proj/repo v1.0.0
+    )
+
+### Private modules
+When our modules are kept in private github repos, we need to specify this with
+the `GOPRIVATE` environment variable:
 
     # specify that all repos here under are private (can specify multiple with
     # comma-separation)
     export GOPRIVATE="github.com/secret-company"
-
 
 When using private git repos, we need to pass sufficient credentials to `git` to
 be able to fetch the dependency (over `https`). This can be achieved in a couple
