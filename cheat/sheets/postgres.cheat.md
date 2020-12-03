@@ -245,6 +245,26 @@ is eligble for consumption by another worker.
     COMMIT;
 
 
+## Backup/restore
+
+Dumping a local database:
+
+    pg_dump --no-owner --host localhost --username=admin db > db.dump
+
+Dump with SSL credentials:
+
+    pg_dump "sslmode=verify-ca sslrootcert=server-ca.pem \
+             sslcert=client-cert.pem sslkey=client-key.pem \
+             hostaddr=<IP/host> port=5432 \
+             user=postgres dbname=db" --no-owner > db.dump
+
+Restore/recreate database from dump:
+
+    echo "DROP DATABASE db" | psql --host localhost --username=admin
+    echo "CREATE DATABASE db" | psql --host localhost --username=admin
+    cat db.dump |  psql --host localhost --username=admin
+
+
 ## System
 
 A few useful system queries:
