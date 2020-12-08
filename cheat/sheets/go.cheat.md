@@ -2325,7 +2325,7 @@ new io.Reader on every call) one can use the following hack:
     call := storageMock.On("GetReader", anyCtx, path)
     call.RunFn = func(args mock.Arguments) {
         call.ReturnArguments = mock.Arguments{
-            newFileReader("path/to/file.txt")), nil,
+            newFileReader("path/to/file.txt"), nil,
         }
     }
 
@@ -2457,6 +2457,11 @@ code. However, more commonly, one uses the `net/http/pprof` package to enable
 and set up HTTP endpoints for `pprof` as such:
 
     import _ "net/http/pprof"
+
+    // start a http server
+    go func() {
+        log.Println(http.ListenAndServe("localhost:6060", nil))
+    }()
 
 Then, one can download a profile via:
 
