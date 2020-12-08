@@ -262,7 +262,7 @@ Restore/recreate database from dump:
 
     echo "DROP DATABASE db" | psql --host localhost --username=admin
     echo "CREATE DATABASE db" | psql --host localhost --username=admin
-    cat db.dump |  psql --host localhost --username=admin
+    cat db.dump |  psql --host localhost --username=admin db
 
 
 ## System
