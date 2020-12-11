@@ -28,6 +28,31 @@ Create an `ssh` key:
     ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
 
 
+## Processes
+
+Process relationships can be shown with `pstree`:
+
+    # processes rooted at a certain pid
+    pstree <pid>
+    # for a certain user
+    pstree <user>
+
+
+## Disk usage
+Report system disk space usage:
+
+    # for all partitions
+    df -h
+    # only for partition where <dir> is at
+    df -h /some/dir
+
+Disk usage in a directory tree
+
+    # note: the -h flag to `sort`
+    du -h | sort -h
+    du -h --max-depth=1 | sort -h
+
+
 ## Filesystem encryption
 
 Generally speaking, full disk encryption should be used for sensitive data,
