@@ -80,7 +80,7 @@ an arbitrary IP address) over an `ssh` tunnel.
     # -q: quiet. no local output.
     # -N: do not execute remote commands
     # user@edge-server: edge proxy server that will forward tunneled requests
-    ssh -D 1234 -C -q -N user@edge-server
+    ssh -D 0.0.0.0:1234 -C -q -N user@edge-server
 
 One can also pass `-f` to fork ssh into the background.
 
@@ -91,10 +91,21 @@ the SOCKS proxy.
     # note: should show the IP-address of *proxy-server*, not *your* IP
     # => {"ip":"<ip of proxy-server"}
 
-By default, the local listen port only binds to `127.0.0.1`. To make the proxy
-available to other hosts use:
+By default, the local listen port at `-D` only binds to `127.0.0.1`. To make the
+proxy available to other hosts use:
 
     ssh -D 0.0.0.0:1234 -CqN user@edge-server
+
+
+To set up a local socks5 proxy that supports basic authentication one can use
+`microsocks` (https://github.com/rofl0r/microsocks):
+
+    ./microsocks -i 0.0.0.0 -p 1234  -u admin -P password
+    # call the socks proxy on its host IP
+    curl --proxy-user admin:password --socks5 192.168.0.105:1234 https://api.ipify.org?format=json
+
+    # or utilize environment variables
+    http_proxy=socks5://admin:password@192.168.0.105:1234 https_proxy=socks5://admin:password@192.168.0.105:1234 curl https://api.ipify.org?format=json
 
 
 ### SSH tunnel (local port forward)
