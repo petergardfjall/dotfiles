@@ -6,6 +6,7 @@
 
 - Exit:                           `C-x C-c`
 
+## Help
 - Help:                           `C-h` (or `F1`)
 - *A*propos: show matching commands `C-h a <match-string>`
 - Describe function for *k*ey       `C-h k <keyboard-shortcut>`
@@ -45,6 +46,9 @@
 - Save all:              `C-x s`
 - Kill/close frame:      `M-x delete-frame`
 - List buffers:          `C-x C-b`
+  - `d` to mark for *deletion*
+  - `u` to *unmark*
+  - `x` to *execute* marked deletions
 - Switch buffer:         `C-x b <buffer>`
 - Kill/close buffer:     `C-x k`
 - Restore buffer:        `M-x revert-buffer`
@@ -127,11 +131,10 @@ there are two modes: `char mode` (each character is captured by the shell,
 meaning that normal emacs keybindings `C-x *` aren't be available) and `line
 mode` (which works like a normal emacs buffer).
 
-
 - Open a shell:             `M-x shell`
 - Open a terminal:          `M-x ansi-term`
-  - Switch to `char mode`:  `C-c C-k`
-  - Switch to `line mode`:  `C-c C-j`
+  - Switch to `char mode`:    `C-c C-k`
+  - Switch to `line mode`:    `C-c C-j`
 
 ## Shell commands
 - Execute a shell command:       `M-!`
@@ -148,9 +151,14 @@ Go to the *scratch* buffer, enter an expression, like `(+ 1 1)`, and run `C-j`
 to have the last expression evaluated.
 
 
-## Concepts:
+## Concepts
+Emacs' graphical layout has three primary concepts:
 
-- https://www.gnu.org/software/emacs/manual/html_node/emacs/Screen.html#Screen: frame > window > buffer
+- *Frame*: a graphical window or terminal screen occupied by Emacs.
+- *Window*: Occupies the main area of the frame and displays a single buffer. A
+  frame can be split to display multiple windows.
+- *Buffer*: the contents displayed in a frame. A buffer is commonly visiting a
+  file.
 
 - commands (interactive functions)
 
@@ -159,11 +167,6 @@ to have the last expression evaluated.
 - hooks
   TODO: https://www.gnu.org/software/emacs/manual/html_node/emacs/Hooks.html
 
-  https://www.gnu.org/software/emacs/manual/html_node/elisp/Standard-Hooks.html
-- `after-init-hook`
-- `emacs-startup-hook`
-- `<modename>-mode-hook`
-- `after-save-hook`, `before-save-hook`
 
 - autoloads
 
@@ -173,7 +176,8 @@ TODO: `auto-mode-alist`: https://www.emacswiki.org/emacs/AutoModeAlist
 TODO: `interpreter-mode-alist`: https://www.emacswiki.org/emacs/InterpreterModeAlist
 
 
-## Theme
+## Themes
+- `M-x load-theme <theme>`: load and apply a particular theme.
 - `M-x customize-create-theme`: opens the theme customization tool that shows
   all basic faces that need to be filled out by a theme.
 - `M-x customize-face <face>`: allows a particular editor face to be edited
@@ -219,9 +223,75 @@ You can even open files with a "multi-hop" syntax:
   `M-x toggle-debug-on-error`)
 
 
+## Org mode
+Org mode is a plain text system for keeping notes, maintaining to-do lists,
+planning, scheduling and even authoring. In short, a mode for organizing life.
+
+It's implemented on top of *outline mode*, a mode specialized at managing
+(editing, navigating, visibility-cycling) tree-structured content.
+
+*Headings* are marked with leading asterisks `*`, with a deeper (sub)heading in
+the tree indicated by one more leading asterisk. Text under each heading is
+called the *body*, and together a heading and a body forms an *entry*.
+
+Outline-mode:
+- `TAB`/`org-cycle`: local visibility cycling over states `FOLDED`, `CHILDREN`,
+  `SUBTREE`
+- `S-TAB`/`org-global-cycle`: global visibility cycling over states `OVERVIEW`,
+  `CONTENTS`, `SHOW ALL`
+- `M-RET`/`org-meta-return`: insert new heading at current heading level
+  - `TAB`/`org-cycle`: cycle level in a new entry (each press demotes one level)
+- `M-S-RET`/`org-insert-todo-heading`:  insert `TODO` heading at current level
+- `M-left`/`org-do-promote`: promote current entry one level
+- `M-right`/`org-do-demote`: demote current entry one level
+- `M-S-left`/`org-promote-subtree`: promote current subtree one level
+- `M-S-right`/`org-demote-subtree`: demote current subtree one level
+- `M-up`/`org-move-subtree-up`: move subtree up before prior entry
+- `M-down`/`org-move-subtree-down`: move subtree down after next entry
+`TODO`s:
+- `C-c C-t`/`org-todo`: rotate the `TODO` state
+- `S-left`/`S-right`: select following/preceding `TODO` state
+- `S-up`/`org-priority-up`
+- `S-down`/`org-priority-down`
+Table editor:
+- `C-c |`: create an org table
+- `C-c C-c`/`org-table-realign`: re-align table at point
+- `TAB`/`org-table-next-field`: re-align, move to next field
+- `S-TAB`/`org-table-previous-field`: re-align, move to prev field
+- `M-left`/`org-table-move-column-left`
+- `M-right`/`org-table-move-column-right`
+- `M-up`/`org-table-move-row-up`
+- `M-down`/`org-table-move-row-down`
+- `M-S-left`/`org-table-delete-column`: kill current column
+- `M-S-right`/`org-table-insert-column`: insert new column
+- `M-S-up`/`org-table-kill-row`: kill current row
+- `M-S-down`/`org-table-insert-row`: insert new row
+- `S-<cursors>`: move cell by swapping with adjacent cell
+- `C-c +`/`org-table-sum`: echo sum of numbers in column (`C-y` yanks)
+- note: the table editor can be enabled in other modes via `orgtbl-mode`
+Links:
+Agenda view:
+- `S-f`: follow mode: agenda item under cursor highlighted in org buffer
+- `f`/`b`: move forward or backward one time unit (a week)
+- `q`: exit agenda view
+Scheduling and deadlines:
+- TODO
+Capture:
+
+Within an outline tree, one can also add lists to entry bodies.
+- *Unordered lists* start with `-`, `+` or `*`
+- *Ordered lists* start with `1.` or `1)`
+
+
+
+TODO: important commands
+- `org-store-link`
+- `org-capture`
+- `org-agenda`
+
 ## Custom keybindings
 Navigation:
-- `Shift-<arrow>`: `windmove-{up|down|left|right}` (move between windows)
+- `C-x w <arrow>`: `windmove-{up|down|left|right}` (move between windows)
 - `C-S-<up|down>`: `enlarge-window|shrink-window` (on v-split windows)
 - `C-S-<left|right>`: `{enlarge-window|shrink-window}-horizontally` (on h-split windows)
 
@@ -287,3 +357,16 @@ Snippets:
 
 Markdown-mode:
 - `C-c p m`    `markdown-preview-mode`
+
+Org-mode:
+- Global:
+  - `C-c o o`: open a file in my `~/org`.
+  - `C-c o l`: `org-store-link`
+  - `C-c o c`: `org-capture`
+  - `C-c o a`: `org-agenda`
+- In an org-mode buffer
+  - `C-c o x`: `org-archive-subtree`
+  - `C-c o >`: `org-clock-in`
+  - `C-c o <`: `org-clock-out`
+  - `C-c C-s`: `org-schedule`
+  - `C-c C-d`: `org-deadline`
