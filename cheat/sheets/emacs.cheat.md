@@ -248,7 +248,10 @@ Outline-mode:
 - `M-S-right`/`org-demote-subtree`: demote current subtree one level
 - `M-up`/`org-move-subtree-up`: move subtree up before prior entry
 - `M-down`/`org-move-subtree-down`: move subtree down after next entry
-`TODO`s:
+Within an outline tree, one can also add lists to entry bodies.
+- *Unordered lists* start with `-`, `+` or `*`
+- *Ordered lists* start with `1.` or `1)`
+TODOs:
 - `C-c C-t`/`org-todo`: rotate the `TODO` state
 - `S-left`/`S-right`: select following/preceding `TODO` state
 - `S-up`/`org-priority-up`
@@ -270,30 +273,33 @@ Table editor:
 - `C-c +`/`org-table-sum`: echo sum of numbers in column (`C-y` yanks)
 - note: the table editor can be enabled in other modes via `orgtbl-mode`
 Links:
+- link format: `[[LINK][DESCRIPTION]]` or `[[LINK]]`
+- schemes: `file`, `mailto`, `help`, `http(s)`, `shell`, etc.
+- without scheme, a link refers to the current doc: e.g. `[[*Some section]]`
+- `C-c o l`/`org-store-link`: (note: custom global key-binding) stores a link to
+  thing at point for later insertion. Link format depends on where call is made.
+- `C-c C-l`/`org-insert-link`: used in org buffers. Semantics depend on context:
+  - When point is on a link, edit link.
+  - Otherwise, prompt for previously stored link to be inserted.
+- `C-c C-o`/`org-open-at-point`: follow link.
+Capture:
+- `C-c o c`/`org-capture`: (note: custom global keybinding)
 Agenda view:
+- `C-c o a`/`org-agenda`: (note: custom global keybinding)
 - `S-f`: follow mode: agenda item under cursor highlighted in org buffer
 - `f`/`b`: move forward or backward one time unit (a week)
 - `q`: exit agenda view
 Scheduling and deadlines:
-- TODO
-Capture:
-
-Within an outline tree, one can also add lists to entry bodies.
-- *Unordered lists* start with `-`, `+` or `*`
-- *Ordered lists* start with `1.` or `1)`
-
-
-
-TODO: important commands
-- `org-store-link`
-- `org-capture`
-- `org-agenda`
+-
 
 ## Custom keybindings
 Navigation:
 - `C-x w <arrow>`: `windmove-{up|down|left|right}` (move between windows)
-- `C-S-<up|down>`: `enlarge-window|shrink-window` (on v-split windows)
-- `C-S-<left|right>`: `{enlarge-window|shrink-window}-horizontally` (on h-split windows)
+Window management hydra:
+- Prefix: `C-c C-w`
+  - `<arrow>`:        `windmove-{up|down|left|right}`
+  - `S-<up|down>`:    `enlarge-window|shrink-window` (on v-split win)
+  - `S-<left|right>`: `{enlarge|shrink}-window-horizontally` (on h-splits win)
 
 Text size:
 - `C-x C-+`: `default-text-scale-increase`
