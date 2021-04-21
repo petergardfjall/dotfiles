@@ -177,7 +177,7 @@ Set user globally
     git config --global user.name "Foo Bar"
     git config --global user.email "foo@bar.com"
 
-Set user for a single repo.
+Set user for a single repo (implicitly uses the `--local` flag)
 
     git config user.name "Foo Bar"
     git config user.email "foo@bar.com"
@@ -192,6 +192,17 @@ One-time override of a configuration variable for a single call via `git -c`:
     git -c "http.proxy=http://address:port" clone https://...
     # use a socks5 proxy
     git -c "http.proxy=socks5://address:port" clone https://...
+
+Although not officially supported (an internal implementation detail), `-c`
+style config parameters can also be passed with `GIT_CONFIG_PARAMETERS`:
+
+    GIT_CONFIG_PARAMETERS="'http.proxy=http://address:port'" git clone ...
+
+Since git v2.31.0 there is formal support for this using:
+
+    GIT_CONFIG_COUNT=1 \
+    GIT_CONFIG_KEY_0=http.proxy GIT_CONFIG_VALUE_0=http://address:port \
+    git clone ...
 
 ## Use basic auth for a repo
 To configure that a particular user/password should be used for certain https
