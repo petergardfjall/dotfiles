@@ -9,9 +9,11 @@
 - `exit/ctrl-d`                # exit pane/window (last win => destroy session)
 - `C-b %`                      # split window horizontally into two panes
 - `C-b "`                      # split window vertically into two panes
-- `C-b <arrow>`                # move between window panes
+- `C-b <arrow>`                # move between panes within a window
 - `C-b <digit>`                # move between windows
+- `C-b n|p`                    # move to next/previous window
 - `C-b <PgUp>`                 # enter "scroll mode" ('q' to exit)
+- `C-b ,`                      # (re)name current window
 
 ## copy mode
 - `C-b [`                      # enter copy mode
