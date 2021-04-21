@@ -74,6 +74,14 @@ Redirecting both `stderr` and `stdout` to a file:
 
     cmd > /tmp/alloutput 2>&1
 
+Echoing to `stderr` by redirecting `stdout` to `stderr`:
+
+    echo "error" 1>&2
+
+Echoing to `stderr` by copying `stderr` to `stdout`:
+
+     >&2 echo "error"
+
 
 ## Scripting: executing commands over ssh
 
