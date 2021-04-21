@@ -62,6 +62,8 @@
 ## Navigation
 - One word forward:       `M-f`
 - One word backward:      `M-b`
+- One expression forward: `C-M-f` (jump to closing delimiter/parenthesis)
+- One expression back:    `C-M-b` (jump to opening delimiter/parenthesis)
 - Start of buffer:        `M-<`
 - End of buffer:          `M->`
 - Start of line:          `C-a`
