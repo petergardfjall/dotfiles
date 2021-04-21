@@ -205,6 +205,15 @@ Examples:
     insert into pkgs (pkg) values ('pkg:purl');
     insert into  pkg_downloads (id, pkg, pkg_rev, status) values (1, 'pkg:purl', 'r1', 0);
 
+### Insert into with select
+
+For example, moving values from a `{id, enable_cache, enable_tls}` table to a
+`{id, key, value}` table.
+
+    INSERT INTO opts (id, key, value)
+        SELECT id, 'enable_cache', enable_cache FROM config;
+    INSERT INTO opts (id, key, value)
+        SELECT id, 'enable_tls', enable_tls FROM config;
 
 
 ## Updates
@@ -245,11 +254,19 @@ is eligble for consumption by another worker.
     COMMIT;
 
 
+## Show table creation DDL
+
+    pg_dump -t 'schema-name.table-name' --schema-only database-name
+
+
 ## Backup/restore
 
 Dumping a local database:
 
     pg_dump --no-owner --host localhost --username=admin db > db.dump
+
+    # or dumping all databases
+    pg_dumpall --no-owner --no-role-passwords --host localhost --username=admin > db.dump
 
 Dump with SSL credentials:
 
@@ -257,6 +274,11 @@ Dump with SSL credentials:
              sslcert=client-cert.pem sslkey=client-key.pem \
              hostaddr=<IP/host> port=5432 \
              user=postgres dbname=db" --no-owner > db.dump
+
+    pg_dumpall -d "sslmode=verify-ca sslrootcert=server-ca.pem \
+             sslcert=client-cert.pem sslkey=client-key.pem \
+             hostaddr=<IP/host> port=5432 \
+             user=postgres dbname=postgres" --no-owner --no-role-passwords > all.dump
 
 Restore/recreate database from dump:
 
