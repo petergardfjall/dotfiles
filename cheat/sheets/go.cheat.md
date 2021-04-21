@@ -2548,6 +2548,10 @@ version. Some useful commands:
     # list all dependency edges between modules
     go mod graph
 
+    # remove all modules in the download cache: $GOPATH/pkg/mod
+    go clean --modcache
+
+
 If you find a need to rely on a particular commit or tag, just do:
 
     go get github.com/proj/repo@<commitish>
