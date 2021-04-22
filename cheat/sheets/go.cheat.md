@@ -2551,6 +2551,9 @@ version. Some useful commands:
     # remove all modules in the download cache: $GOPATH/pkg/mod
     go clean --modcache
 
+To visualize a `go mod graph` a tool like `modgv` can be used:
+
+    go mod graph | modgv | dot -Tsvg -o /tmp/d.svg && xdg-open /tmp/d.svg
 
 If you find a need to rely on a particular commit or tag, just do:
 
