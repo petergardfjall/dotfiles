@@ -169,3 +169,85 @@ well-formatted.
 To package a chart (in a `.tgz` file) for distribution run:
 
     helm package <chart directory>
+
+
+## Plugins
+The `helm` cli tool allows for add-on tools that extend the `helm` functionality
+without being built into the Helm codebase. These plugins live in
+`${HELM_PLUGINS}` (as can be found via `helm env`).
+
+A plugin is typically installed via VCS repo URL.
+
+    helm plugin install <path|url>
+
+To see the list of installed plugins:
+
+    helm plugin list
+
+For plugin examples, see https://helm.sh/docs/community/related/#helm-plugins.
+
+### Plugin: helm diff
+Produces a diff explaining what running `helm upgrade` would change. When
+executed, it generates a diff between the latest deployed version of a release
+and a `helm upgrade --debug --dry-run`.
+
+    helm diff upgrade [flags] [RELEASE] [CHART]
+
+Example
+
+    helm diff -n local upgrade local-webserver ../web-server/helm
+
+It can also be used to compare two revisions/versions of a helm release.
+
+### Plugin: helm secrets
+Supports management of secrets (passwords, keys, certificates, etc) that are
+needed by Helm charts. It supports a common workflow where secrets are stored
+encrypted directly in version control (`git`). The `helm secrets` plugin can
+then be used both to edit and to perform on-the-fly decryption when the helm
+chart is installed/upgraded.
+
+`helm secrets` relies on SOPS (Secrets OperationS) as a "secret driver", which
+uses structured formats (yaml, json) to store secrets. Being able to store
+secrets in yaml is useful in Helm as it allows secrets to be handles just like
+any other `values.yaml` file. Also SOPS only encrypts _values_ (not keys),
+making it easy to see what secrets are in a file without needing to decrypt it.
+
+SOPS supports different key stores (PGP, AWS KMS, GCP KMS, Azure Key Vault,
+Hashicorp Vault) used to encrypt/decrypt secrets. The type of keys to use can be
+inidcated via command-line parameters, environment variables or a `.sops.yaml`
+file in an ancestor directory.
+
+    ---
+    # can have different keys depending on paths/patterns.
+    # creation rules are evaluated sequentially, first match wins
+    creation_rules:
+      - path_regex: \.dev.yaml$
+      # fingerprint of GPG key to use for encryption
+      - pgp: 'FBC7B9E2A4F9289AC0C1D4843D16CEE4A27381B4'
+
+
+Encrypt a clear-text secrets file:
+
+    # enter yaml structure with credentials in clear text
+    ${EDITOR} secrets.yaml
+
+    # use a pgp fingerprint to indicate which encryption key to use
+    export SOPS_PGP_FP=''FBC7B9E2A4F9289AC0C1D4843D16CEE4A27381B4'
+    # encrypt
+    helm secrets enc secrets.yaml
+
+Decrypt secrets file (creates a `secrets.yaml.dec`):
+
+    helm secrets dec secrets.yaml
+
+    # removes decrypted files: *.dec
+    helm secrets clean .
+
+To view a secrets file in clear-text:
+
+    helm secrets view secrets.yaml
+
+To edit a secrets file and have it encrypted on exit:
+
+    # note: opens ${EDITOR}
+    helm secrets edit secrets.yaml
