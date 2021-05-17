@@ -2389,6 +2389,15 @@ Then add something like this to your build (in this case, using `Makefile`):
     ...
 
 
+## gRPC
+gRPC relies on the protobuf compiler `protoc` version 3 to be installed as well
+as Go plugins for the protocol compiler `protoc-gen-go` and
+`protoc-gen-go-grpc`. To see which versions are installed run:
+
+    $GOPATH/bin/protoc-gen-go --version
+    $GOPATH/bin/protoc-gen-go-grpc --version
+
+
 ## Debugging
 When debugging Go programs built with the standard toolchain, `delve` is a
 better option than `gdb`, since it understands Go internals better.
