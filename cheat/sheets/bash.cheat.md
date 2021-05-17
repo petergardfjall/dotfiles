@@ -170,6 +170,26 @@ Echoing to `stderr` by copying `stderr` to `stdout`:
         exit 0
     fi
 
+## Scripting: debugging
+To see each executed command
+
+    set -x
+
+To not have variables in commands expanded, instead use:
+
+    set -v
+
+### Jobs
+
+    # create background job
+    sleep 10s &
+
+    # list jobs
+    jobs
+
+    # join first background job
+    wait %1
+
 ### Signals and traps
 
 Use `trap` to run code on certain signals:
