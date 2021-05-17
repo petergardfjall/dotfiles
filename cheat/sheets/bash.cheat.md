@@ -60,6 +60,40 @@ Line-by-line processing.
     while read line; do echo $line; done < /dev/stdin
 
 
+Arrays:
+
+    databases=("db1" "db2" "db3")
+    for db in "${databases[@]}"; do
+        psql -c "SELECT pg_size_pretty(pg_database_size('${db}')) AS db_size;"
+    done
+
+Associative array/map/hash table/dictionary:
+
+    # declare associative array
+    declare -A animals
+    # assign key-value pairs
+    animals=( ["cow"]="moo" ["dog"]="woof")
+
+    # .. or in shorter form
+    declare -A animals=( ["moo"]="cow" ["woof"]="dog")
+
+    # get value
+    echo ${animals[cow]}  # => moo
+
+    # set value
+    animals[cat]="meow"
+
+    # expand keys (notice the !)
+    echo ${!animals[@]}
+
+    # expand values
+    echo ${animals[@]}
+
+    # iterate over
+    for a in "${!animals[@]}"; do
+        echo "${a} says: ${animals[${a}]}"
+    done
+
 ## Redirecting output
 
 Redirect `stderr` to a file
