@@ -1575,6 +1575,10 @@ Simple command-line parsing can be done with the standard librar `flag` package:
     }
 
     func main() {
+        flag.Usage = func() {
+            fmt.Println(`foo [OPTIONS] arg...`)
+            flag.PrintDefaults()
+        }
         flag.Parse()
         fmt.Printf("flag value: %d\n", flagvar)
     }
