@@ -1,6 +1,23 @@
 ## psql
 
+To pass a password over command-line without being prompted run
+
+    PGPASSWORD=pass1234 psql ...
+
+To use postgres over SSL the following environment variables can be used:
+
+    PGSSLMODE="verify-ca"
+    PGSSLCERT="client-cert.pem"
+    PGSSLKEY="client-key.pem"
+    PGSSLROOTCERT="server-ca.pem"
+
+Useful options:
+- `-t`: tuples only (don't show headers nor footers)
+
+Useful prompt commands:
 - Turn off paging:     `\pset pager 0`
+- No column headers:   `\pset tuples_only`
+- No query footer:     `\pset footer off`
 - List databases:      `\l`
 - Connect to database: `\c <database>`
 - List tables:         `\d`
