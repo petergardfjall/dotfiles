@@ -2169,6 +2169,21 @@ An example.
 
 
 
+## OS Signals
+To do proper cleanup of system resources when an interrupt signal is receied
+signal handling can be set up. For example:
+
+    server.Start()
+
+    // await  SIGINT/SIGTERM signal
+    sig := make(chan os.Signal)
+    signal.Notify(sig, syscall.SIGINT, syscall.SIGTERM)
+    <-sig
+
+    log.Info().Msg("received signal, stopping server ...")
+    server.Stop()
+
+
 ## Tests
 Tests are written in files ending in `_test.go` and use the `testing` package.
 
