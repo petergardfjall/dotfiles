@@ -392,6 +392,15 @@ List available fonts:
     fc-list
     fc-list : family style file spacing
 
+Install a new font by downloading the `.ttf` files that define the font to
+either `/usr/share/fonts/` (global installation) or `~/.local/share/fonts/`
+(user installation). Then regenerate the font cache with `fc-cache -f`.
+
+    mkdir -p ~/.local/share/fonts
+    cp SourceCodePro-*.ttf ~/.local/share/fonts
+    # regenerate font cache
+    fc-cache -f
+
 
 ## Copy changed files
 Sometimes one wants to copy all changes made to a directory in one place (say
