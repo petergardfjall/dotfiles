@@ -59,7 +59,6 @@ Line-by-line processing.
     cat file | while read line; do echo $line; done
     while read line; do echo $line; done < /dev/stdin
 
-
 Arrays:
 
     databases=("db1" "db2" "db3")
@@ -199,6 +198,35 @@ Use `trap` to run code on certain signals:
 or execute commands when the shell exits:
 
     trap "{ kill ${MY_PID}; }" EXIT
+
+
+### Line/byte processing
+Process first N lines:
+
+    cat file | head -N
+    # bytes
+    cat file | head --bytes=N
+
+Process last N lines:
+
+    cat file | tail -N
+    # bytes
+    cat file | tail --bytes=-N
+
+Process lines starting at N:
+
+    cat file | tail --lines=+N
+    # bytes
+    cat file | tail --bytes=+N
+
+Process lines [A,B]:
+
+    cat file | tail --lines=+A | head -[B-A+1]
+    # alternatively
+    sed -n 'A,B p' file
+
+    # bytes [A,B]
+    cat file | tail --bytes=+A | head --bytes=+[B-A+1]
 
 
 ### String manipulation
