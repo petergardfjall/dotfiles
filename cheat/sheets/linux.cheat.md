@@ -162,6 +162,27 @@ Decrompress a `tar.gz` to a particular destination directory with `-C`:
 
     tar xzvf foo.tar.gz -C foo/
 
+Strip first directory level:
+
+    tar xf archive.tar --strip-components=1
+
+## Zip
+
+Regular directory compression:
+
+    zip -r archive.zip dir/ foo-0.8.1.orig/
+
+Add multiple entries:
+
+    zip -r archive.zip dir1/ dir2/ file1 file2
+
+List content of zip file:
+
+    unzip -l archive.zip
+
+Unzip to a different destination directory
+
+    unzip archive.zip -d /dest/path
 
 ## Hardware information commands
 
