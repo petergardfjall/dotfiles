@@ -13,6 +13,72 @@ a given network device.
 
     sudo lshw -class network
 
+### Network troubleshooting
+
+Network troubleshooting is difficult to generalize as there are so many failure
+modes. But one can try a few of the below commands to investigate certain
+aspects of the network stack.
+
+`nmcli` appears to be a rather high-level alternative to `systemd` services like
+`NetworkManager.service` and `networking`. Its usage is further described in
+`man nmcli-examples`.
+
+    # GENERAL: network connectivity
+    #
+    # probe network connectivity
+    #
+    nmcli general status
+    nmcli networking connectivity
+    nmcli device status
+    # other option to do the same:
+    sudo systemctl status NetworkManager.service
+    sudo systemctl status networking
+    #
+    # depending on outcome..
+    #
+    # restart network
+    nmcli networking off && nmcli networking on
+    # restart each network device (interface)
+    for dev in $(nmcli -f DEVICE device status | tail --lines=+2); do
+        sudo ifdown ${dev} && sudo ifup ${dev}
+    done
+
+    #
+    # check where a connection fails
+    #
+    mtr 8.8.8.8
+    # alternatively, use `traceroute -4 8.8.8.8`
+
+    #
+    # check firewall settings
+    #
+    sudo iptables -L
+
+    #
+    # DNS
+    #
+    # probe dns: is anything returned ...?
+    nslookup google.com
+    # should be "active (running)"
+    sudo systemctl status systemd-resolved.service
+    sudo journalctl -u systemd-resolved -f
+    # a few files worth inspecting
+    cat /etc/resolv.conf
+    cat /run/systemd/resolve/resolv.conf
+    # proble local dns server
+    dig @192.168.0.1
+    dig @127.0.0.53
+    # depending on outcome..
+    # restart dns
+    sudo systemctl restart systemd-resolved.service
+
+    #
+    # routing tables
+    #
+    route
+    ip route show
+
+
 ### Desktop Ubuntu: change IP address
 
 Modifies settings under `/etc/NetworkManager/system-connections`:
