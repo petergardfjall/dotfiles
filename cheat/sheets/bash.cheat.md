@@ -59,6 +59,10 @@ Line-by-line processing.
     cat file | while read line; do echo $line; done
     while read line; do echo $line; done < /dev/stdin
 
+    # if we want `read` to keep whitespace
+    IFS=''
+    cat file | while read line; do echo $line; done
+
 Arrays:
 
     databases=("db1" "db2" "db3")
@@ -250,3 +254,23 @@ Substring replacement:
      # replace all matches
      file=node-ssh-key.sshkey
      echo ${file//ssh/gpg}     # => node-gpg-key.gpgkey
+
+### Regular expressions
+
+The `=~` operator can be used to match strings against regular expressions, and
+capture patterns.
+
+    # captures <image-name> and <image-path> in lines containing:
+    #
+    #  ![<image-name>](<image-path>)
+    #
+    imageref_regexp="!\[([^]]+)\]\(([^)]+)\)"
+    line='   ![An image](path/to/image.png)'
+    if [[ ${line} =~ ${imageref_regexp} ]]; then
+        image_ref="${BASH_REMATCH[0]}"
+        image_name="${BASH_REMATCH[1]}"
+        image_path="${BASH_REMATCH[2]}"
+        echo "match: ${image_ref}"
+        echo "capture group 1: ${image_name}"
+        echo "capture group 2: ${image_path}"
+    fi
