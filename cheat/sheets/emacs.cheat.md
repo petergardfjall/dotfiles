@@ -220,9 +220,10 @@ You can even open files with a "multi-hop" syntax:
 
 
 ## Debugging
-
-- To get a backtrace on errors: `(setq debug-on-error t)` (or in the session:
-  `M-x toggle-debug-on-error`)
+To make every `error` call dump a backtrace:
+- `(setq debug-on-error t)`
+- `M-x toggle-debug-on-error`)
+- `emacs --eval '(setq debug-on-error t)' <file>`
 
 
 ## Org mode
