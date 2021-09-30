@@ -1547,10 +1547,23 @@ structured logging is needed, something like `zerolog` is better.
             "github.com/rs/zerolog/log"
     )
 
+    func logLevel() zerolog.Level {
+        l := strings.ToLower(os.Getenv("LOG_LEVEL"))
+        if l == "" {
+            l = "DEBUG"
+        }
+        level, err := zerolog.ParseLevel(l)
+        if err != nil {
+            panic(fmt.Errorf("failed to parse log level '%s': %w", l, err))
+        }
+        return level
+    }
+
     func init() {
          // configure the global logger
-         log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr, TimeFormat: time.RFC3339})
-         log.Level(zerolog.DebugLevel)
+         log.Logger = log.Output(zerolog.ConsoleWriter{
+             Out: os.Stdout, TimeFormat: time.RFC3339}).
+             Level(logLevel())
 
          // formatted logging
          log.Debug().Msgf("a value: %s", "val")
