@@ -2429,6 +2429,12 @@ as Go plugins for the protocol compiler `protoc-gen-go` and
     $GOPATH/bin/protoc-gen-go --version
     $GOPATH/bin/protoc-gen-go-grpc --version
 
+Exercising a gRPC endpoint can be done with `grpcurl`. For example:
+
+    # non-tls, no reflection support in remote endpoint
+    grpcurl -plaintext -proto service.proto  -d '{"input": "value"}' localhost:5100 my.Service/Hello
+
+
 
 ## Debugging
 When debugging Go programs built with the standard toolchain, `delve` is a
