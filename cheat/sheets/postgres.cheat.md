@@ -100,11 +100,65 @@ Create a unique index (no duplicate values) on a column:
 
 ## Alter schema
 
-- change PK column type
+- add a column
 
+        ALTER TABLE downloads ADD COLUMN end_time TIMESTAMPTZ;
+
+- drop a column
+
+        ALTER TABLE downloads DROP COLUMN end_time;
+
+- drop a PK column
+
+        -- drop PK
+        ALTER TABLE downloads DROP CONSTRAINT downloads_pkey;
+        -- drop PK column
+        ALTER TABLE downloads DROP COLUMN start_time;
+        -- reconstruct PK
+        ALTER TABLE downloads ADD PRIMARY KEY (id, url);
+
+
+- change column type
+
+        -- note requires id column type to be castable to TEXT
+        ALTER TABLE downloads ALTER COLUMN id TYPE TEXT;
+
+        -- use explicit conversion: <expr> can for example be a function
+        ALTER TABLE downloads ALTER COLUMN id TYPE JSON USING <expr>;
+
+        -- change column type for a PK column
         ALTER TABLE downloads DROP CONSTRAINT downloads_pkey;
         ALTER TABLE downloads ALTER COLUMN id TYPE TEXT;
         ALTER TABLE downloads ADD PRIMARY KEY (id);
+
+- create index
+
+        CREATE INDEX downloads_url_idx ON downloads(url);
+
+- a more complex modification that uses PL/pgSQL (a procedural language)
+  normally used to create functions and triggers.
+
+        -- set release_year for any movie missing one
+        DO
+        $$
+        DECLARE
+            it record;
+            it_year text;
+        BEGIN
+            FOR it IN SELECT id, title FROM movies
+                WHERE release_year IS NULL
+            LOOP
+
+            -- get release year from a different table
+            it_year := (SELECT release_year
+                        FROM movie_metadata
+                        WHERE title=it.title);
+
+            UPDATE movies SET release_year=it_year WHERE id=it.id;
+            END LOOP;
+        END;
+        $$;
+
 
 ## Queries
 
@@ -308,21 +362,33 @@ Restore/recreate database from dump:
 
 A few useful system queries:
 
-- view current settings:
+### current settings:
 
         select name, setting, short_desc from pg_settings where name like '%time%';
 
         select * from pg_settings where name like '%log%';
 
-- show locks in use
+### locks in use
 
         select * from pg_locks;
         select * from pg_locks where locktype = 'advisory';
 
-- show active connections
+### active connections
 
         SELECT sum(numbackends) FROM pg_stat_database;
 
-- show connection status
+### show connection status
 
         select * from pg_stat_activity;
+
+### column size
+
+To get some size metrics for a column `col` in table `tab`:
+
+    SELECT pg_size_pretty(SUM(pg_column_size(col))) AS total_size,
+           pg_size_pretty(MAX(pg_column_size(col))::numeric) AS max_size,
+           pg_size_pretty(MIN(pg_column_size(col))::numeric) AS min_size,
+           pg_size_pretty(AVG(pg_column_size(col))) AS average_size,
+           pg_size_pretty(SUM(pg_column_size(col)) / pg_relation_size('tab'))
+              AS table_fraction
+           FROM tab;
