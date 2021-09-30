@@ -133,10 +133,10 @@ there are two modes: `char mode` (each character is captured by the shell,
 meaning that normal emacs keybindings `C-x *` aren't be available) and `line
 mode` (which works like a normal emacs buffer).
 
-- Open a shell:             `M-x shell`
-- Open a terminal:          `M-x ansi-term`
-  - Switch to `char mode`:    `C-c C-k`
-  - Switch to `line mode`:    `C-c C-j`
+- Open a shell:                           `M-x shell`
+- Open a terminal:                        `M-x ansi-term`
+  - Switch to `char mode` (`term-char-mode`): `C-c C-k`
+  - Switch to `line mode` (`term-line-mode`): `C-c C-j`
 
 ## Shell commands
 - Execute a shell command:       `M-!`
