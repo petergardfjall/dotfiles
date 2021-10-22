@@ -18,6 +18,8 @@ export PATH=${GOROOT}/bin:${PATH}
 export PATH=${PATH}:/usr/share/bcc/tools/
 # add pyenv to path
 export PATH=~/.pyenv/bin:${PATH}
+# add user-installed gem binaries ('gem install --user-install <gem>')
+export PATH=${PATH}:${HOME}/.gem/ruby/2.7.0/bin
 
 export PATH=${HOME}/bin:${PATH}
 export PATH=${HOME}/bin/scripts:${PATH}
