@@ -2568,6 +2568,15 @@ set up the handlers like so:
 
     log.Panic(s.ListenAndServe())
 
+## gopls
+
+`gopls` is a Language Server Protocol (LSP) implementation for Go. To get it to
+work properly with build tags (`// +build integration`) you may need to set
+`GOFLAGS` to include the build tags that need to be recognized. Since you may
+not want these build tags whenever you compile/run tests, you may want to start
+your IDE (`gopls`) from a separate terminal.
+
+    export GOFLAGS="-tags=integration,db"
 
 ## Modules
 Go modules is the prefered way of managing project dependencies.

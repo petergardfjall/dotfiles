@@ -10,3 +10,4 @@ alias copy="xsel --clipboard"
 # one directory deep and sort by size
 alias du1="du -h --max-depth=1 | sort -h"
 alias t="xfce4-terminal"
+alias gopls-env='echo export GOFLAGS="-tags=integration,db"'
