@@ -374,6 +374,12 @@ To view differences:
     # changes between branches for a particular file
     git diff master..feature1 pkg/svc/service.go
 
+Use `--name-only` to only see which files have changed
+
+    git diff --name-only <treeish1> [<treeish2>]
+    # show changed files on current branch compared to master
+    git diff --name-only master
+
 
 Record everything in the staging area in a new commit (snapshot revision), and
 advance `HEAD`:
