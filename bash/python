@@ -10,6 +10,8 @@ export PIPENV_VENV_IN_PROJECT=true
 
 # enable pyenv shims (inserts a directory of proxy commands first in the PATH
 # that forward python command calls to the selected pyenv)
+source <(pyenv init --path)
+# enable bash completion
 source <(pyenv init -)
 # enable pyenv-virtualenv to handle virtualenvs as well
 source <(pyenv virtualenv-init -)
