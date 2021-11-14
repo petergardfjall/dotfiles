@@ -39,6 +39,8 @@ if ${enable}; then
 #
 export GDK_DPI_SCALE=0.5
 EOF
+
+    xfconf-query -c xsettings -p /Gtk/MonospaceFontName -s "DejaVu Sans Mono 9"
 else
     echo "Disabling High-DPI settings ..."
     # set window scaling factor x1 (> Appearance > Settings)
@@ -54,4 +56,6 @@ else
 
     echo "Removing ${high_dpi_env_path} ..."
     rm -f ${high_dpi_env_path}
+
+    xfconf-query -c xsettings -p /Gtk/MonospaceFontName -s "DejaVu Sans Mono 10"
 fi
