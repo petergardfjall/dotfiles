@@ -124,13 +124,47 @@ Echoing to `stderr` by copying `stderr` to `stdout`:
 
     ssh <host> bash -s < /my/script.sh
 
-
-
 ## Scripting: coloring output
 
+    echo -e "NORMAL \e[31m RED \e[0m NORMAL"
     echo -e "NORMAL \e[32m GREEN \e[0m NORMAL"
+    echo -e "NORMAL \e[33m ORANGE \e[0m NORMAL"
 
 
+## Arithmetic
+
+Basic arithmetic can be done with double parenthesis.
+
+    a="3"
+    (( a++ ))   # a == 4, doesn't print anything
+    $(( a++ ))  # a == 5, prints "4"
+    $(( ++a ))  # a == 6, prints "6"
+    $(( a+=2 )) # a == 6, prints "9"
+
+    a=$(( ${a} + 4 ))  # => 7
+    # dollar sign is optional for variables
+    a=$(( a + 4 ))     # => 11
+
+One can also used the built-in `let` function to do arithmetic when one needs to
+save it to a variable.
+
+    a=1
+
+    let a=a+2           # => 3
+    # quote to allow whitespace
+    let "a = 2*a + 10"  # => 16
+
+    b=2
+    let "a = a*b"       # => 6
+    # increment operator
+    let a++             # => 7
+
+`expr` is similar to `let` except instead of saving the result to a variable it
+instead prints the answer. Unlike `let` you don't need to enclose the expression
+in quotes, but whitespace is needed between arguments.
+
+    expr 1 + 2
+    expr 2 * $a
 
 ## Scripting: command-line parsing
 
