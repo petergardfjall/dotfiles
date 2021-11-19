@@ -25,6 +25,8 @@ if ${enable}; then
     xfconf-query -c xsettings -p /Gdk/WindowScalingFactor -s 2
     # scale mouse cursor: 24 -> 48 pixels (> Mouse > Theme)
     xfconf-query -c xsettings -p /Gtk/CursorThemeSize -s 48
+    # scale window titles
+    xfconf-query -c xfwm4 -p /general/title_font -s "Sans Bold 16"
 
     # scale up fonts with custom DPI: 96 -> 192 (> Appearance > Fonts)
     xfconf-query -c xsettings -p /Xft/DPI -s 192
@@ -47,6 +49,8 @@ else
     xfconf-query -c xsettings -p /Gdk/WindowScalingFactor -s 1
     # default mouse cursor: 24 pixels (> Mouse > Theme)
     xfconf-query -c xsettings -p /Gtk/CursorThemeSize -s 24
+    # scale window titles
+    xfconf-query -c xsettings -p /general/title_font -s "Sans Bold 9"
 
     # normal fonts DPI: 96 (> Appearance > Fonts)
     xfconf-query -c xsettings -p /Xft/DPI -s 96
