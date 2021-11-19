@@ -146,7 +146,7 @@ Basic arithmetic can be done with double parenthesis.
     a=$(( a + 4 ))     # => 11
 
 One can also used the built-in `let` function to do arithmetic when one needs to
-save it to a variable.
+save it to a variable. NOTE though that the `let` function returns a non-zero exit if the result evaluates to `0`!
 
     a=1
 
@@ -158,6 +158,13 @@ save it to a variable.
     let "a = a*b"       # => 6
     # increment operator
     let a++             # => 7
+
+    # exit code madness when something evaluates to zero
+    a=0
+    let a++    # exit code: 1
+    a=0
+    let ++a    # exit code: 0
+
 
 `expr` is similar to `let` except instead of saving the result to a variable it
 instead prints the answer. Unlike `let` you don't need to enclose the expression
