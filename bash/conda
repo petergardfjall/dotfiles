@@ -1,0 +1,14 @@
+#
+# activate the 'base' environment for conda (package manager mainly used to
+# manage data-science/machine-learning environments).
+#
+# To manage available environments:
+# `conda env list|create|remove`
+#
+# To activate an environment:
+#    conda activate my-env
+#
+# To deactivate an environment:
+#    conda deactivate
+#
+alias conda-activate='source <(~/miniconda3/bin/conda shell.bash hook)'
