@@ -32,7 +32,7 @@ if ${enable}; then
     xfconf-query -c xsettings -p /Xft/DPI -s 192
 
     # use a high-dpi friendly window manager theme
-    xfconf-query -c xfwm4 -p /general/theme -s Default-xhdpi
+    xfconf-query -c xfwm4 -p /general/theme -s Default-hdpi
 
     echo "Adding GDK_DPI_SCALE factor in ${high_dpi_env_path} ..."
     cat > ${high_dpi_env_path} <<EOF
