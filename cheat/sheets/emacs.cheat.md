@@ -251,6 +251,8 @@ Outline-mode:
 - `M-S-right`/`org-demote-subtree`: demote current subtree one level
 - `M-up`/`org-move-subtree-up`: move subtree up before prior entry
 - `M-down`/`org-move-subtree-down`: move subtree down after next entry
+- `C-c C-,`/`org-insert-structure-template`: insert structural blocks,
+  such as `#+BEGIN_SRC...#+END_SRC`.
 Within an outline tree, one can also add lists to entry bodies.
 - *Unordered lists* start with `-`, `+` or `*`
 - *Ordered lists* start with `1.` or `1)`
