@@ -337,7 +337,8 @@ Dumping a local database:
     pg_dump --no-owner --host localhost --username=admin db > db.dump
 
     # or dumping all databases
-    pg_dumpall --no-owner --no-role-passwords --host localhost --username=admin > db.dump
+    export PGPASSWORD=password  # avoid repeating password for every db
+    pg_dumpall --no-owner --no-role-passwords --host=localhost --username=postgres > db.dump
 
 Dump with SSL credentials:
 
