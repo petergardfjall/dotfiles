@@ -62,22 +62,27 @@ aspects of the network stack.
     # should be "active (running)"
     sudo systemctl status systemd-resolved.service
     sudo journalctl -u systemd-resolved -f
-    # a few files worth inspecting
-    cat /etc/resolv.conf
-    cat /run/systemd/resolve/resolv.conf
-    # proble local dns server
-    dig @192.168.0.1
-    dig @127.0.0.53
-    # depending on outcome..
-    # restart dns
+    # depending on outcome, we could restart dns
     sudo systemctl restart systemd-resolved.service
+    # should resolve correctly
+    sudo systemd-resolve www.google.com
+    # worth inspecting: which dns servers does it point to?
+    # try 'dig @server www.google.com' to see if the dns server works.
+    cat /etc/resolv.conf
+    # probe local dns server -- should give similar results as
+    #   dig @8.8.8.8 www.google.com
+    dig @127.0.0.53 www.google.com
+    dig @192.168.0.1 www.google.com
+    # if, for example, 127.0.0.53 doesn't produce results, one might need
+    # to point /etc/resolv.conf from /run/systemd/resolve/stub-resolv.conf
+    # to /run/systemd/resolve/resolv.conf
+    sudo ln -sf /run/systemd/resolve/resolv.conf /etc/resolv.conf
 
     #
     # routing tables
     #
     route
     ip route show
-
 
 ### Desktop Ubuntu: change IP address
 
