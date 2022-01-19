@@ -173,6 +173,22 @@ in quotes, but whitespace is needed between arguments.
     expr 1 + 2
     expr 2 * $a
 
+## Scripting: conditionals
+
+One-liners:
+
+    [ "a" = "a" ] && [ "b" = "b" ] && echo "seems sensible"
+
+    ls -al /not/found > /dev/null 2>&1 || echo "can't find"
+
+Conditional operators (and/or):
+
+    if [ "a" = "a" ] && [ "b" = "b" ]; then
+       echo "that's a relief"
+    else
+       echo "now I'm confused"
+    fi
+
 ## Scripting: command-line parsing
 
     for arg in ${@}; do
