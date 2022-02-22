@@ -1,12 +1,12 @@
-## Legend
+# Legend
 - `M` = Meta (or Alt)
 - `C` = Ctrl
 
-## General
+# General
 
 - Exit:                           `C-x C-c`
 
-## Help
+# Help
 - Help:                           `C-h` (or `F1`)
 - *A*propos: show matching commands `C-h a <match-string>`
 - Describe function for *k*ey       `C-h k <keyboard-shortcut>`
@@ -25,22 +25,22 @@
 
 - Reload configuration:           `M-x load-file ~/.emacs`
 
-## Appearance
+# Appearance
 - Increase buffer font size:      `C-x C-+`
 - Decrease buffer font size:      `C-x C--`
 
-## Packages
+# Packages
 - Refresh and list packages:      `M-x list-packages`
 
 - In package view, press `U` to mark all upgradable packages for upgrade, and
   `x` to perform the upgrades.
 
 
-## Major Mode:
+# Major Mode:
 - Describe current major-mode:  `M-x describe-mode`
 - Set mode (e.g. `yaml-mode`):    `M-x <mode>`
 
-## File and buffers
+# File and buffers
 - Open file:             `C-x C-f`
 - Save buffer:           `C-x C-s`
 - Save all:              `C-x s`
@@ -53,13 +53,13 @@
 - Kill/close buffer:     `C-x k`
 - Restore buffer:        `M-x revert-buffer`
 
-## Multiple windows (in buffer)
+# Multiple windows (in buffer)
 - Split window:           `C-x 2` (vertical) `C-x 3` (horizontal)
 - Switch to other window: `C-x o`
 - Close other windows:    `C-x 1`
 - Close this window:      `C-x 0`
 
-## Navigation
+# Navigation
 - One word forward:       `M-f`
 - One word backward:      `M-b`
 - One expression forward: `C-M-f` (jump to closing delimiter/parenthesis)
@@ -72,7 +72,7 @@
 - Save point to register:     `C-x r <SPC> <name>`
 - Jump to point in register:  `C-x r j <name>`
 
-## Editing
+# Editing
 - Undo:                            `C-x u`
 - Cancel/abort command:            `C-g`
 - Delete (rest of) row:            `C-k`
@@ -94,7 +94,7 @@
 - Copy rectangle                        `C-x r M-w`
 - Yank rectangle:                       `C-x r y`
 
-## Copy-paste
+# Copy-paste
 - Start selection:        `C-Space`
 - Select all:             `C-x h`
 - Copy (region):          `M-w`
@@ -102,25 +102,25 @@
 - Insert another file:    `C-x i`
 - Paste (yank):           `C-y`
 
-## Indentation
+# Indentation
 - Indent rigidly (marked rows):  `C-u C-x TAB`
 - Decrease indent by 2:          `C-u 2 C-x TAB`
 - Decrease indent by 4:          `C-u -4 C-x TAB`
 - Mode-aware indent:             `M-x indent-region`
 
-## Search/replace
+# Search/replace
 - Search forward:         `C-s`
 - Search backward:        `C-r`
 - Query replace:          `M-%`
 - Replace with regexp:    `M-x query-replace-regexp`
 
-## Bookmarks
+# Bookmarks
 - Set bookmark at point:  `C-x r m`
 - Jump to bookmark:       `C-x r b`
 - List bookmarks:         `C-x r l`
 - Delete bookmark:        `M-x bookmark-delete`
 
-## Shell/terminal
+# Shell/terminal
 There are a couple of ways to open a subshell and run external (to emacs)
 commands: `shell` and (`ansi-`)`term`.
 
@@ -138,22 +138,22 @@ mode` (which works like a normal emacs buffer).
   - Switch to `char mode` (`term-char-mode`): `C-c C-k`
   - Switch to `line mode` (`term-line-mode`): `C-c C-j`
 
-## Shell commands
+# Shell commands
 - Execute a shell command:       `M-!`
 - Open shell in `*shell*` buffer:  `M-x shell`
 
 
-## Web browser
+# Web browser
 - Open web page:       `M-x eww <URL>`
 - Reload web page:     `M-x eww-reload`
 
 
-## Lisp
+# Lisp
 Go to the *scratch* buffer, enter an expression, like `(+ 1 1)`, and run `C-j`
 to have the last expression evaluated.
 
 
-## Concepts
+# Concepts
 Emacs' graphical layout has three primary concepts:
 
 - *Frame*: a graphical window or terminal screen occupied by Emacs.
@@ -178,7 +178,7 @@ TODO: `auto-mode-alist`: https://www.emacswiki.org/emacs/AutoModeAlist
 TODO: `interpreter-mode-alist`: https://www.emacswiki.org/emacs/InterpreterModeAlist
 
 
-## Themes
+# Themes
 - `M-x load-theme <theme>`: load and apply a particular theme.
 - `M-x customize-create-theme`: opens the theme customization tool that shows
   all basic faces that need to be filled out by a theme.
@@ -190,7 +190,7 @@ TODO: `interpreter-mode-alist`: https://www.emacswiki.org/emacs/InterpreterModeA
   overlays at point, face which in turn is a list of faces (as in org mode tags)
 
 
-## Tramp-mode
+# Tramp-mode
 `tramp` brings transparent access to files on remote hosts. `tramp` is triggered
 by the name entered when opening a file.
 
@@ -219,14 +219,14 @@ You can even open files with a "multi-hop" syntax:
     C-x C-f /ssh:you@remotehost|sudo:remotehost:/path/to/file RET
 
 
-## Debugging
+# Debugging
 To make every `error` call dump a backtrace:
 - `(setq debug-on-error t)`
 - `M-x toggle-debug-on-error`)
 - `emacs --eval '(setq debug-on-error t)' <file>`
 
 
-## Org mode
+# Org mode
 Org mode is a plain text system for keeping notes, maintaining to-do lists,
 planning, scheduling and even authoring. In short, a mode for organizing life.
 
@@ -297,7 +297,306 @@ Agenda view:
 Scheduling and deadlines:
 -
 
-## Custom keybindings
+
+# use-package
+The primary purpose of `use-package` is to configure and (lazily) load Emacs
+packages. It interfaces with package managers, which allows it to also ensure
+that packages are installed before use.
+
+Thanks to the lazy/on-demand loading of packages it enables, it typically helps
+reduce the startup time of Emacs. Behind the scenes `use-package` makes use of
+Emacs' `autoload` facility, which lets you register the existence of a function
+or macro, but put off loading the file that defines it. The first call to the
+function automatically loads the proper library, in order to install the real
+definition and other associated code, then runs the real definition as if it had
+been loaded all along.
+
+    autoload function filename &optional docstring interactive type
+
+For example,
+
+    (autoload 'ace-jump-mode "ace-jump-mode.el" nil t)
+
+
+## Configuration
+Use the `:init` keyword to execute code *before* a package is loaded. It accepts
+one or more forms, up to the next keyword:
+
+    (use-package foo
+      :init
+      (setq foo-variable t))
+
+Since `:init` is always run, even when the package is configured to be loaded
+lazily (deferred), one should restrict this to (1) code that doesn't rely on the
+package being loaded and (2) avoid time-consuming calls (since they would be
+executed on *every* emacs start, no matter if we actually *need* the package).
+
+Similarly, `:config` can be used to execute code *after* a package is loaded. In
+cases where loading is done lazily, this execution is deferred until after the
+autoload occurs:
+
+    (use-package foo
+      :init
+      (setq foo-variable t)
+      :config
+      (foo-mode 1))
+
+
+## Lazy (deferred) loading
+`use-package` can defer loading of a module until a certain command is invoked.
+
+    (use-package company-lsp
+      ;; download the package via package.el if it's not available
+      :ensure t
+      ;; autoload the package whenever `(company-lsp)` is invoked.
+      :commands company-lsp
+
+
+When you use the `:commands` keyword, it creates `autoload`s for those commands
+and defers loading of the package until any command is invoked. The `:commands`
+keyword takes either a symbol or a list of symbols.
+
+One can combine the use of `:command` with binding a keyboard shortcut to the
+command that will trigger the module to be loaded:
+
+    (use-package ace-jump-mode
+      :bind ("C-." . ace-jump-mode))
+
+This does two things: first, it creates an autoload for the `ace-jump-mode`
+command and defers loading of `ace-jump-mode` until the command is
+invoked. Second, it binds the key `C-.` to that command. After loading, you can
+use `M-x describe-personal-keybindings` to see all such keybindings you've set
+throughout your .emacs file.
+
+A more literal way to do the exact same thing is:
+
+    (use-package ace-jump-mode
+      :commands ace-jump-mode
+      :init
+      (bind-key "C-." 'ace-jump-mode))
+
+Or, an *even more* verbose way of achieving the same thing:
+
+    (use-package ace-jump-mode
+      :defer t
+      :init
+      (autoload 'ace-jump-mode "ace-jump-mode" nil t)
+      (bind-key "C-." 'ace-jump-mode))
+
+Note: `:defer t` is implied whenever `:commands`, `:bind`, `:mode`,
+`:interpreter` or `:hook` are used.
+
+
+## Lazy loading via modes and interpreters
+Similar to `:commands` and `:bind`, you can use `:mode` and `:interpreter` to
+establish a deferred binding within the `auto-mode-alist` and
+`interpreter-mode-alist` variables. The specifier to either keyword can be a
+cons cell, a list of cons cells, or a string or regexp:
+
+    (use-package ruby-mode
+      ;; load if file ends in .rb
+      :mode "\\.rb\\'"
+      ;; load if file contains a ruby shebang such as `#!/usr/bin/env ruby`
+      :interpreter "ruby")
+
+    ;; The package is "python" but the mode is "python-mode":
+    (use-package python
+      ;; load if file ends in .py
+      :mode ("\\.py\\'" . python-mode)
+      ;; load if file contains a python shebang such as `#!/usr/bin/env python`
+      :interpreter ("python" . python-mode))
+
+
+## Lazy loading via hooks
+The `:hook` keyword allows adding functions onto hooks, here only the basename
+of the hook is required. Thus, all of the following are equivalent:
+
+    (use-package ace-jump-mode
+      :hook (prog-mode text-mode))
+
+    (use-package ace-jump-mode
+      :hook ((prog-mode text-mode) . ace-jump-mode))
+
+    (use-package ace-jump-mode
+      :hook ((prog-mode . ace-jump-mode)
+             (text-mode . ace-jump-mode)))
+
+    (use-package ace-jump-mode
+      :commands ace-jump-mode
+      :init
+      (add-hook 'prog-mode-hook #'ace-jump-mode)
+      (add-hook 'text-mode-hook #'ace-jump-mode))
+
+When using `:hook` omit the "-hook" suffix if you specify the hook explicitly,
+as this is appended by default.
+
+Multiple hooks can trigger loading of a package:
+
+    (use-package ace-jump-mode
+      :hook (prog-mode text-mode))
+
+    (use-package ace-jump-mode
+      :hook ((prog-mode text-mode) . ace-jump-mode))
+
+    (use-package ace-jump-mode
+      :hook ((prog-mode . ace-jump-mode)
+             (text-mode . ace-jump-mode)))
+
+
+The use of `:hook`, `:bind`, `:mode`, `:interpreter`, etc., causes the functions
+being hooked to implicitly be read as `:commands` (meaning they will establish
+interactive `autoload` definitions for that module, if not already defined as
+functions), and so `:defer t` is also implied by `:hook`.
+
+
+## Notes about lazy loading
+In almost all cases you don't need to manually specify `:defer t`. This is
+implied whenever `:bind` or `:mode` or `:interpreter` is used. Typically, you
+only need to specify `:defer` if you know for a fact that some other package
+will do something to cause your package to load at the appropriate time, and
+thus you would like to defer loading even though `use-package` isn't creating
+any autoloads for you.
+
+You can override package deferral with the `:demand` keyword. Thus, even if you
+use `:bind`, using `:demand` will force loading to occur immediately and not
+establish an autoload for the bound key.
+
+`:defer [N]` causes the package to be loaded -- if it has not already been --
+after `N` seconds of idle time. This can be used to unconditionally load many
+packages while still having a rapid startup.
+
+
+## Conditional loading
+You can use the `:if` keyword to predicate the loading and initialization of
+modules.
+
+    (use-package edit-server
+      :if window-system
+      :init
+      (add-hook 'after-init-hook 'server-start t)
+      (add-hook 'after-init-hook 'edit-server-start t))
+
+The `:disabled` keyword can turn off a module you're having difficulties with,
+or stop loading something you're not using at the present time:
+
+    (use-package ess-site
+      :disabled
+      :commands R)
+
+A package can also be triggered to load after another package via `:after`:
+
+    :after (foo bar)
+    :after (:all foo bar)
+    :after (:any foo bar)
+    :after (:all (:any foo bar) (:any baz quux))
+    ;; load when either both foo and bar have been loaded, or
+    ;; both baz and quux have been loaded
+    :after (:any (:all foo bar) (:all baz quux))
+
+
+## Package installation
+You can use use-package to load packages from ELPA with `package.el`. This is
+particularly useful if you share your .emacs among several machines; the
+relevant packages are downloaded automatically once declared in your .emacs. The
+`:ensure` keyword causes the package(s) to be installed automatically if not
+already present on your system (set `(setq use-package-always-ensure t)` if you
+wish this behavior to be global for all packages):
+
+    (use-package magit
+      :ensure t)
+
+Note that `:ensure` will install a package if it is not already installed, but
+it does not keep it up-to-date.
+
+By default package.el prefers `melpa` over `melpa-stable` due to the versioning
+`(> evil-20141208.623 evil-1.0.9)`, so even if you are tracking only a single
+package from melpa, you will need to tag all the non-melpa packages with the
+appropriate archive.
+
+One can use `:pin` to pin a certain package to a certain archive.
+
+    (use-package company
+      :ensure t
+      :pin melpa-stable)
+
+
+## Local packages
+If your package needs a directory added to the load-path in order to load, use
+`:load-path`. This takes a symbol, a function, a string or a list of strings. If
+the path is relative, it is expanded within `user-emacs-directory`:
+
+    (use-package ess-site
+      :load-path "site-lisp/ess/lisp/"
+      :commands R)
+
+
+## Key-bindings
+As mentioned above, one can set up a (deferred) autoload of a package for a
+certain command and also bind that command to a key-binding via:
+
+    (use-package org
+      ...
+      :bind (("C-c o o" . my-org-open)
+             ("C-c o l" . org-store-link)
+             ("C-c o c" . org-capture)
+             ("C-c o a" . org-agenda))
+      ...
+
+One can also use `:bind` to set up custom key-bindings _within_ a local keymap
+that only exists after the package is loaded via a `:map` modifier:
+
+    (use-package org
+      ...
+      :bind (("C-c o o" . my-org-open)         ;; global, auto-loading command
+             :map org-mode-map                 ;; local key-bindings after load
+             ("C-c o x" . org-archive-subtree)
+             ("C-c o >" . org-clock-in)
+             ("C-c o <" . org-clock-out)
+      ...
+
+The effect of the `:map` statement is to wait until `org-mode` has loaded, and
+then to bind e.g. `C-c o x` to `org-archive-subtree` within org-mode's local
+keymap, `org-mode-map`. Something similar can also be achieved via:
+
+(define-key projectile-mode-map (kbd "C-c s p") 'counsel-projectile-ag)
+
+    (use-package org
+      ...
+      :bind (("C-c o o" . my-org-open))
+      :config
+      (define-key org-mode-map (kbd "C-c o x") 'org-archive-subtree)
+      ...
+
+
+# straight-el (package manager)
+The biggest benefit of `straight.el` over the built-in `package.el` is that
+`straight.el` supports 100% reproducibility for your Emacs packages with version
+lockfiles.
+
+- It uses git to store/update package sources (`~/.emacs.d/straight/repos`).
+- Editing packages locally is trivial (as is upstreaming patches). Just edit
+  files in place. Packages are rebuilt if necessary when Emacs restarts.
+- You are free to commit your changes and push or pull to various remotes using
+  Git.
+- A version lockfile can be written to `~/.emacs.d/straight/versions/default.el`
+  if you want reproducibility of your Emacs environment between hosts. This
+  should be kept under version control.
+
+- `M-x straight-pull-package/straight-pull-all`: fetch/merge upstream changes
+  from each package's configured remote.
+- `M-x straight-remove-unused-repos`: clear out packages not mentioned in init
+  file.
+- `M-x straight-check-package/straight-check-all`: force rebuild of package(s).
+
+- `M-x straight-freeze-versions`: save the currently checked out revisions of
+  all of your packages
+- `M-x straight-thaw-versions`: revert all packages to the revisions specified
+  in the lockfile.
+
+One can always perform rebuild (if needed) with M-x straight-check-package or M-x straight-check-all.
+
+
+# Custom keybindings
 Navigation:
 - `C-x w <arrow>`: `windmove-{up|down|left|right}` (move between windows)
 Window management hydra:
@@ -311,9 +610,7 @@ Text size:
 - `C-x C--`: `default-text-scale-decrease`
 - `C-x C-0`: `default-text-scale-reset`
 
-Enter "IDE mode":
-- `F6`:  enable `desktop-save-mode`
-- `F7`: `projectile-mode`
+File explorer:
 - `F8`: `toggle-treemacs`
 
 Formatting:
@@ -328,7 +625,7 @@ General find definition of thing at point (if supported by mode):
 - `C-c C-d`:    `describe-symbol` (any docs for thing at point?)
 
 Find file (in project)
-- `C-c f f`   `projectile-find-file`
+- `C-c f f`   `project-find-file`
 
 Undo:
 - `C-x u`:  `undo`
