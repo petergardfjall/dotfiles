@@ -2364,6 +2364,19 @@ new io.Reader on every call) one can use the following hack:
         }
     }
 
+For more advanced argument matchers one can use `mock.MatchedBy`:
+
+    db := mocks.NewDatabase()
+    db.On("Query", anyCtx, matchingQuery(expectedQuery)).Return(...)
+
+    // mock argument matcher that matches any db.Query that is
+    // JSON-equivalent to 'expected'.
+    func matchingQuery(expected db.Query) interface{} {
+        return mock.MatchedBy(func(got db.Query) bool {
+            return testutil.EqualJSON(expected, got)
+        })
+    }
+
 
 ## Versioning
 
