@@ -2,7 +2,9 @@
 
 To pass a password over command-line without being prompted run
 
-    PGPASSWORD=pass1234 psql ...
+
+    export PGUSER=postgres PGPASSWORD=password PGHOST=localhost
+    psql ...
 
 To use postgres over SSL the following environment variables can be used:
 
