@@ -42,6 +42,7 @@ if ${enable}; then
 export GDK_DPI_SCALE=0.5
 EOF
 
+    xfconf-query -c xsettings -p /Gtk/FontName -s "Noto Sans 10"
     xfconf-query -c xsettings -p /Gtk/MonospaceFontName -s "DejaVu Sans Mono 9"
 else
     echo "Disabling High-DPI settings ..."
@@ -50,7 +51,7 @@ else
     # default mouse cursor: 24 pixels (> Mouse > Theme)
     xfconf-query -c xsettings -p /Gtk/CursorThemeSize -s 24
     # scale window titles
-    xfconf-query -c xsettings -p /general/title_font -s "Sans Bold 9"
+    xfconf-query -c xfwm4 -p /general/title_font -s "Sans Bold 12"
 
     # normal fonts DPI: 96 (> Appearance > Fonts)
     xfconf-query -c xsettings -p /Xft/DPI -s 96
@@ -61,5 +62,6 @@ else
     echo "Removing ${high_dpi_env_path} ..."
     rm -f ${high_dpi_env_path}
 
-    xfconf-query -c xsettings -p /Gtk/MonospaceFontName -s "DejaVu Sans Mono 10"
+    xfconf-query -c xsettings -p /Gtk/FontName -s "Noto Sans 12"
+    xfconf-query -c xsettings -p /Gtk/MonospaceFontName -s "DejaVu Sans Mono 12"
 fi
