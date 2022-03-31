@@ -37,6 +37,76 @@ Process relationships can be shown with `pstree`:
     # for a certain user
     pstree <user>
 
+## Control groups (cgroups, containers)
+
+See which container groups are used, their relationships, and which processes
+belong to which group (`systemctl status` gives a similar view):
+
+    # list entire cgroup tree
+    systemd-cgls
+
+    # show subtrees of a certain unit
+    systemd-cgls -u docker.service
+
+    # show subtrees of a certain cgroup
+    systemd-cgls /docker
+
+    # show subtrees of a certain docker container
+    systemd-cgls /docker/ed2c3062552190f9aeec89956330dfef522cf2f12edb903826d5d457e4bc6249
+
+To see consumption of system resources per cgroup:
+
+    systemd-cgtop -p
+
+### cgroup slices
+`systemd.slice(5)` systemd unit files can be used to define a custom cgroup
+configuration. They must be placed in a systemd directory, such as
+`/etc/systemd/system/`. The resource control options that can be assigned are
+documented in `systemd.resource-control(5)`.
+
+For example, to limit the resource consumption of docker engine:
+
+    cat > /etc/systemd/system/docker-limit.slice <<EOF
+    [Unit]
+    Description=Slice that limits docker resources
+    Before=slices.target
+    [Slice]
+    # see systemd.resource-control(5)
+    CPUAccounting=true
+    CPUQuota=700%       # only allow 7 cpus to be used
+    MemoryAccounting=true
+    MemoryHigh=15G      # memory throttling starts
+    MemoryLimit=16G     # only allow 16 GB to be used
+    EOF
+
+    # needs to be run to pick up new or changed `.slice` files.
+    systemctl daemon-reload
+
+    # in the docker case we also need to update docker to use the slice
+    # as its parent cgroup
+    echo '{"cgroup-parent": "/docker_limit.slice"}' > /etc/docker/daemon.json
+    systemctl restart docker.service
+
+cgroups resources can be runtime-adjusted using `systemctl set-property` (syntax
+as described in `systemd.resource-control(5)`).
+
+    systemctl set-property UNIT PROPERTY=VALUE...
+
+Use `--runtime` to prevent changes from being persisted in a drop-in file under
+`/etc/systemd`.
+
+    systemctl set-property --runtime /docker/ed2c3062552190f9aeec89956330dfef522cf2f12edb903826d5d457e4bc6249 CPUAccounting=true CPUQuota=400%
+
+`systemctl show` can be used to display cgroup resources:
+
+    # works without `/docker/` also (just the container id)
+    systemctl show /docker/ed2c3062552190f9aeec89956330dfef522cf2f12edb903826d5d457e4bc6249
+
+Warning: The adjustments will be made permanent unless --runtime option is passed. Adjustments are saved at /etc/systemd/system.control/ for system wide options and .config/systemd/user.control/ for user options.
+Note: Not all resources changes immediately take effect. For example, changing TaskMax will only take effect on spawning new processes.
+For example, cutting off internet access for all user sessions:
+
+$ systemctl set-property user.slice IPAddressDeny=any
 
 ## Disk usage
 Report system disk space usage:
