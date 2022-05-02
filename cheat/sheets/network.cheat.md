@@ -52,7 +52,26 @@ aspects of the network stack.
     #
     # check firewall settings
     #
-    sudo iptables -L
+
+    # Sometimes programs (like telepresence) modify iptables and then fail
+    # to properly cleanup. This has borked the DNS on my host sometimes. To find
+    # the offending chain (rule set) and delete it, *without rebooting*, do
+    # something this:
+    #
+    # List iptables rules on the 'nat' table (consulted for new connections).
+    # You might want to look for REDIRECTs on 127.0.0.53.
+    sudo iptables -t nat -L -n -v
+    # For example, you might find a chain 'sshuttle-12298' that you wish to
+    # remove. Before that, we need to remove all references to it.
+    # Flush: remove all rules in the chain.
+    sudo iptables -t nat -F sshuttle-12298
+    # find referencing rules in other chains
+    sudo iptables -t nat -L
+    # Delete referencing rules (the number after the chain is a 1-based index).
+    sudo iptables -t nat -D OUTPUT 1
+    sudo iptables -t nat -D PREROUTING 1
+    # Finally remove the chain altogether.
+    sudo iptables -t nat -X sshuttle-12298
 
     #
     # DNS
