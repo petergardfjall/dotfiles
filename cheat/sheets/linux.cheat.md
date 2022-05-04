@@ -481,6 +481,16 @@ B). `rsync` can be used for this:
     # 'path' itself)
     rsync --update -av --dry-run user@host:/path/ .
 
+`rsync` is also useful to mirror dirctory structures on a host. For example, to
+mirror all `.json` files in a directory structure from `${dirA}` to `${dirB}`:
+
+    # --include should read "don't exclude"
+    # -z: compress
+    # -a: archive mode (rlptgoD: recurse, links, preserve perm+time+group+owner)
+    # -v: verbose
+    # trailing slash in source dir => avoid create root-dir in destination
+    rsync --update -zav --prune-empty-dirs --delete-after --include "*/" --include="*.json" --exclude="*"  "${dirA}/" "${dirB}"
+
 
 ## Laptop as desktop
 When the laptop is used as a desktop computer (connected to an external display)
