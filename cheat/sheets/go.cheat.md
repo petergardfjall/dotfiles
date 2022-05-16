@@ -840,6 +840,83 @@ values of the result parameters are used as the returned values.
     }
 
 
+## Generics
+
+See https://go.dev/blog/intro-generics
+
+Generics adds three things to the language:
+- Type parameters for function and types.
+- Defining interface types as sets of types, including types that don’t have
+  methods.
+- Type inference, which permits omitting type arguments in many cases when
+  calling a function.
+
+- Generic types:
+- Generic functions:
+- Type constraints:
+
+
+A generic type:
+
+    type Stack[E any] struct {
+        stack []E
+    }
+
+    func (s *Stack[E]) Push(e E) {
+        s.stack = append(s.stack, e)
+    }
+
+    func (s *Stack[E]) Pop() E {
+        if s.Empty() {
+            panic("pop on empty stack")
+        }
+        e := s.stack[len(s.stack)-1]
+        s.stack = s.stack[0 : len(s.stack)-1]
+        return e
+    }
+
+    func (s *Stack[E]) Empty() bool {
+        return s.Size() == 0
+    }
+
+    func (s *Stack[E]) Size() int {
+        return len(s.stack)
+    }
+
+    func main() {
+        stringStack := &Stack[string]{}
+        stringStack.Push("a")
+        fmt.Println(stringStack.Pop())
+
+        buf := bytes.NewBuffer([]byte(`hello world`))
+        ptrStack := &Stack[*bytes.Buffer]{}
+        ptrStack.Push(buf)
+        got := ptrStack.Pop()
+        if got != buf {
+            panic("did not store pointer value!")
+        }
+    }
+
+A generic function:
+
+
+    func Min[T constraints.Ordered](x, y T) T {
+        if x < y {
+            return x
+        }
+        return y
+    }
+
+    func SumIntsOrFloats[K comparable, V int64 | float64](m map[K]V) V {
+        var s V
+        for _, v := range m {
+            s += v
+        }
+        return s
+    }
+
+
+
 ## Strings
 
 Convert string to bytes:
