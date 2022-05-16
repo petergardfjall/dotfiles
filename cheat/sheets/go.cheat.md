@@ -1673,7 +1673,72 @@ Simple command-line parsing can be done with the standard librar `flag` package:
         fmt.Printf("flag value: %d\n", flagvar)
     }
 
-For more complex command-line tools, with sub-commands, and which allows flags
+The `flag` package can also be used to handle subcommands with `FlagSet`s:
+
+    mainCmd := flag.NewFlagSet("main", flag.ExitOnError)
+    mainCmd.Usage = func() {
+        fmt.Println(`usage: run [OPTIONS] start|await|status|result`)
+        mainCmd.PrintDefaults()
+    }
+    mainCmd.StringVar(&opts.Host, "host", opts.Host, "API hostname.")
+    mainCmd.IntVar(&opts.Port, "port", opts.Port, "API port.")
+    mainCmd.StringVar(&opts.APIToken, "api-token", opts.APIToken, "API token.")
+
+    mainCmd.Parse(os.Args[1:])
+    if len(mainCmd.Args()) < 1 {
+        fmt.Fprintf(os.Stderr, "error: %v\n\n", errUnexpectedSubcommand)
+        mainCmd.Usage()
+        os.Exit(1)
+    }
+    subcommand := mainCmd.Arg(0)
+
+    startCmd := flag.NewFlagSet("start", flag.ExitOnError)
+    startCmd.Usage = func() {
+        fmt.Print(`usage: start [OPTIONS] <operation> [parameter ...]
+
+        Starts an operation with the given parameters.
+        OPTIONS
+        `)
+        startCmd.PrintDefaults()
+    }
+    awaitOpt := startCmd.Bool("await", false, "Wait for opertaion to complete.")
+
+    awaitCmd := flag.NewFlagSet("await", flag.ExitOnError)
+    // ... options and usage
+    statusCmd := flag.NewFlagSet("status", flag.ExitOnError)
+    // ... options and usage
+    resultCmd := flag.NewFlagSet("result", flag.ExitOnError)
+    // ... options and usage
+
+    switch subcommand {
+    case "start":
+        startCmd.Parse(mainCmd.Args()[1:])
+        if len(startCmd.Args()) < 1 {
+            log.Fatalf("no operation specified")
+        }
+        op := startCmd.Arg(0)
+        parameters := []string(nil) // all
+        if len(startCmd.Args()) > 2 {
+            parameters = startCmd.Args()[1:]
+        }
+        revision, err := client.Start(op, *awaitOpt, parameters...)
+        if err != nil {
+            log.Fatalf("start failed: %v", err)
+        }
+    case "await":
+        awaitCmd.Parse(mainCmd.Args()[1:])
+        // ...
+    case "status":
+        statusCmd.Parse(mainCmd.Args()[1:])
+        // ...
+    case "result":
+        resultCmd.Parse(mainCmd.Args()[1:])
+        // ...
+    default:
+        log.Fatalf(errUnexpectedSubcommand.Error())
+    }
+
+For more complex command-line tools when you want to allow flags
 to be input either via command-line options or environment variables, the
 `viper/cobra` packages are useful:
 
