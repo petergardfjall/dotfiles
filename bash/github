@@ -1,0 +1,6 @@
+#
+# Enable completion for github-cli.
+#
+if which gh > /dev/null; then
+    source <(gh completion --shell bash)
+fi
