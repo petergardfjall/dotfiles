@@ -1,0 +1,11 @@
+#
+# Prettier configuration.
+#
+
+overrides:
+  # Markdown-specific settings.
+  - files: "*.md"
+    options:
+      # Always fold lines at the specified printWidth.
+      proseWrap: "always"
+      printWidth: 80
