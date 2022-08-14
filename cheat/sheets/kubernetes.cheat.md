@@ -402,3 +402,18 @@ To a deployment:
 To a service:
 
     kubectl port-forward svc/redis-master 7000:6379
+
+## Run a stress pod
+Try to hog 8 cpus:
+
+    kubectl run stress -n local --image=progrium/stress -- --cpu 8
+
+Run 4 workers each allocating 256MB memory
+
+    kubectl run stress -n local --image=progrium/stress -- --vm 4 --vm-bytes 256M --vm-hang 0
+
+One can pass `timeout=60s` to limit the duration.
+
+To remove:
+
+    kubectl delete deployments.apps -n local --now stress 
