@@ -1,7 +1,11 @@
 # About
 
+`telepresence` brings your laptop into the Kubernetes cluster (figuratively),
+ allowing you to (1) debug the cluster with local tools and commands and (2)
+ code and test microservices locally against a remote Kubernetes cluster
+
 `telepresence` allows you to develop and debug services locally, swapping out a
-Kubernetes deployment for a local binary transparently, thus cutting down the
+Kubernetes deployment for a local binary transparently. This cuts down the
 rebuild cycle by an order of magnitude (from rebuild docker image and apply an
 updated deployment to recompile locally and run `telepresence` again).
 
