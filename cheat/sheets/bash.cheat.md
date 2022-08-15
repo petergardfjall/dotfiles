@@ -1,7 +1,6 @@
 ## Command-line
+
 - `Ctrl+r`: search command history
-
-
 
 ## Scripting: basics
 
@@ -10,7 +9,7 @@ the calling process.
 
     (command; command)
 
-Return the *value* of the commands run in `command_list`. Just like `$VAR` gives
+Return the _value_ of the commands run in `command_list`. Just like `$VAR` gives
 the value of `VAR`.
 
     $(command_list)
@@ -23,7 +22,6 @@ Pass output of `command_list` as stdin to `cmd`.
 Pass output of multiple commands as stdin to a command.
 
     comm <(ls -l) <(ls -al)
-
 
 `test` is a conditional test with multiple possible comparisons. `-f` tests file
 existence. `-z`: string length is zero. `-n`: string length is non-zero. Integer
@@ -119,7 +117,6 @@ Echoing to `stderr` by copying `stderr` to `stdout`:
 
      >&2 echo "error"
 
-
 ## Scripting: executing commands over ssh
 
     ssh <host> bash -s < /my/script.sh
@@ -129,7 +126,6 @@ Echoing to `stderr` by copying `stderr` to `stdout`:
     echo -e "NORMAL \e[31m RED \e[0m NORMAL"
     echo -e "NORMAL \e[32m GREEN \e[0m NORMAL"
     echo -e "NORMAL \e[33m ORANGE \e[0m NORMAL"
-
 
 ## Arithmetic
 
@@ -164,7 +160,6 @@ save it to a variable. NOTE though that the `let` function returns a non-zero ex
     let a++    # exit code: 1
     a=0
     let ++a    # exit code: 0
-
 
 `expr` is similar to `let` except instead of saving the result to a variable it
 instead prints the answer. Unlike `let` you don't need to enclose the expression
@@ -231,6 +226,7 @@ Conditional operators (and/or):
     fi
 
 ## Scripting: debugging
+
 To see each executed command
 
     set -x
@@ -260,8 +256,8 @@ or execute commands when the shell exits:
 
     trap "{ kill ${MY_PID}; }" EXIT
 
-
 ### Line/byte processing
+
 Process first N lines:
 
     cat file | head -N
@@ -288,7 +284,6 @@ Process lines [A,B]:
 
     # bytes [A,B]
     cat file | tail --bytes=+A | head --bytes=+[B-A+1]
-
 
 ### String manipulation
 
@@ -331,3 +326,10 @@ capture patterns.
         echo "capture group 1: ${image_name}"
         echo "capture group 2: ${image_path}"
     fi
+
+### JSON processing with jq
+
+Passing variables to the expression can be done with `--arg` (since expression
+quoting makes shell variable expansion difficuly):
+
+    jq -r --arg path "LICENSE.txt" '.files[] | select(.path==$path)'
