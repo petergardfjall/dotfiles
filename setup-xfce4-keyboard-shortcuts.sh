@@ -18,7 +18,7 @@ fi
 # property.
 #
 shortcut_properties=$(xfconf-query --list --channel xfce4-keyboard-shortcuts | (grep custom || true) | (egrep -v 'override$' || true) )
-for shortcut_property in "${shortcut_properties}"; do
+for shortcut_property in ${shortcut_properties}; do
     echo "clearing xfce keyboard shortcut: ${shortcut_property}"
     xfconf-query --reset  --channel xfce4-keyboard-shortcuts --property "${shortcut_property}"
 done
@@ -80,7 +80,7 @@ EOF
     fi
     shortcut=$(echo ${row} | awk -F'|' '{print $1}' | xargs)
     command=$(echo ${row}  | awk -F'|' '{print $2}' | xargs)
-    # echo "adding xfce keyboard shortcut: \"${shortcut}\" => \"${command}\""
+    echo "adding xfce keyboard shortcut: \"${shortcut}\" => \"${command}\""
     # xfconf-query --reset  --channel xfce4-keyboard-shortcuts --property "/commands/default/${shortcut}"
     # xfconf-query --reset  --channel xfce4-keyboard-shortcuts --property "/commands/custom/${shortcut}"
     # xfconf-query --reset  --channel xfce4-keyboard-shortcuts --property "/xfwm4/custom/${shortcut}"
