@@ -4,7 +4,7 @@ export JAVA_HOME=/opt/java
 export MAVEN_HOME=/opt/maven
 
 export GOROOT=/opt/go
-export GOPATH=${HOME}/dev/go
+export GOPATH=${HOME}/go
 
 # add user-installed python binaries ('pip install --user <package>')
 export PATH=${HOME}/.local/bin:${PATH}
