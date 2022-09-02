@@ -3,6 +3,7 @@
 For local documentation: Use `godoc-open.sh` or `godoc -http localhost:1234`.
 
 ## Types
+
 Go's basic types are:
 
 - boolean: `bool`
@@ -18,7 +19,8 @@ Go's basic types are:
 - floating point numbers: `float32`, `float64`
 - complex numbers: `complex64`, `complex128`
 
-The *zero value* is:
+The _zero value_ is:
+
 - `0` for numeric types,
 - `false` for the boolean type, and
 - `""` (the empty string) for strings.
@@ -28,7 +30,7 @@ The *zero value* is:
     i := 42
     f := float64(i)
 
-A *type assertion* provides access to an interface value's underlying concrete
+A _type assertion_ provides access to an interface value's underlying concrete
 value.
 
     var i interface{} = "hello"
@@ -70,12 +72,11 @@ access a different set of methods.
         return fmt.Sprint([]int(s)) // convert to []int
     }
 
-
 ## Packages
 
 A convention is that the package name is the base name of its source directory;
 the package in `src/encoding/base64` is imported as `"encoding/base64"` but has
-name `base64`. This is a *convention*, it would have been perfectly ok to name
+name `base64`. This is a _convention_, it would have been perfectly ok to name
 the package `b64`.
 
 The importer of a package will use the name to refer to its contents, so
@@ -83,9 +84,10 @@ exported names in the package can use that fact to avoid stutter. For instance,
 the buffered reader type in the `bufio` package is called `Reader`, not
 `BufReader`, because users see it as `bufio.Reader`.
 
-
 ### Package organization
+
 Source:
+
 - https://github.com/bketelsen/gcru18-best/blob/master/PITCHME.md
   https://www.youtube.com/watch?v=MzTcsI6tn-0
 
@@ -102,9 +104,9 @@ Regarding naming, name your packages after what they provide, not what they
 contain. Remember that a package's name is both a description of its purpose,
 and a name space prefix.
 
-
 #### Library organization
-For *libraries*, packages should contain code with a single purpose (look at the
+
+For _libraries_, packages should contain code with a single purpose (look at the
 standard library): `archive`, `container`, `math`, `path`, `net`, `io`.
 
 - Packages names describe their purpose
@@ -115,18 +117,20 @@ standard library): `archive`, `container`, `math`, `path`, `net`, `io`.
   `encoding/pem`)
 
 #### Application organization
-For *applications*, the package organization is subtly different. The difference
+
+For _applications_, the package organization is subtly different. The difference
 is the command, the executable that ties all of those packages together. Most
 libraries focus on providing a singularly scoped function; logging, encoding,
 network access. Your application will tie all of those libraries together to
 create a tool or service, which will be much larger in scope.
 
-When building an *application*, you should organize your code into packages, but
+When building an _application_, you should organize your code into packages, but
 those packages should be centered on two categories:
+
 - Domain Types
 - Services
 
-*Domain Types* model your business functionality and objects. *Services* are
+_Domain Types_ model your business functionality and objects. _Services_ are
 packages that operate on or with the domain types.
 
 A domain type is the substance of your application. If you have an inventory
@@ -155,10 +159,10 @@ It involves 4 simple tenets:
 
 1. Root package is for domain types. Your application has a logical, high-level
    language that describes how data and processes interact. This is your
-   *domain*. Place domain types in the root package. This package only contains
+   _domain_. Place domain types in the root package. This package only contains
    simple data types like a `User` struct for holding user data or a
-   `UserService` interface for fetching or saving user data. *The root package
-   should not depend on any other package in your application!*
+   `UserService` interface for fetching or saving user data. _The root package
+   should not depend on any other package in your application!_
 
 2. Group subpackages by (external) dependency. Subpackages exist as an adapter
    between your domain and your implementation. Your `UserService` might be
@@ -188,9 +192,9 @@ https://github.com/katzien/go-structure-examples. The `domain-hex` show-cases a
 "hexagonal architecture" with the goal of creating loosely coupled application
 components, allowing parts to be modified locally without spreading across
 component boundaries, which only "communicate" via interfaces and a core domain
-model. This makes components exchangeable and facilitates test
-automation. ("clean architecture" is another similar approach, which borrows
-ideas from the hexagonal architecture).
+model. This makes components exchangeable and facilitates test automation.
+("clean architecture" is another similar approach, which borrows ideas from the
+hexagonal architecture).
 
 ### Package renaming
 
@@ -201,8 +205,8 @@ references updated (very tedious when done manually).
 
 Note: it appears to only work when the project is on your `GOPATH`.
 
-
 ## The init function
+
 Each source file can define one or more `init` functions to set up whatever
 state is required; `init` is called after all the variable declarations in the
 package have evaluated their initializers, and those are evaluated only after
@@ -225,17 +229,18 @@ themselves.
 
     import _ "github.com/lib/pq"   // postgresql
 
-
 ## Builtin
 
-Package `builtin` provides *documentation* (they aren't actually declared there)
+Package `builtin` provides _documentation_ (they aren't actually declared there)
 for built-in identifiers: https://golang.org/pkg/builtin/.
 
 Examples are:
+
 - output: `print`, `println`
 - slices: `append`, `copy`
 - map: `delete`
 - creation:
+
   - `new`: returns a pointer to a newly allocated zero value of type T. That is,
     it does not initialize the memory, it only zeros it. It's helpful to arrange
     your data structures such that the zero value can be used directly. Since
@@ -251,7 +256,7 @@ Examples are:
          var v SyncedBuffer      // type  SyncedBuffer
 
   - `make`: creates slices, maps, and channels only, and it returns an
-    initialized (not zeroed) value of type `T` (*not* `*T`).
+    initialized (not zeroed) value of type `T` (_not_ `*T`).
 
         a := make([]int, 5)    // len(a)=5, cap(a)=5
         b := make([]int, 0, 5) // len(b)=0, cap(b)=5
@@ -260,10 +265,9 @@ Examples are:
         ch := make(chan int)        // creates a 'chan int'
         m := make(map[string]int)   // creates a string->int map
 
-- size: `len`,  `cap`
+- size: `len`, `cap`
 - channels: `close(c chan<- Type)`
 - error handling: `panic`, `recover`
-
 
 ## Looping
 
@@ -321,7 +325,6 @@ Use a "type switch" to compare types instead of values:
     whatAmI(1)
     whatAmI("hey")
 
-
 Switch cases evaluate cases from top to bottom, stopping when a case succeeds.
 
     // does not call `f` if `i==0`.
@@ -331,7 +334,6 @@ Switch cases evaluate cases from top to bottom, stopping when a case succeeds.
     }
 
 Each `case` can be an expression. For example `today + 1`.
-
 
 ## Defer
 
@@ -387,6 +389,7 @@ return values.
 The formatted I/O from package `fmt` supports these format specifiers:
 
 General:
+
 - `%v`: the value in a default format.For compound objects, the elements are
   printed using these rules, recursively, laid out like this:
 
@@ -397,13 +400,15 @@ General:
 
 - `%+v`: same as `%v`, but When printing `struct`s, field names are written
 - `%#v`: a Go-syntax representation of the value.
-- `%T`:  a Go-syntax representation of the *type* of the value.
-- `%%`:  a literal percent sign; consumes no value
+- `%T`: a Go-syntax representation of the _type_ of the value.
+- `%%`: a literal percent sign; consumes no value
 
 Boolean:
+
 - `%t`: the word `true` or `false`.
 
 Integer:
+
 - `%b`: base 2
 - `%c`: the character represented by the corresponding Unicode code point
 - `%d`: base 10
@@ -414,9 +419,10 @@ Integer:
 - `%U`: Unicode format: U+1234; same as "U+%04X"
 
 Floating-point:
+
 - `%b`: decimalless scientific notation with exponent a power of two.
-- `%e`:  scientific notation (`-1.234456e+78`
-- `%E`:  scientific notation (`-1.234456E+78`)
+- `%e`: scientific notation (`-1.234456e+78`
+- `%E`: scientific notation (`-1.234456E+78`)
 - `%f`: decimal point but no exponent, e.g. `123.456`. Width is specified by an
   optional number immediately preceding the verb. Precision is specified after
   the (optional) width by a period followed by a number.
@@ -427,23 +433,24 @@ Floating-point:
         %9.2f  width 9, precision 2
         %9.f   width 9, precision 0
 
-- `%F`:  synonym for `%f`
-- `%g`:  `%e` for large exponents, `%f` otherwise.
-- `%G`:  `%E` for large exponents, `%F` otherwise
+- `%F`: synonym for `%f`
+- `%g`: `%e` for large exponents, `%f` otherwise.
+- `%G`: `%E` for large exponents, `%F` otherwise
 
 String and slice of bytes (treated equivalently with these verbs):
+
 - `%s`: the uninterpreted bytes of the string or slice
 - `%q`: a double-quoted string safely escaped with Go syntax
 - `%x`: base 16, lower-case, two characters per byte
 - `%X`: base 16, upper-case, two characters per byte
 
 Slice:
+
 - `%p`: address of 0th element in base 16 notation, with leading `0x`
 
 Pointer:
+
 - `%p`: base 16 notation, with leading `0x`
-
-
 
 ## Errors
 
@@ -511,7 +518,7 @@ the error implements an `Unwrap() error` method. Errors can be wrapped with the
         return fmt.Errorf("decompress %v: %w", name, err)
     }
 
-To inspect an error (chain), `errors.Is` and `errors.As` can be used.  In the
+To inspect an error (chain), `errors.Is` and `errors.As` can be used. In the
 simplest case, the `errors.Is` behaves like a comparison to a sentinel error,
 and `errors.As` function behaves like a type assertion.
 
@@ -539,6 +546,7 @@ Arrays are useful when planning the detailed layout of memory and sometimes can
 help avoid allocation, but primarily they are a building block for slices.
 
 Note though that:
+
 - Arrays are values. Assigning one array to another copies all the elements.
 - If you pass an array to a function, it will receive a copy of the array, not a
   pointer to it. If you want C-like behavior and efficiency, pass a pointer to
@@ -546,20 +554,19 @@ Note though that:
 - The size of an array is part of its type. The types `[10]int` and `[20]int`
   are distinct.
 
-
 ## Slices
 
 Slices wrap arrays to give a more general, powerful, and convenient interface to
 sequences of data. Slices hold references to an underlying array, and if you
-assign one slice to another, both refer to the same array.  Note: Go types read
+assign one slice to another, both refer to the same array. Note: Go types read
 from left to right `[]string` "slice of string".
 
-A slice has both a *length* and a *capacity*. The length of a slice is the
+A slice has both a _length_ and a _capacity_. The length of a slice is the
 number of elements it contains. The capacity of a slice is the number of
 elements in the underlying array, counting from the first element in the slice.
 
-The zero-value for a slice is `nil`, which in effect is a zero capacity
-slice. No need to use `make()`. Note that `append` works on `nil` slices.
+The zero-value for a slice is `nil`, which in effect is a zero capacity slice.
+No need to use `make()`. Note that `append` works on `nil` slices.
 
     var v []string
     v = append(v, "foo", "bar")  // we can append without make()
@@ -610,7 +617,6 @@ Search strings:
 
     sort.SearchStrings(strList, "baz")  // -> 2
 
-
 ## Maps
 
 The zero value of a map is `nil`. A `nil` map has no keys, nor can keys be
@@ -620,7 +626,6 @@ added. Use `make` to create a `map`.
     m["a"] = 1
     m["b"] = 2
     delete(m, "b")
-
 
 Map keys may be of any type that is comparable. The language spec defines this
 precisely, but in short, comparable types are boolean, numeric, string, pointer,
@@ -670,7 +675,7 @@ A `map[T]bool` is an idiomatic way of representing a set in Go.
 See https://golang.org/doc/effective_go.html#embedding
 
 Go does not provide subclassing, but it does have the ability to “borrow” pieces
-of an implementation by *embedding* types within a struct or interface.
+of an implementation by _embedding_ types within a struct or interface.
 
 Interface embedding is very simple.
 
@@ -751,9 +756,9 @@ Functions are values and can be passed around just like other values.
     }
     fmt.Println(compute(hypot))    // prints "5"
 
-A closure is a function value that references variables from outside its
-body. The function may access and assign to the referenced variables; in this
-sense the function is "bound" to the variables.
+A closure is a function value that references variables from outside its body.
+The function may access and assign to the referenced variables; in this sense
+the function is "bound" to the variables.
 
     func adder(start int) func(int) int {
         sum := start  // becomes part of the returned functions closure
@@ -767,8 +772,8 @@ sense the function is "bound" to the variables.
     fmt.Println(next(2))  // -> 3
     fmt.Println(next(1))  // -> 4
 
-Go does not have classes. However, you can define *methods* on types.  A method
-is a function with a *receiver argument*.
+Go does not have classes. However, you can define _methods_ on types. A method
+is a function with a _receiver argument_.
 
     type Vertex struct {
         X, Y float64
@@ -778,9 +783,9 @@ is a function with a *receiver argument*.
         return math.Sqrt(v.X*v.X + v.Y*v.Y)
     }
 
-You can declare a method on non-struct types, too. However, you can only
-declare a method with a receiver whose type is defined in the same package as
-the method, which prevents us from modifying built-in types such as `int`.
+You can declare a method on non-struct types, too. However, you can only declare
+a method with a receiver whose type is defined in the same package as the
+method, which prevents us from modifying built-in types such as `int`.
 
     type MyFloat float64
 
@@ -791,7 +796,7 @@ the method, which prevents us from modifying built-in types such as `int`.
         return float64(f)
     }
 
-You can declare methods with *pointer receivers* or *value receivers*.
+You can declare methods with _pointer receivers_ or _value receivers_.
 
     func (v Vertex) ScaleVal(f float64)  {
         v.X = v.X * f
@@ -820,17 +825,17 @@ Use pointer receivers when:
   far too expensive. It's a bit more complicated than pointers always being more
   efficient: modern computers are quick at copying memory, heap allocations are
   expensive (as can garbage collection be), so don't use pointers because you
-  *think* they might give you better performance (prove it by benchmarking!). If
+  _think_ they might give you better performance (prove it by benchmarking!). If
   memory copying is a limiting factor for you performance-wise, you're in a good
-  place. Default to using values except when you *need* the semantics a pointer
+  place. Default to using values except when you _need_ the semantics a pointer
   provides.
 
-Also, for a single type, *be consistent in the use of value/pointer receivers*.
+Also, for a single type, _be consistent in the use of value/pointer receivers_.
 
 The return values a Go function can be given names and used as regular
 variables, just like the incoming parameters. When named, they are initialized
 to the zero values for their types when the function begins; if the function
-executes a `return` statement without arguments (*naked return*), the current
+executes a `return` statement without arguments (_naked return_), the current
 values of the result parameters are used as the returned values.
 
     func split(sum int) (x, y int) {
@@ -839,12 +844,12 @@ values of the result parameters are used as the returned values.
         return
     }
 
-
 ## Generics
 
 See https://go.dev/blog/intro-generics
 
 Generics adds three things to the language:
+
 - Type parameters for function and types.
 - Defining interface types as sets of types, including types that don’t have
   methods.
@@ -854,7 +859,6 @@ Generics adds three things to the language:
 - Generic types:
 - Generic functions:
 - Type constraints:
-
 
 A generic type:
 
@@ -899,7 +903,6 @@ A generic type:
 
 A generic function:
 
-
     func Min[T constraints.Ordered](x, y T) T {
         if x < y {
             return x
@@ -914,8 +917,6 @@ A generic function:
         }
         return s
     }
-
-
 
 ## Strings
 
@@ -941,7 +942,6 @@ Split and join:
 Create an `io.Reader` from a string:
 
     strings.NewReader("hello world")
-
 
 ## Regular expressions
 
@@ -980,6 +980,7 @@ There are a few intersting functions:
          }
 
 `Regexp` has several methods:
+
 - `Match(b []byte) bool`: does `b` contain any match of the regexp?
 - `Find(b []byte) []byte`: leftmost match in `b` of the regexp
 - `FindAll(b []byte, n int) [][]byte`: all matches in `b` of the regexp.
@@ -1000,7 +1001,7 @@ There are a few intersting functions:
             fmt.Printf("matched: '%s'\n", m[1])
         }
 
-One can also use *named capture groups*, for example like so:
+One can also use _named capture groups_, for example like so:
 
     var (
         metaGopathPattern = regexp.MustCompile(`^(?P<importPrefix>\S+)\s+(?P<vcs>\S+)\s+(?P<repo>\S+)$`)
@@ -1027,7 +1028,6 @@ One can also use *named capture groups*, for example like so:
         vcs = getGroup(matches, "vcs")
         repoRoot = getGroup(matches, "repo")
 
-
 ## Time
 
 Parsing time is carried out via `time.Parse`:
@@ -1053,7 +1053,6 @@ defines the format via a reference time: `Mon Jan 2 15:04:05 -0700 MST 2006`.
 
     t4, _ := time.Parse(time.RFC3339, time4)
     fmt.Println(t4.UTC())
-
 
 ## Enumerations
 
@@ -1085,7 +1084,6 @@ similar fashion.
         return fmt.Sprintf("%.2fB", b)
     }
 
-
 ## Stack vs heap allocation
 
 Generally speaking, we want our data on the stack (for reasons of performance:
@@ -1102,7 +1100,6 @@ In current compilers, if a variable has its address taken, that variable is a
 candidate for allocation on the heap. However, a basic "escape analysis"
 recognizes some cases when such variables will not live past the return from the
 function and can reside on the stack.
-
 
 ## I/O and files
 
@@ -1156,8 +1153,6 @@ Read line-by-line with a `bufio.Reader`:
         }
     }
 
-
-
 ## JSON
 
 Reading and writing data is accomplished with the `encoding/json` package.
@@ -1172,8 +1167,8 @@ Decoding JSON into a data structure is done via `Unmarshal`:
 
 It is possible to annotate fields to customize how they are encoded/decoded:
 
-*NOTE: The json package only accesses exported fields of struct types (those
-that begin with an uppercase letter).*
+_NOTE: The json package only accesses exported fields of struct types (those
+that begin with an uppercase letter)._
 
     type Message struct {
         Name string     `json:"name"`
@@ -1189,9 +1184,9 @@ that begin with an uppercase letter).*
     var m2 Message
     err := json.Unmarshal(b, &m)
 
-
 Custom marshalling/unmarshalling for a user-defined type can be provided by
-writing `MarshalJSON` and `UnmarshalJSON` methods for the type.
+writing `MarshalJSON` and `UnmarshalJSON` methods for the type. This makes the
+type implement the `json.Marhsaler` and `json.Unmarshaler` interface.
 
     type Duration time.Duration
 
@@ -1269,8 +1264,6 @@ The following snippet shows how to read it element-by-element
             fmt.Printf("person %#v\n", person)
         }
 
-
-
 ## XML parsing
 
 Stream-based parsing (one entry at a time). Suitable for very large files.
@@ -1307,10 +1300,69 @@ Stream-based parsing (one entry at a time). Suitable for very large files.
         return nil
     }
 
+## Marshalling/Unmarshalling
+
+For custom types, there are a interfaces that can be implemented to support
+marshalling/unmarshalling values to/from different formats:
+
+- Text: `encoding.TextMarshaler`, `encoding.TextUnmarshaler`
+- JSON: `json.Marshaler`, `json.Unmarshaler`
+- SQL: `sql.Scanner`, `driver.Valuer`
+
+An example for JSON:
+
+    type Duration time.Duration
+
+    func (d Duration) MarshalJSON() ([]byte, error) {
+        return json.Marshal(fmt.Sprintf("%s", time.Duration(d)))
+    }
+
+    func (d *Duration) UnmarshalJSON(b []byte) error {
+        var v interface{}
+        if err := json.Unmarshal(b, &v); err != nil {
+            return err
+        }
+        switch value := v.(type) {
+        case float64:
+            *d = Duration(time.Duration(value))
+            return nil
+        case string:
+            tmp, err := time.ParseDuration(value)
+            if err != nil {
+                return err
+            }
+            *d = Duration(tmp)
+            return nil
+        default:
+            return errors.New("invalid duration")
+        }
+    }
+
+An example for SQL:
+
+    // Scan implements the sql.Scanner interface.
+    func (d *Duration) Scan(value interface{}) error {
+      s, ok := value.(string)
+      if !ok {
+        return fmt.Errorf("invalid duration")
+      }
+
+      parsed, err := time.ParseDuration(s)
+      if err != nil {
+        return err
+      }
+      *d = parsed
+      return nil
+    }
+
+    // Value implements the driver.Valuer interface.
+    func (d Duration) Value() (driver.Value, error) {
+      return d.String(), nil
+    }
 
 ## Database
 
-The `database/sql` package provides a generic interface around SQL(-like)
+he `database/sql` package provides a generic interface around SQL(-like)
 databases. A driver is needed to connect: http://golang.org/s/sqldrivers.
 
     import "database/sql"
@@ -1457,14 +1509,20 @@ have `NULL` values. For example, `sql.NullString`, `sql.NullInt`
         fmt.Printf("%s does not have a nickname", name)
     }
 
+## Database - custom marshalling/unmarshalling
+
+A type can implement `sql.Scanner` and `driver.Valuer` to allow custom
+unmarshalling/marshalling from/to database column values. See the section on
+Marshalling/Unmarshalling.
 
 ## Database - transactional API
+
 Oftentimes the service layer needs to be able to handle transaction demarcation,
 composing a transaction of database operations in a mix-and-match manner. For
 such scenarios, a transactional database API can be constructed. Several
 approaches are possible. For example:
 
-*Alternative 1*:
+_Alternative 1_:
 
     package mysvc
 
@@ -1544,7 +1602,7 @@ Usage of the above API would look something like:
         }
     }
 
-*Alternative 2*:
+_Alternative 2_:
 
     package mysvc
 
@@ -1613,8 +1671,8 @@ Usage of the above API would look something like:
         return nil     // Commit will happen
     })
 
-
 ## Logging
+
 There are many logging frameworks out there. The standard library `log` may
 suffice for simple cases, but when different log levels, output formats and
 structured logging is needed, something like `zerolog` is better.
@@ -1654,8 +1712,8 @@ structured logging is needed, something like `zerolog` is better.
          log.Msg("step 2") // => {"id":"2","rev":"abc123a","message":"step 2"}
     }
 
-
 ## Command-line parsing
+
 Simple command-line parsing can be done with the standard librar `flag` package:
 
     var flagvar int
@@ -1738,9 +1796,9 @@ The `flag` package can also be used to handle subcommands with `FlagSet`s:
         log.Fatalf(errUnexpectedSubcommand.Error())
     }
 
-For more complex command-line tools when you want to allow flags
-to be input either via command-line options or environment variables, the
-`viper/cobra` packages are useful:
+For more complex command-line tools when you want to allow flags to be input
+either via command-line options or environment variables, the `viper/cobra`
+packages are useful:
 
     // main.go
     func main() {
@@ -1800,9 +1858,7 @@ to be input either via command-line options or environment variables, the
         },
     }
 
-
 ## User input from stdio
-
 
     func Prompt(warning string) {
         fmt.Println(warning)
@@ -1832,10 +1888,9 @@ to be input either via command-line options or environment variables, the
         return strings.Trim(response, " \n")
     }
 
-
 ## Concurrency: Goroutines and channels
 
-A *goroutine* is lightweight, costing little more than the allocation of stack
+A _goroutine_ is lightweight, costing little more than the allocation of stack
 space. And the stacks start small, so they are cheap, and grow by allocating
 (and freeing) heap storage as required. Goroutines are multiplexed onto multiple
 OS threads so if one should block, such as while waiting for I/O, others
@@ -1850,7 +1905,7 @@ the execution of `f` happens in the new goroutine.
 
 Besides the well-known thread synchronization primitives such as `sync.Mutex`
 and `sync.Cond` Go offers a message-passing synchronization mechanism in
-*channels*. Go channels can be viewed as a type-safe generalization of Unix
+_channels_. Go channels can be viewed as a type-safe generalization of Unix
 pipes.
 
 Channels are a typed conduit through which you can send and receive values with
@@ -1861,6 +1916,7 @@ the channel operator, `<-` (data flows in the direction of the arrow).
                // assign value to v.
 
 Channels:
+
 - must be created before use (via `make`)
 - channels can be typed to only allow sending (`s chan<- int`) or receiving of
   values (`r <-chan int`)
@@ -1934,10 +1990,9 @@ A buffered channel:
     fmt.Println(<-ch)
     fmt.Println(<-ch)
 
-
-A `select` statement lets a goroutine wait on multiple communication
-operations. It blocks until one of its cases can run, then it executes that
-case. If multiple are ready one is chosen pseudo-randomly.
+A `select` statement lets a goroutine wait on multiple communication operations.
+It blocks until one of its cases can run, then it executes that case. If
+multiple are ready one is chosen pseudo-randomly.
 
 A `default` case in a select is run if no other case is ready, and can therefore
 be used to try a send or receive without blocking.
@@ -1990,7 +2045,6 @@ be used to try a send or receive without blocking.
         time.Sleep(1 * time.Second)
     }
 
-
 A `nil` channel is never ready.
 
     var c chan int // nil
@@ -2001,8 +2055,8 @@ A `nil` channel is never ready.
         fmt.Println("will always happen")
     }
 
-
 ### Concurrency patterns: async APIs with futures/promises
+
 To await the result/completion of a goroutine, use a result channel.
 
     type work struct{}
@@ -2030,8 +2084,8 @@ To await the result/completion of a goroutine, use a result channel.
         fmt.Printf("future result: %v\n", <-future)
     }
 
-
 ### Concurrency patterns: work queue
+
 A channel is a very natural work queue. To tell the workers that no more work is
 coming (and to quit and reclaim system resources), the work channel can be
 closed.
@@ -2063,9 +2117,8 @@ closed.
         time.Sleep(1 * time.Second)
     }
 
-
-
 ### Concurrency patterns: cancellation
+
 Without a mechanism for cancelling a (infinite loop) goroutine, there is no way
 to reclaim system resources. A quit channel is commonly used.
 
@@ -2093,6 +2146,7 @@ to reclaim system resources. A quit channel is commonly used.
     }
 
 ### Concurrency patterns: one-time await
+
 A collection of goroutines waiting for a certain condition can be signalled via
 closing a channel.
 
@@ -2127,8 +2181,8 @@ closing a channel.
         time.Sleep(3 * time.Second)
     }
 
-
 ### Concurrency patterns: periodical await
+
 Traditional condition variables have there place as well. For example, as a way
 of signalling many waiting goroutines of a condition/event.
 
@@ -2177,8 +2231,8 @@ of signalling many waiting goroutines of a condition/event.
         time.Sleep(10 * time.Second)
     }
 
-
 ### Concurrency patterns: pub/sub, observer
+
 A collection of listener channels is one way of achieving pub/sub or
 observer/observable behavior.
 
@@ -2230,8 +2284,8 @@ observer/observable behavior.
         time.Sleep(10 * time.Second)
     }
 
-
 ### Concurrency patterns: timeouts
+
 The `select` statement makes working with timeouts easy. Just forget to cancel
 started work (and release resources).
 
@@ -2270,8 +2324,8 @@ started work (and release resources).
         time.Sleep(100 * time.Millisecond)
     }
 
-
 ### Concurrency patterns: context
+
 The `context` package makes it easy to pass request-scoped values, cancelation
 signals, and deadlines across API boundaries to all the goroutines involved in
 handling a request. It comes in handy when a request needs to access additional
@@ -2279,15 +2333,14 @@ backend services (database, RPC) using common values (e.g. user credentials) and
 provides a convenient handle to cancel/time out all those related operations
 together to not waste system resources.
 
-It is safe for use by multiple goroutines. Code can pass a
-single `Context` to any number of goroutines and cancel that `Context` to signal
-all of them.
+It is safe for use by multiple goroutines. Code can pass a single `Context` to
+any number of goroutines and cancel that `Context` to signal all of them.
 
 `Background` is the root of any Context tree -- it is never canceled, has no
 deadline, and has no values. `WithCancel` and `WithTimeout` return derived
-`Context` values that can be canceled sooner than the parent
-`Context`. `WithValue` allows request-scoped key-value pairs to be passed along
-(thread context).
+`Context` values that can be canceled sooner than the parent `Context`.
+`WithValue` allows request-scoped key-value pairs to be passed along (thread
+context).
 
 An example.
 
@@ -2322,9 +2375,8 @@ An example.
         }
     }
 
-
-
 ## OS Signals
+
 To do proper cleanup of system resources when an interrupt signal is receied
 signal handling can be set up. For example:
 
@@ -2338,8 +2390,8 @@ signal handling can be set up. For example:
     log.Info().Msg("received signal, stopping server ...")
     server.Stop()
 
-
 ## Tests
+
 Tests are written in files ending in `_test.go` and use the `testing` package.
 
     import "testing"
@@ -2405,8 +2457,8 @@ goroutine and can do whatever setup and teardown is necessary around a call to
         os.Exit(c)
     }
 
-
 ## stretchr/testify
+
 Libraries like https://github.com/stretchr/testify can be used to simplify
 testing:
 
@@ -2444,7 +2496,6 @@ instead of returning a boolean result they terminate current test.
       // will not run
       require.Equal(t, 123, 123, "expected to be equal")
 
-
 One can also test that a given function panics:
 
         failingFunc := func() {
@@ -2453,10 +2504,10 @@ One can also test that a given function panics:
 
         assert.Panics(t, failingFunc)
 
-
 ## Mocking
-A simple `mock` package https://github.com/stretchr/testify#mock-package:
-As an example:
+
+A simple `mock` package https://github.com/stretchr/testify#mock-package: As an
+example:
 
     type Runner interface {
         // Run executes an external command as a sub-process.
@@ -2519,7 +2570,6 @@ For more advanced argument matchers one can use `mock.MatchedBy`:
         })
     }
 
-
 ## Versioning
 
 It is common to want a semantic version for a program (and to have the git
@@ -2575,8 +2625,8 @@ Then add something like this to your build (in this case, using `Makefile`):
         go build -ldflags "-X github.com/my/service/pkg/version.GitCommit=$(GIT_COMMIT)";
     ...
 
-
 ## gRPC
+
 gRPC relies on the protobuf compiler `protoc` version 3 to be installed as well
 as Go plugins for the protocol compiler `protoc-gen-go` and
 `protoc-gen-go-grpc`. To see which versions are installed run:
@@ -2589,33 +2639,32 @@ Exercising a gRPC endpoint can be done with `grpcurl`. For example:
     # non-tls, no reflection support in remote endpoint
     grpcurl -plaintext -proto service.proto  -d '{"input": "value"}' localhost:5100 my.Service/Hello
 
-
-
 ## Debugging
+
 When debugging Go programs built with the standard toolchain, `delve` is a
 better option than `gdb`, since it understands Go internals better.
 
-To debug a *program*, run `dlv debug` from your `main` package directory:
+To debug a _program_, run `dlv debug` from your `main` package directory:
 
     $ dlv debug [ -- PROGRAM-ARG ... ]
     Type 'help' for list of commands.
     (dlv)
 
-To debug a *source* run:
+To debug a _source_ run:
 
     $ dlv debug ./path/to/main.go
 
-To debug a *test*, run `dlv test` from within your package directory. For
+To debug a _test_, run `dlv test` from within your package directory. For
 example:
 
     dlv test --build-flags "-tags db" ./pkg/my/db/ -- -test.v -test.run TestQuery
-
 
 Delve compiles the program, starts itself and attaches to the program to start a
 debug session. Once at the prompt you can start interacting with the
 program/debug session.
 
 Common commands:
+
 - `break <locspec>`: set a breakpoint (`file:lineno`, `function[:lineno]`)
 - `breakpoints`: print all active breakpoints
 - `clear <breakpoint>`: delete a breakpoint
@@ -2634,9 +2683,9 @@ Common commands:
 - `down`: move current frame down
 - `up`: move current frame up
 
-- `[goroutine n] [frame m] args [-v]`:   print function arguments
+- `[goroutine n] [frame m] args [-v]`: print function arguments
 - `[goroutine n] [frame m] locals [-v]`: print local variables
-- `vars [-v]`:   print package variables
+- `vars [-v]`: print package variables
 
 - `sources`: print list of source files
 - `funcs`: print list of functions
@@ -2646,9 +2695,8 @@ Common commands:
 
 - `restart`: restart process
 
-
-
 ## Profiling
+
 A Go program can be collect and publish runtime profiling data, to help
 troubleshooting a program and/or get insight into the program's behavior with
 respect to:
@@ -2734,11 +2782,11 @@ your IDE (`gopls`) from a separate terminal.
     export GOFLAGS="-tags=integration,db"
 
 ## Modules
+
 Go modules is the prefered way of managing project dependencies.
 
     mkdir newproj ; cd newproj
     git init && go mod init github.com/my/newproj
-
 
 Generally, `go build` will update your `go.mod` file to include the libraries
 you depend on in your code (via `import`s) and make a "sensible" selection of
@@ -2780,6 +2828,7 @@ your local machine.
     )
 
 ### Private modules
+
 When our modules are kept in private github repos, we need to specify this with
 the `GOPRIVATE` environment variable:
 
@@ -2791,10 +2840,10 @@ When using private git repos, we need to pass sufficient credentials to `git` to
 be able to fetch the dependency (over `https`). This can be achieved in a couple
 of ways.
 
-Both rely on generating a personal access token
-(e.g. https://github.com/settings/tokens). NOTE: give the token read-only access
-to limit the damage if the token ends up in the wrong hands. In github, only
-check the `repo` scope (and its sub-fields).
+Both rely on generating a personal access token (e.g.
+https://github.com/settings/tokens). NOTE: give the token read-only access to
+limit the damage if the token ends up in the wrong hands. In github, only check
+the `repo` scope (and its sub-fields).
 
 - Modify the `git` client to use this access token when accesing repos matching
   a given pattern:
@@ -2805,8 +2854,6 @@ check the `repo` scope (and its sub-fields).
   servers.
 
         machine github.com login ${USER} password ${ACCESS_TOKEN}
-
-
 
 ## Module proxy
 
