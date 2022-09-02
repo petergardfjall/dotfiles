@@ -25,6 +25,9 @@ if ${enable}; then
     # set window scaling factor x2 (> Appearance > Settings)
     # xfconf-query -c xsettings -p /Gdk/WindowScalingFactor -s 2
 
+    # use a high-dpi friendly window manager theme
+    xfconf-query -c xfwm4 -p /general/theme -s Default-hdpi
+
     # Scale mouse cursor: 24 -> 48 pixels (> Mouse > Theme).
     xfconf-query -c xsettings -p /Gtk/CursorThemeSize -s 48
     # Scale window titles.
@@ -56,6 +59,9 @@ else
     echo "Disabling High-DPI settings ..."
     # Set normal window scaling factor x1 (> Appearance > Settings).
     xfconf-query -c xsettings -p /Gdk/WindowScalingFactor -s 1
+
+    # use a default window manager theme
+    xfconf-query -c xfwm4 -p /general/theme -s Greybird
 
     # Default size mouse cursor: 24 pixels (> Mouse > Theme).
     xfconf-query -c xsettings -p /Gtk/CursorThemeSize -s 24
