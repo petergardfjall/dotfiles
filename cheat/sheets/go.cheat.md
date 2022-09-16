@@ -1434,7 +1434,7 @@ To ensure that a transaction is always commited or rolled back (to ensure that
 the underlying database connection isn't leaked), and to reduce the amount of
 code, the following pattern can be used.
 
-    package tx
+    package database
 
     // TxFunc is a function that operates on a database through an (opened)
     // transaction. The function should not close the transaction itself.
@@ -1478,7 +1478,6 @@ code, the following pattern can be used.
         return
     }
 
-
     ...
 
     // executes within a transaction with guaranteed cleanup
@@ -1517,12 +1516,15 @@ Marshalling/Unmarshalling.
 
 ## Database - transactional API
 
-Oftentimes the service layer needs to be able to handle transaction demarcation,
+Often the service layer needs to be able to handle transaction demarcation,
 composing a transaction of database operations in a mix-and-match manner. For
-such scenarios, a transactional database API can be constructed. Several
+such scenarios, a transactional database API must be constructed. Several
 approaches are possible. For example:
 
-_Alternative 1_:
+### Alternative 1: explicit transaction demarcation
+
+This approach requires the client to always open a new transaction and
+commit/rollback as part of the data store interface.
 
     package mysvc
 
@@ -1587,38 +1589,142 @@ Usage of the above API would look something like:
     tx, _ := db.Begin()
     defer tx.Rollback() // note: won't have an effect if Commit gets called.
     {
-        err := tx.InsertUser(u)
-        if err != nil {
-            return err
-        }
-
-        err := tx.InsertGroup(g)
-        if err != nil {
-            return err
-        }
-
-        if err := tx.Commit(); err != nil {
-            return err
-        }
+        _ = tx.InsertUser(u)
+        _ = tx.InsertGroup(g)
+        _ = tx.Commit()
     }
 
-_Alternative 2_:
+### Alternative 2: explicit transactions or "auto-commit"
 
-    package mysvc
-
-    type TxnFunc func(tx Txn) error
+Although the most flexible approach, it requires dual implementations of each
+operation (one for Session and one for TxnSession). Although Session can be
+defined in terms of TxnSession it does lead to some additional code.
 
     // Database is a persistent data store.
     type Database interface {
-        // InTxn opens a transaction and passes that transaction to the function
-        // fn, which is free to call any database operations and have them
+        // Close closes the database and frees system resources. After a
+        // call to Close the Database should not be used further.
+        Close() error
+
+        // Do returns a auto-commit/non-transactional session where each
+        // executed method is performed in a separate commit.
+        Do(ctx context.Context) Session
+
+        // Begin opens a transactional session that operates on the database in
+        // a single commit that spans potentially several method calls. The
+        // caller is responsible for calling Commit/Rollback or the
+        // connection will leak.
+        Begin(ctx context.Context) (TxnSession, error)
+    }
+
+    // Session allows operations to be executed on a Database.
+    type Session interface {
+        InsertUser(u User) error
+        InsertGroup(g Group) error
+    }
+
+    // TxnSession performs a sequence of database operations atomically.
+    // A TxnSession is started by a call to Database.Begin and must be
+    // closed by a call to Commit or Rollback or the connection will leak.
+    type TxnSession interface {
+        // Commit saves changes to the Database. A Commit call after Rollback
+        // is a no-op.
+        Commit() error
+        // Rollback cancels the changes introduced in the TxnSession. A call to
+        // Rollback after Commit is a no-op.
+        Rollback() error
+
+        Session
+    }
+
+An implementation might look something like:
+
+    package postgres
+
+    // Database
+
+    var _ Database = &database{}
+
+    type database struct {
+        *sql.DB
+    }
+
+    func (db *database) Begin(ctx context.Context) (TxnSession, error) {
+        tx, err := db.DB.Begin()
+        if err != nil {
+            return nil, err
+        }
+        return &txnSession{Tx:  tx, ctx: ctx}, nil
+    }
+
+    func (d *Database) Do(ctx context.Context) Session {
+        return &nonTxnSession{Database: d, ctx: ctx}
+    }
+
+    // TxnSession
+
+    var _ TxnSession = &txnSession{}
+
+    type txnSession struct {
+        *sql.Tx  // Commit and Rollback come "for free".
+         ctx context.Context
+    }
+
+    func (s *txnSession) InsertUser(u User) error { ... }
+
+    // Session
+
+    var _ Session = &nonTxnSession{}
+
+    type nonTxnSession struct {
+        *Database
+        ctx context.Context
+    }
+
+    // note: nonTxnSession makes use of txnSession to commit each operation.
+    func (s *nonTxnSession) InsertUser(u User) error {
+        return s.inTx(s.ctx, func(tx TxnSession) error {
+            return tx.InsertUser(root)
+        })
+    }
+
+    func (s *nonTxnSession) inTx(ctx context.Context, fn func(TxnSession) error) error {
+        tx, err := s.Begin(ctx) // start a TxnSession
+        if err != nil {
+            return fmt.Errort("begin transaction: %w", err)
+        }
+        return database.InTxn(tx, fn) // commits/rolls back TxnSession
+    }
+
+Usage of the above API would look something like:
+
+    db, _ := mysvc.OpenDatabase(..)
+    // Auto-commit API
+    _ = db.Do().InsertUser(u)
+    _ = db.Do().InsertGroup(g)
+
+    // Transactional API
+    tx, _ := db.Begin()
+    defer tx.Rollback() // note: won't have an effect if Commit gets called.
+    {
+        _ = tx.InsertUser(u)
+        _ = tx.InsertGroup(g)
+        _ = tx.Commit()
+    }
+
+### Alternative 3: transaction as a function closure
+
+    // Database is a persistent data store.
+    type Database interface {
+        // InTxn opens a Txn and passes that Txn to the function fn,
+        // which is free to call any Txn operations and have them
         // performed within the transaction. The transaction gets closed on
         // return/panic, either by commiting (on nil return) or by rolling back
         // (on error return/panic).
-        InTxn(fn TxnFunc) error
+        InTxn(func(s Txn) error) error
     }
 
-    // Txn is a transactional context for Database created with a call to
+    // Txn is a transactional Database session created with a call to
     // Database.InTxn(). A Txn client can execute any combination of operations
     // within the boundaries of a single transaction. The transaction does not
     // need to be closed by the client (it is closed by the InTxn function).
@@ -1632,18 +1738,20 @@ An implementation might look something like:
 
     package postgres
 
+    var _ Database = &database{}
+
     type database struct {
         *sql.DB
     }
 
-    func (db *database) InTxn(fn mysvc.TxnFunc) error {
-         return tx.InNewTx(db, func(tx *sql.Tx) error {
+    func (db *database) InTxn(fn func(Txn) error {
+         return InNewTx(db, func(tx *sql.Tx) error {
              return fn(&txn{tx})
          })
     }
 
     // enforce interface at compile time.
-    var _ mysvc.Txn = &txn{}
+    var _ Txn = &txn{}
 
     // implements mysvc.Txn interface (while being a sql.Tx)
     type txn struct {
