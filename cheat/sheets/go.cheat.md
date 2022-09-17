@@ -2678,6 +2678,20 @@ For more advanced argument matchers one can use `mock.MatchedBy`:
         })
     }
 
+Or another example to matching anything but an exceptional case. This can be
+useful to mock success for a particular value and errors for all others.
+
+    store := mocks.NewStore()
+    store.On("GetItem", itemID).Return(item, nil)
+    store.On("GetItem", anyIDExcept(itemID)).Return(nil, ErrItemNotFound)
+
+    // argument matcher that match all IDs except one particular.
+    func anyIDExcept(ignoreID ItemID) interface{} {
+        return mock.MatchedBy(func(got ItemID) bool {
+            return got != ignoreID
+        })
+    }
+
 ## Versioning
 
 It is common to want a semantic version for a program (and to have the git
