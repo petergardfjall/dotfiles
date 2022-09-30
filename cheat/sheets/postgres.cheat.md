@@ -2,7 +2,6 @@
 
 To pass a password over command-line without being prompted run
 
-
     export PGUSER=postgres PGPASSWORD=password PGHOST=localhost PGDATABASE=mydb
     psql ...
 
@@ -14,18 +13,21 @@ To use postgres over SSL the following environment variables can be used:
     PGSSLROOTCERT="server-ca.pem"
 
 Useful `psql` command-line flags:
+
 - `-t`: tuples only (don't show headers nor footers)
 
 Useful prompt commands:
-- Turn off paging:     `\pset pager 0`
-- No column headers:   `\pset tuples_only`
-- No query footer:     `\pset footer off`
-- List databases:      `\l`
+
+- Turn off paging: `\pset pager 0`
+- No column headers: `\pset tuples_only`
+- No query footer: `\pset footer off`
+- List databases: `\l`
 - Connect to database: `\c <database>`
-- List tables:         `\d`
-- Show table schema:   `\d <table>`
+- List tables: `\d`
+- Show table schema: `\d <table>`
 
 ## Types
+
 A few common data types:
 
 - `bigint` (`int8`): signed eight-byte integer
@@ -35,9 +37,9 @@ A few common data types:
 - `character varying [n]` (`varchar [n]`): variable-length character string
 - `cidr`: IPv4 or IPv6 network address
 - `date`: calendar date (year, month, day)
-- `double precision` (`float8`):  double precision floating-point number
+- `double precision` (`float8`): double precision floating-point number
 - `inet`: IPv4 or IPv6 host address
-- `integer`(`int`, `int4`):   signed four-byte integer
+- `integer`(`int`, `int4`): signed four-byte integer
 - `json`: textual JSON data
 - `jsonb`: binary JSON data, decomposed
 - `text`: variable-length character string
@@ -66,6 +68,20 @@ Create table:
       FOREIGN KEY (country) REFERENCES countries(country) ON DELETE CASCADE
     );
 
+### Access rights/Permissions
+
+Grant all privileges on a database to a given user:
+
+    GRANT ALL PRIVILEGES ON DATABASE ${db} TO ${username};
+
+Grant all privileges on all tables in a schema:
+
+    GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA ${schema_name} TO ${username};
+
+Grant select statement privileges access on tables:
+
+    GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA ${schema_name} TO ${username};
+    GRANT SELECT ON ALL TABLES IN SCHEMA public TO read_only;
 
 ### Indices
 
@@ -93,12 +109,10 @@ Create a unique index (no duplicate values) on a column:
 
     CREATE UNIQUE INDEX title_idx ON films (title);
 
-
 ## Destruction
 
     DROP DATABASE <database>;
     DROP TABLE downloads CASCADE;
-
 
 ## Alter schema
 
@@ -118,7 +132,6 @@ Create a unique index (no duplicate values) on a column:
         ALTER TABLE downloads DROP COLUMN start_time;
         -- reconstruct PK
         ALTER TABLE downloads ADD PRIMARY KEY (id, url);
-
 
 - change column type
 
@@ -160,7 +173,6 @@ Create a unique index (no duplicate values) on a column:
             END LOOP;
         END;
         $$;
-
 
 ## Queries
 
@@ -208,7 +220,6 @@ and `with_query` is:
 
     TABLE [ ONLY ] table_name [ * ]
 
-
 Examples:
 
 To (inner) join the table `films` with the table `distributors`:
@@ -230,7 +241,6 @@ NULL from the right side, if there is no match.
     SELECT column_name(s)
     FROM table1 LEFT JOIN table2 ON table1.column_name = table2.column_name;
 
-
 `GROUP BY` groups rows that have the same values into summary rows and is often
 combined with aggregate functions (`COUNT`, `MAX`, `MIN`, `SUM`, `AVG`) to group
 the result-set by one or more columns.
@@ -247,8 +257,6 @@ Use `UNION` to combine result sets (with identical column types):
     SELECT column_name(s) FROM table1
     UNION
     SELECT column_name(s) FROM table2;
-
-
 
 ## Inserts
 
@@ -272,7 +280,6 @@ and `conflict_action` is one of:
                   } [, ...]
               [ WHERE condition ]
 
-
 Examples:
 
     insert into pkgs (pkg) values ('pkg:purl');
@@ -288,7 +295,6 @@ For example, moving values from a `{id, enable_cache, enable_tls}` table to a
     INSERT INTO opts (id, key, value)
         SELECT id, 'enable_tls', enable_tls FROM config;
 
-
 ## Updates
 
     [ WITH [ RECURSIVE ] with_query [, ...] ]
@@ -300,7 +306,6 @@ For example, moving values from a `{id, enable_cache, enable_tls}` table to a
         [ FROM from_item [, ...] ]
         [ WHERE condition | WHERE CURRENT OF cursor_name ]
         [ RETURNING * | output_expression [ [ AS ] output_name ] [, ...] ]
-
 
 ## Work queues
 
@@ -326,11 +331,9 @@ is eligble for consumption by another worker.
 
     COMMIT;
 
-
 ## Show table creation DDL
 
     pg_dump -t 'schema-name.table-name' --schema-only database-name
-
 
 ## Backup/restore
 
@@ -359,7 +362,6 @@ Restore/recreate database from dump:
     echo "DROP DATABASE db" | psql --host localhost --username=admin
     echo "CREATE DATABASE db" | psql --host localhost --username=admin
     cat db.dump |  psql --host localhost --username=admin db
-
 
 ## System
 
