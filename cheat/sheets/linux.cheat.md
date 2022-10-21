@@ -1,6 +1,6 @@
 # About
-This document contains an unsorted collection of linux-related admin tasks.
 
+This document contains an unsorted collection of linux-related admin tasks.
 
 ## User management
 
@@ -19,14 +19,12 @@ System users:
     sudo adduser --system sysuser
     sudo addgroup --system sysgroup
 
-
 ## Key management
 
 Create an `ssh` key:
 
     ssh-keygen -f mykey
     ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
-
 
 ## Processes
 
@@ -59,33 +57,56 @@ To see consumption of system resources per cgroup:
     systemd-cgtop -p
 
 ### cgroup slices
+
 `systemd.slice(5)` systemd unit files can be used to define a custom cgroup
 configuration. They must be placed in a systemd directory, such as
 `/etc/systemd/system/`. The resource control options that can be assigned are
 documented in `systemd.resource-control(5)`.
 
+Also see https://wiki.archlinux.org/title/cgroups.
+
+To check that resource limits work on your kernel you can run
+
+    sudo apt install stress
+    # This works
+    sudo systemd-run -p CPUQuota=400% --wait -- stress -c 8 --timeout 10s
+    sudo systemd-run -p AllowedCPUs=0-2 --wait -- stress -c 8 --timeout 10s
+
+and watch the load being spread over 8 CPUs but not exceeding the set limits.
+
 For example, to limit the resource consumption of docker engine:
 
-    cat > /etc/systemd/system/docker-limit.slice <<EOF
+    cat > /etc/systemd/system/docker_limit.slice <<EOF
     [Unit]
     Description=Slice that limits docker resources
     Before=slices.target
     [Slice]
     # see systemd.resource-control(5)
     CPUAccounting=true
-    CPUQuota=700%       # only allow 7 cpus to be used
+    CPUQuota=600%       # only allow 6 cpus to be used
+    AllowedCPUs=0-5     # only allow cpus 0,1,2,3,4,5 to be used (/proc/cpuinfo)
     MemoryAccounting=true
-    MemoryHigh=15G      # memory throttling starts
-    MemoryLimit=16G     # only allow 16 GB to be used
+    MemoryHigh=10G      # memory throttling starts
+    MemoryMax=12G       # only allow 12 GB to be used
+
     EOF
 
     # needs to be run to pick up new or changed `.slice` files.
     systemctl daemon-reload
+    systemctl restart docker.service
 
     # in the docker case we also need to update docker to use the slice
     # as its parent cgroup
-    echo '{"cgroup-parent": "/docker_limit.slice"}' > /etc/docker/daemon.json
-    systemctl restart docker.service
+    echo '{"cgroup-parent": "docker_limit.slice"}' > /etc/docker/daemon.json
+
+    # verify slice
+    sudo systemctl cat docker_limit.slice
+    sudo systemd-run --slice=docker_limit.slice --wait -- stress -c 8 --timeout 30s
+
+To check that the limits work you can run the following command and verify that
+it does not get more than the configured CPU limits.
+
+    docker run --rm -it progrium/stress --cpu 8 --timeout 60s
 
 cgroups resources can be runtime-adjusted using `systemctl set-property` (syntax
 as described in `systemd.resource-control(5)`).
@@ -102,13 +123,17 @@ Use `--runtime` to prevent changes from being persisted in a drop-in file under
     # works without `/docker/` also (just the container id)
     systemctl show /docker/ed2c3062552190f9aeec89956330dfef522cf2f12edb903826d5d457e4bc6249
 
-Warning: The adjustments will be made permanent unless --runtime option is passed. Adjustments are saved at /etc/systemd/system.control/ for system wide options and .config/systemd/user.control/ for user options.
-Note: Not all resources changes immediately take effect. For example, changing TaskMax will only take effect on spawning new processes.
-For example, cutting off internet access for all user sessions:
+Warning: The adjustments will be made permanent unless --runtime option is
+passed. Adjustments are saved at /etc/systemd/system.control/ for system wide
+options and .config/systemd/user.control/ for user options. Note: Not all
+resources changes immediately take effect. For example, changing TaskMax will
+only take effect on spawning new processes. For example, cutting off internet
+access for all user sessions:
 
-$ systemctl set-property user.slice IPAddressDeny=any
+    $ systemctl set-property user.slice IPAddressDeny=any
 
 ## Disk usage
+
 Report system disk space usage:
 
     # for all partitions
@@ -121,7 +146,6 @@ Disk usage in a directory tree
     # note: the -h flag to `sort`
     du -h | sort -h
     du -h --max-depth=1 | sort -h
-
 
 ## Filesystem encryption
 
@@ -191,7 +215,6 @@ To encrypt a home directory:
     cp -a -T /home/<user>.original /home/<user>
     rm -rf /home/<user>.original
 
-
 ## Docker
 
 Remove unused docker data. This will remove all stopped containers, all networks
@@ -199,7 +222,6 @@ not used by at least one container, all dangling images, all dangling build
 cache.
 
     docker system prune
-
 
 ## Archiving
 
@@ -268,19 +290,19 @@ network interfaces) can be obtained with:
 
     lshw -short
 
-*CPU details*: either `lshw -C cpu` or `lscpu`.
+_CPU details_: either `lshw -C cpu` or `lscpu`.
 
     sudo lshw -C cpu
     lscpu | grep -i "Model name"
 
-*Memory details*: either `dmidecode -t memory` or `lshw -C memory`
+_Memory details_: either `dmidecode -t memory` or `lshw -C memory`
 
     # list each memory stick and its capacity
     sudo dmidecode -t memory
     # show cache sizes and memory cards
     sudo lshw -short -C memory
 
-*Disks and filesystems*:
+_Disks and filesystems_:
 
     # display one line for each disk device
     sudo lshw -short -C disk
@@ -291,7 +313,7 @@ network interfaces) can be obtained with:
     # list disks (devices and mountpoints) with used space
     df -h
 
-*Network*:
+_Network_:
 
     # shod details about network card
     sudo lshw -C network
@@ -310,8 +332,7 @@ network interfaces) can be obtained with:
     # list open tcp and udp listening ports and the owning processes
     sudo netstat -lnptu
 
-
-*PCI devices*: `lspci` shows information about PCI buses and connected devices.
+_PCI devices_: `lspci` shows information about PCI buses and connected devices.
 
     # list all PCI devices with domain/bus/device identifiers (like '00:00.0')
     # in the left-most column. for example search for graphics card
@@ -322,6 +343,7 @@ network interfaces) can be obtained with:
     sudo lspci -v -s 01:00.0
 
 ## Performance troubleshooting commands
+
 At the Netflix Performance Engineering team, the first 60 seconds of an
 optimized performance investigation at the command line might look like this:
 
@@ -355,16 +377,15 @@ optimized performance investigation at the command line might look like this:
     as it does not include I/O. To interpret: an `r` value greater than the CPU
     count is saturation.
 
-   - `free`: Free memory in kilobytes. If there are too many digits to count,
-     you have enough free memory. Use `free -mh` for more details.
+  - `free`: Free memory in kilobytes. If there are too many digits to count, you
+    have enough free memory. Use `free -mh` for more details.
 
-   - `si`, `so`: Swap-ins and swap-outs. If these are non-zero, you're out of
-     memory.
+  - `si`, `so`: Swap-ins and swap-outs. If these are non-zero, you're out of
+    memory.
 
-   - `us`, `sy`, `id`, `wa`, `st`: breakdowns of CPU time, on average across all
-     CPUs. They are user time, system time (kernel), idle, wait I/O, and stolen
-     time (by other guests, or with Xen, the guest's own isolated driver
-     domain).
+  - `us`, `sy`, `id`, `wa`, `st`: breakdowns of CPU time, on average across all
+    CPUs. They are user time, system time (kernel), idle, wait I/O, and stolen
+    time (by other guests, or with Xen, the guest's own isolated driver domain).
 
   The CPU time breakdowns will confirm if the CPUs are busy, by adding user +
   system time. A constant degree of wait I/O points to a disk bottleneck; this
@@ -374,14 +395,12 @@ optimized performance investigation at the command line might look like this:
 
   System time is necessary for I/O processing. A high system time average, over
   20%, can be interesting to explore further: perhaps the kernel is processing
-  the I/O inefficiently.  If CPU time is almost entirely in user-level, that
+  the I/O inefficiently. If CPU time is almost entirely in user-level, that
   points to application level usage instead.
-
 
 - `mpstat -P ALL 1`: prints CPU time breakdowns per CPU, which can be used to
   check for an imbalance. A single hot CPU can be evidence of a single-threaded
   application.
-
 
 - `pidstat 1`: a little like `top`'s per-process summary, but prints a rolling
   summary instead of clearing the screen. This can be useful for watching
@@ -420,7 +439,8 @@ optimized performance investigation at the command line might look like this:
   and txkB/s, as a measure of workload, and also to check if any limit has been
   reached. Look for high bandwidths and high `%ifutil`.
 
-- `sar -n TCP,ETCP 1`: This is a summarized view of some key TCP metrics. These include:
+- `sar -n TCP,ETCP 1`: This is a summarized view of some key TCP metrics. These
+  include:
 
   - `active/s`: Num locally-initiated TCP connections/s (`connect()`s).
 
@@ -443,20 +463,17 @@ optimized performance investigation at the command line might look like this:
   indicate that load is variable.
 
   A downside is that it is harder to see patterns over time, which may be more
-  clear in tools like `vmstat` and `pidstat`, which provide rolling
-  output. Evidence of intermittent issues can also be lost if you don't pause
-  the output quick enough (`Ctrl-S` to pause, `Ctrl-Q` to continue), and the
-  screen clears.
-
+  clear in tools like `vmstat` and `pidstat`, which provide rolling output.
+  Evidence of intermittent issues can also be lost if you don't pause the output
+  quick enough (`Ctrl-S` to pause, `Ctrl-Q` to continue), and the screen clears.
 
 ## Network troubleshooting
-TODO: Other tools useful for network troubleshooting: `iftop`, `bmon`
-`ifconfig` `ip link show`
-`ip route | column -t`, `route`
-`netstat`
-`lsof`
+
+TODO: Other tools useful for network troubleshooting: `iftop`, `bmon` `ifconfig`
+`ip link show` `ip route | column -t`, `route` `netstat` `lsof`
 
 ## Fonts
+
 List available fonts:
 
     fc-list
@@ -471,11 +488,11 @@ either `/usr/share/fonts/` (global installation) or `~/.local/share/fonts/`
     # regenerate font cache
     fc-cache -f
 
-
 ## Copy changed files
+
 Sometimes one wants to copy all changes made to a directory in one place (say
-host A) and apply those changes to a different directory (say on host
-B). `rsync` can be used for this:
+host A) and apply those changes to a different directory (say on host B).
+`rsync` can be used for this:
 
     # NOTE the trailing slash (it means 'the contents of path' rather than
     # 'path' itself)
@@ -491,40 +508,40 @@ mirror all `.json` files in a directory structure from `${dirA}` to `${dirB}`:
     # trailing slash in source dir => avoid create root-dir in destination
     rsync --update -zav --prune-empty-dirs --delete-after --include "*/" --include="*.json" --exclude="*"  "${dirA}/" "${dirB}"
 
-
 ## Laptop as desktop
+
 When the laptop is used as a desktop computer (connected to an external display)
 it's nice to be able to run with the lid closed to keep things tidy looking.
 
-1. Prevent machine from suspending when lid is closed. Add the following setting
-   to `/etc/systemd/logind.conf`:
+1.  Prevent machine from suspending when lid is closed. Add the following
+    setting to `/etc/systemd/logind.conf`:
 
-        HandleLidSwitch=ignore
+         HandleLidSwitch=ignore
 
-   Restart the login daemon: `sudo systemctl restart systemd-logind` for the
-   setting to take effect.
+    Restart the login daemon: `sudo systemctl restart systemd-logind` for the
+    setting to take effect.
 
-   *NOTE*: also make sure there are no xfce power manager user settings that
-   could interfere.
+    _NOTE_: also make sure there are no xfce power manager user settings that
+    could interfere.
 
-2. Next, we'd like the lock screen to not blank and freeze: Update
-   `/usr/bin/xflock4`: make sure it runs the lightdm greeter by adding this
-   first in the list processed by the `for lock_cmd in` loop:
+2.  Next, we'd like the lock screen to not blank and freeze: Update
+    `/usr/bin/xflock4`: make sure it runs the lightdm greeter by adding this
+    first in the list processed by the `for lock_cmd in` loop:
 
-        dm-tool switch-to-greeter
+         dm-tool switch-to-greeter
 
-3. For the lightdm greeter to appear on the display where the cursor is at, we
-   set `active-monitor=#cursor` in `/etc/lightdm/lightdm-gtk-greeter.conf`.
-
+3.  For the lightdm greeter to appear on the display where the cursor is at, we
+    set `active-monitor=#cursor` in `/etc/lightdm/lightdm-gtk-greeter.conf`.
 
 ## List kernel configuration
+
 Kernal configuration parameters/variables, such as `CONFIG_FS_ENCRYPTION`, can
 be found via:
 
     cat /boot/config-$(uname -r)
 
-
 ## Close user processes on logout
+
 If `systemd` is built with `--without-kill-user-processes`, setting
 `KillUserProcesses` is set to no by default. This setting causes user processes
 not to be killed when the user logs out. To change this behavior in order to
