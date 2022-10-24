@@ -81,14 +81,12 @@ For example, to limit the resource consumption of docker engine:
     Description=Slice that limits docker resources
     Before=slices.target
     [Slice]
-    # see systemd.resource-control(5)
+    # Only allow 6 cpus to be used. See systemd.resource-control(5).
     CPUAccounting=true
-    CPUQuota=600%       # only allow 6 cpus to be used
-    AllowedCPUs=0-5     # only allow cpus 0,1,2,3,4,5 to be used (/proc/cpuinfo)
+    CPUQuota=400%
     MemoryAccounting=true
-    MemoryHigh=10G      # memory throttling starts
-    MemoryMax=12G       # only allow 12 GB to be used
-
+    MemoryHigh=20G
+    MemoryMax=22G
     EOF
 
     # needs to be run to pick up new or changed `.slice` files.
