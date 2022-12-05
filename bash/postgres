@@ -1,0 +1,7 @@
+#
+# 'pg-local mydatabase' sets up environment varaiables for accessing a local
+# development database with 'psql'.
+#
+function pg-local() {
+	 export PGUSER=postgres PGPASSWORD=password PGHOST=localhost PGDATABASE=${1}
+}
