@@ -576,6 +576,19 @@ To modify the third to last commit:
     # rewrite the rest of the commits on top of the new one
     git rebase --continue
 
+To split a commit far back on the current branch into several:
+
+    git rebase -i master
+    # opens rebase editor: select 'e' for commit to be split in two
+    # unstage the commit
+    git reset HEAD~1
+    # add some changes to one commit
+    git add -p ; git commit -m "split commit 1"
+    # add remaining changes to another commit
+    git add -p ; git commit -m "split commit 2"
+    # rebase the rest on top of those commits
+    git rebase --continue
+
 ## Undo an already pushed commit
 Reverts a given commit by adding a new "anti-commit" to the commit history.
 
