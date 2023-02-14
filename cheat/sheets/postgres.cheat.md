@@ -96,18 +96,31 @@ The `USING method` can specify one of the built-in index types: `btree`
 
 Examples:
 
-Create a B-tree index on the `download` table's `url` column (will be named
-`downloads_url_idx`).
+- Hash indexes handle equality comparisons (`=`). A hash index is considered
+  whenever an indexed column is involved in a comparison using the `=` operator.
 
-    CREATE INDEX ON downloads(url)
+        CREATE INDEX download_url_idx ON downloads USING HASH (url);
 
-Explicit naming of index:
+        -- apply index to a particular string field in a JSONB column
+        CREATE INDEX prop_name_idx ON matches USING HASH ((props->>'name'));
 
-    CREATE INDEX url_idx ON downloads(url);
+- B-tree indexes can handle a wide range of queries and orderings. The index is
+  used whenever an indexed column is involved in a comparison using either of
+  operators `<` `<=` `=` `>=` `>`.
 
-Create a unique index (no duplicate values) on a column:
+        CREATE INDEX download_site_idx ON downloads USING BTREE (site);
 
-    CREATE UNIQUE INDEX title_idx ON films (title);
+        -- apply index to a particular int field in a JSONB column
+        CREATE INDEX prop_byte_start_idx ON matches USING BTREE (((props->'byteStart')::int4));
+
+- A GIN index can for example be used for many columns containing multiple
+  component values, such as `ARRAY`, `HSTORE` or `JSONB` columns. It is
+  considered for operators testing for presence of component values like: `<@`,
+  `@>`, `=`, `&&`.
+
+        -- Apply index to a JSONB column. This allows "contains queries" like:
+        --   WHERE tools @> '{"dia": "0.97"}'
+        CREATE INDEX sys_tools_idx ON system USING GIN (tools);
 
 ## Destruction
 
@@ -282,8 +295,14 @@ and `conflict_action` is one of:
 
 Examples:
 
-    insert into pkgs (pkg) values ('pkg:purl');
-    insert into  pkg_downloads (id, pkg, pkg_rev, status) values (1, 'pkg:purl', 'r1', 0);
+    INSERT INTO pkgs (pkg) VALUES ('pkg:purl');
+    INSERT INTO pkg_downloads (id, pkg, pkg_rev, status) VALUES (1, 'pkg:purl', 'r1', 0);
+
+### Inserts with auto-generated column values
+
+`RETURNING` can be used to retrieve an auto-generated column.
+
+    INSERT INTO users (name, age) VALUES ('john', 45) RETURNING id;
 
 ### Insert into with select
 
@@ -291,9 +310,9 @@ For example, moving values from a `{id, enable_cache, enable_tls}` table to a
 `{id, key, value}` table.
 
     INSERT INTO opts (id, key, value)
-        SELECT id, 'enable_cache', enable_cache FROM config;
+        (SELECT id, 'enable_cache', enable_cache FROM config);
     INSERT INTO opts (id, key, value)
-        SELECT id, 'enable_tls', enable_tls FROM config;
+        (SELECT id, 'enable_tls', enable_tls FROM config);
 
 ## Updates
 
