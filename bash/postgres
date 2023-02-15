@@ -5,3 +5,6 @@
 function pg-local() {
 	 export PGUSER=postgres PGPASSWORD=password PGHOST=localhost PGDATABASE=${1}
 }
+
+# equivalent to always running with "\psql pager off"
+export PAGER=
