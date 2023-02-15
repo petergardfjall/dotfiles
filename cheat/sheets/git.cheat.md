@@ -1,4 +1,5 @@
 # About
+
 Git is a distributed version-control system.
 
 The major difference between Git and many earlier VCSs (cvs, svn, bzr) lies in
@@ -8,7 +9,7 @@ filesystem. With every commit, `git` stores a snapshot of the entire project and
 stores a reference to that snapshot (with some cleverness to not duplicate file
 storage like linking rather than copying when a file hasn't changed).
 
-Git is *distributed* rather than *centralized*, giving every developer a full
+Git is _distributed_ rather than _centralized_, giving every developer a full
 copy (clone) of the repository. Therefore, most operations in Git need only
 local files and resources to operate, with only occasional copying to a "more
 central" repo. This differs from centralized client-server approaches which
@@ -25,145 +26,144 @@ commits that directly came before this commit (its parent or parents): zero
 parents for the initial commit, one parent for a normal commit, and multiple
 parents for a commit that results from a merge of two or more branches.
 
-
 # States
-Until a git file is added to version control it is *untracked*.
 
-For *tracked files* (ones that git has been made aware of) a file in git can be
+Until a git file is added to version control it is _untracked_.
+
+For _tracked files_ (ones that git has been made aware of) a file in git can be
 in one of three states:
 
-- *modified*: a changed, but not yet commited file in your *working tree* (a
+- _modified_: a changed, but not yet commited file in your _working tree_ (a
   checkout of one version of the repository).
-- *staged*: a modified file that's been marked to go into the next commit. These
-  are stored in the *staging area* file (`.git/index`).
-- *committed*: stored in the local database.
+- _staged_: a modified file that's been marked to go into the next commit. These
+  are stored in the _staging area_ file (`.git/index`).
+- _committed_: stored in the local database.
 
 The `.git` directory holds the repository (its metadata and object database) and
 is what is copied when you `clone` the repo.
 
-The basic workflow is: modify files in working tree > stage changes >
-commit. The commit takes the files in the staging area and stores the snapshot
-as a commit in the `.git` directory.
+The basic workflow is: modify files in working tree > stage changes > commit.
+The commit takes the files in the staging area and stores the snapshot as a
+commit in the `.git` directory.
 
 Git as a system manages and manipulates three trees in its normal operation:
 
 - `HEAD`: points at the last commit snapshot, which will become the next parent
-- *Index*: the proposed next commit snapshot
-- *Working tree*: the sandbox with ongoing modifications
-
+- _Index_: the proposed next commit snapshot
+- _Working tree_: the sandbox with ongoing modifications
 
 # Concepts
 
-- *repository*: a collection of refs together with an object database containing
+- _repository_: a collection of refs together with an object database containing
   all objects which are reachable from the refs.
 
-- *bare repository*: a directory only containing the administrative files
+- _bare repository_: a directory only containing the administrative files
   (`.git` directory) without a locally checked-out working tree.
 
-- *commit*: a single point in the Git history; the entire history of a project
+- _commit_: a single point in the Git history; the entire history of a project
   is represented as a set of interrelated commits. Also used as a short hand for
-  *commit object*.
+  _commit object_.
 
-- *commit object*: An *object* which contains the information about a particular
+- _commit object_: An _object_ which contains the information about a particular
   revision (e.g. parents, committer, author, date and, a pointer to the
-  top-level *tree object* of the stored revision -- the snapshot content).
+  top-level _tree object_ of the stored revision -- the snapshot content).
 
-- *commit-ish*: a commit object or an object that can be recursively
+- _commit-ish_: a commit object or an object that can be recursively
   dereferenced to a commit object. E.g. a commit object, a tag object that
   points to a commit object, a tag object that points to a tag object that
   points to a commit object, etc.
 
-- *object*: the unit of storage. It is uniquely identified by the SHA-1 of its
+- _object_: the unit of storage. It is uniquely identified by the SHA-1 of its
   contents and, consequently, cannot be changed. Can be of type "commit",
   "tree", "tag" or "blob" (file).
 
-- *tree object*: a directory. Contains a list of file names and modes along with
+- _tree object_: a directory. Contains a list of file names and modes along with
   refs to the associated blob and/or tree objects.
 
-- *head*: a pointer (named reference) that tracks the tip of a branch. Heads are
+- _head_: a pointer (named reference) that tracks the tip of a branch. Heads are
   stored in a file in `.git/refs/heads/` (like `.git/refs/heads/master`).
 
-- *HEAD*: a pointer to the local branch you're currently on (and its latest
+- _HEAD_: a pointer to the local branch you're currently on (and its latest
   commit). This is how `git` knows what branch you're currently on. Stored in
-  `.git/HEAD`. HEAD is a reference to one of the *heads* in your repository,
-  except when using a *detached HEAD*, in which case it directly references an
+  `.git/HEAD`. HEAD is a reference to one of the _heads_ in your repository,
+  except when using a _detached HEAD_, in which case it directly references an
   arbitrary commit.
 
-- *detached HEAD*: what we end up with when checking out an arbitrary commit,
+- _detached HEAD_: what we end up with when checking out an arbitrary commit,
   not at the tip of any particular branch.
 
-- *branch*: a lightweight movable pointer to a commit. Represents an active line
+- _branch_: a lightweight movable pointer to a commit. Represents an active line
   of development. The most recent commit on a branch is referred to as the tip
-  of that branch. The tip of the branch is referenced by a branch *head*, which
+  of that branch. The tip of the branch is referenced by a branch _head_, which
   moves forward as additional commits are made on the branch. A Git repo can
-  track any number of branches, but your *working tree* is associated with just
+  track any number of branches, but your _working tree_ is associated with just
   one of them (the "current" or "checked out" branch), and `HEAD` points to that
-  branch. The default branch name in Git is `master`, since that's what `git
-  init` produces.
+  branch. The default branch name in Git is `master`, since that's what
+  `git init` produces.
 
-- *tag*: a *ref* under `refs/tags` that points to a particular commit (or other
+- _tag_: a _ref_ under `refs/tags` that points to a particular commit (or other
   tag).
 
-- *ref*: A name that begins with `refs/` (e.g. `refs/heads/master`) that points
+- _ref_: A name that begins with `refs/` (e.g. `refs/heads/master`) that points
   to an object name or another ref (called a symbolic ref). For example, the
   `refs/heads/` hierarchy represents local branches.
 
-- *remote (repository)* : a repository which is used to track the same project
-  but resides somewhere else. To communicate with remotes, see *fetch* or
-  *push*.
+- _remote (repository)_ : a repository which is used to track the same project
+  but resides somewhere else. To communicate with remotes, see _fetch_ or
+  _push_.
 
-- *remote-tracking branch*: a *ref* (of form `origin/master`) used to follow the
+- _remote-tracking branch_: a _ref_ (of form `origin/master`) used to follow the
   state of a remote repository branch. It typically looks like
-  `refs/remotes/origin/master` (tracks branch `master` in remote
-  `origin`). They're local references that you can't move; git moves them
-  whenever you do any network communication,
+  `refs/remotes/origin/master` (tracks branch `master` in remote `origin`).
+  They're local references that you can't move; git moves them whenever you do
+  any network communication,
 
-- *upstream branch*: the default branch that is merged into the branch in
-  question (on `git pull`).  If the upstream branch of `A` is `origin/B` we say
+- _upstream branch_: the default branch that is merged into the branch in
+  question (on `git pull`). If the upstream branch of `A` is `origin/B` we say
   that "A is tracking origin/B" or "A is a tracking-branch for origin/B". A
   tracking-branch is a local branch that has a direct relationship to a remote
   (upstream) branch.
 
-- *git directory*: The `.git` directory is where git stores the metadata and
+- _git directory_: The `.git` directory is where git stores the metadata and
   object database for your project. This is the most important part of Git, and
   it is what is copied when you clone a repository from another computer.
 
-- *working tree*: a single checkout of one version of the project. The working
+- _working tree_: a single checkout of one version of the project. The working
   tree contains the contents of the `HEAD` commit's tree, plus any local changes
   that you have made but not yet committed.
 
-- *index*: see *staging area* (or in older terminology: *index*)
+- _index_: see _staging area_ (or in older terminology: _index_)
 
-- *staging area*: a file (`.git/index`) that stores information about what will
+- _staging area_: a file (`.git/index`) that stores information about what will
   go into your next commit
 
-- *unreachable object*: an object which is not reachable from a branch, tag, or
+- _unreachable object_: an object which is not reachable from a branch, tag, or
   any other reference. It will eventually be garbage collected unless a
   reference is attached to it (like a tag or branch).
 
-- *fast-forward*: a type of merge that just update the branch pointer to match
+- _fast-forward_: a type of merge that just update the branch pointer to match
   the merged-in branch (only possible when the merged-in commit is a descendant
-  of the current branch history, otherwise a *merge commit* is needed).
+  of the current branch history, otherwise a _merge commit_ is needed).
 
-- *fetch*: fetching a branch means to get the branch's *head* ref from a
-   *remote* repository. `git fetch` updates remote-tracking branches and tags
-   from a remote.
+- _fetch_: fetching a branch means to get the branch's _head_ ref from a
+  _remote_ repository. `git fetch` updates remote-tracking branches and tags
+  from a remote.
 
-- *pull*: pulling a branch means to *fetch* it and *merge* it.
+- _pull_: pulling a branch means to _fetch_ it and _merge_ it.
 
-- *merge*: to bring the contents of another branch (possibly from an external
-  repository) into the current branch. Can either be *fast-forward* (if
-  merged-in branch is a descendant) or result in a *merge-commit* having the
+- _merge_: to bring the contents of another branch (possibly from an external
+  repository) into the current branch. Can either be _fast-forward_ (if
+  merged-in branch is a descendant) or result in a _merge-commit_ having the
   tips of the merged branches as parents.
 
-- *rebase*: to reapply a series of changes from a branch to a different base,
+- _rebase_: to reapply a series of changes from a branch to a different base,
   and reset the head of that branch to the result.
 
-- *push*: update *remote* refs using local refs.
-
+- _push_: update _remote_ refs using local refs.
 
 # Configure
-Show *all* available config settings:
+
+Show _all_ available config settings:
 
     # check the `Variables` section
     git config --help
@@ -205,13 +205,14 @@ Since git v2.31.0 there is formal support for this using:
     git clone ...
 
 ## Use basic auth for a repo
+
 To configure that a particular user/password should be used for certain https
 repos, one can use URL rewriting:
 
     git config --global url."https://${USER}:${ACCESS_TOKEN}@github.com/${PROJECT}".insteadOf "https://github.com/${PROJECT}"
 
-
 ## Use a particular SSH key
+
 Git can be told to use a particular SSH key and port via an environment
 variable:
 
@@ -221,6 +222,7 @@ variable:
     git clone git@github.com:project/repo.git
 
 ## Use a HTTP proxy
+
 To have `git` use a HTTP proxy:
 
     git config --global http.proxy http://user:pass@proxy:8080
@@ -231,20 +233,22 @@ can use the `-c` flag:
     # use a http proxy for this call only
     git -c "http.proxy=address:port" clone https://...
 
-
 # Creating a repo
+
 An empty git repo (nothing but a `.git` directory) without any tracked files can
 be created in a directory via:
 
     git init
 
-One can also create a *bare repository* (only a `.git` directory) which is suitable for setting up a central repository (that is to act as remote for others). By convention its directory name should end with `.git`:
+One can also create a _bare repository_ (only a `.git` directory) which is
+suitable for setting up a central repository (that is to act as remote for
+others). By convention its directory name should end with `.git`:
 
     git init --bare repo.git
 
-
 # Cloning a repo
-More commonly, a repository is cloned from a *remote* (repository).
+
+More commonly, a repository is cloned from a _remote_ (repository).
 
     git clone https://github.com/project/repo.git repo
 
@@ -262,8 +266,8 @@ The remote-tracking branches can be seen via:
     # also under .git/refs/remotes/*
     git branch -r
 
-
 # Remotes
+
 To support collaboration, a git repository can be set up to pull/push changes
 from/to multiple other remote repositories.
 
@@ -297,7 +301,7 @@ remote-tracking branches for the remote:
     # fetch for all remotes at once
     git fetch --all
 
-Note that fetch only updates *remote-tracking branches*. Your local branches
+Note that fetch only updates _remote-tracking branches_. Your local branches
 remain untouched until you choose to merge in changes from the remote-tracking
 branches.
 
@@ -335,11 +339,10 @@ Some other useful commands on remotes:
 
         git log --branches=* --oneline
 
-
 # Making changes
 
 To move files between the supported states (untracked, unmodified, modified,
-staged) and working in your *local* repo, the following commands are commonly
+staged) and working in your _local_ repo, the following commands are commonly
 used.
 
 Check the status of your files:
@@ -380,7 +383,6 @@ Use `--name-only` to only see which files have changed
     # show changed files on current branch compared to master
     git diff --name-only master
 
-
 Record everything in the staging area in a new commit (snapshot revision), and
 advance `HEAD`:
 
@@ -390,8 +392,8 @@ Show a short hash (like `ceba11f`) for current commit:
 
     git rev-parse --short HEAD
 
-
 # Viewing history
+
 The commit history is best viewed with `git log`.
 
     # show all commits (including author and commit message)
@@ -428,23 +430,25 @@ Show a particular version/commit of a file:
     git show 6b312a3:test/test.py
     git show HEAD~2:test/test.py
 
-
 # Undoing
+
 A few words on undoing/modifying history. Rewriting your local repository
 history (modifying/squashing commits, etc) is never a problem. Making changes to
-global history is only a problem if others are collaborating on the same
-branch. For example, a common way of working includes feature branches, which
-are rebased and force-pushed (with new commit hashes) prior to merge with
-`master`. In such cases, community conventions (such as considering feature
-branches private) are needed to avoid problems.
+global history is only a problem if others are collaborating on the same branch.
+For example, a common way of working includes feature branches, which are
+rebased and force-pushed (with new commit hashes) prior to merge with `master`.
+In such cases, community conventions (such as considering feature branches
+private) are needed to avoid problems.
 
-## Add to commit
-Add more changes to a commit: `git commit --amend`
+## Add to most recent commit (amend)
+
+Add more changes to the most recent commit: `git commit --amend`
 
     # redo commit with changes staged since the commit was made
     git commit --amend
 
 ## Unmodifying a modified file
+
 A file that is modified in the working tree, but not yet staged, can be brought
 back to its unmodified state (`HEAD`) via
 
@@ -472,8 +476,9 @@ they were at a given point in time, without altering history.
     git reset files/2.txt
 
 ## Undo staged files
+
 Unstage staged files with `git reset [treeish] [path ...]` (the unstaged files
-will still be *modified* in the working tree, so this is not destructive,
+will still be _modified_ in the working tree, so this is not destructive,
 changes are preserved).
 
     # stage both 1.txt and 2.txt
@@ -490,10 +495,11 @@ changes are preserved).
     git reset
 
 ## Undo local commits
+
 One can undo several local (non-pushed) commits with `reset`. It rewinds your
 repository's history all the way back to the specified commit. By default, git
 reset preserves the working directory. The commits are gone, but the
-content/modifications are still on disk.  If you want to undo the commits _and_
+content/modifications are still on disk. If you want to undo the commits _and_
 the changes in one go: use `--hard`.
 
     git reset <tree-ish> [--hard]
@@ -522,8 +528,8 @@ Git's version of shell history. It contains entries like:
     94d334e HEAD@{1}: commit: skubectl alias
     ...
 
-Reflog can be used to restore your local `HEAD` to a certain point in time.
-To restore the project's history as it was at that moment in time:
+Reflog can be used to restore your local `HEAD` to a certain point in time. To
+restore the project's history as it was at that moment in time:
 
     git reset --hard <sha>
 
@@ -538,8 +544,8 @@ Expire unreachable commits in the reflog and then garbage collect them:
     git reflog expire --expire-unreachable=now --all
     git gc --prune=now
 
-
 ## Changing multiple commits
+
 To change/rearrange/squash multiple commits, one typically makes use of an
 interactive rebase (`git rebase -i <rebase-commit>`). With the interactive
 rebase tool, you can then stop after each commit you want to modify and change
@@ -590,18 +596,20 @@ To split a commit far back on the current branch into several:
     git rebase --continue
 
 ## Undo an already pushed commit
+
 Reverts a given commit by adding a new "anti-commit" to the commit history.
 
     git revert <sha>
 
 ## Remove sensitive data from repo
+
 If a file containing sensitive data has been mistakenly added (and pushed)
 history can be rewritten to exclude the file via `git filter-branch`:
 
-  https://help.github.com/articles/removing-sensitive-data-from-a-repository/
-
+https://help.github.com/articles/removing-sensitive-data-from-a-repository/
 
 # Branches
+
 A branch in Git is simply a lightweight movable pointer to a commit. It's
 actually a simple file that contains the 40 character SHA-1 checksum of the
 commit it points to, so branches are cheap to create and destroy.
@@ -653,12 +661,13 @@ Renaming branches:
     git push origin :old-name new-name
 
 ## Remote branches
-*Remote-tracking branches* are references to the state of remote
-branches. They're local references that you can't move; Git moves them for you
-whenever you do any network communication. Remote-tracking branch names take the
-form `<remote>/<branch>` (like `origin/master`). `git fetch origin` synchronizes
-with a given remote by fetches data from it and moving your `origin/master`
-pointer to its new, more up-to-date position.
+
+_Remote-tracking branches_ are references to the state of remote branches.
+They're local references that you can't move; Git moves them for you whenever
+you do any network communication. Remote-tracking branch names take the form
+`<remote>/<branch>` (like `origin/master`). `git fetch origin` synchronizes with
+a given remote by fetches data from it and moving your `origin/master` pointer
+to its new, more up-to-date position.
 
 When you want to share a branch with the world, you need to push it up to a
 remote to which you have write access.
@@ -678,7 +687,7 @@ remote-tracking branches, you don't automatically have local, editable copies of
 them. That is, in this case, you don't have a new `ticket123` branch - only a
 `origin/ticket123` pointer that you can't modify. To get your own `ticket123`
 branch to work on, you can base it off your remote-tracking branch to create a
-local *tracking branch* (tracking an *upstream branch*). For a tracking branch
+local _tracking branch_ (tracking an _upstream branch_). For a tracking branch
 `git pull` automatically fetches from the right remote branch.
 
     # create a "tracking-branch"
@@ -698,11 +707,11 @@ The tracked branch for a local can be (re)set at any time via:
     # -u or --setup-upstream-to
     git branch -u origin/ticket123
 
-
 ## Merging and rebasing
-A *merge* brings the contents of another branch into the current branch. A merge
-can be either *fast-forward* (if merged-in branch is a descendant) or result in
-a *merge-commit* having the tips of the merged branches as parents.
+
+A _merge_ brings the contents of another branch into the current branch. A merge
+can be either _fast-forward_ (if merged-in branch is a descendant) or result in
+a _merge-commit_ having the tips of the merged branches as parents.
 
 A fast-forward commit just updates the branch pointer to match the merged
 branch: when merged-in commit is a descendant of current branch history:
@@ -720,10 +729,8 @@ branch: when merged-in commit is a descendant of current branch history:
     #                  V
     #  A - B - C - D - E <- ticket123
 
-
 A merge commit is performed when histories have diverged. git will try to do a
 (three-way) merge. This may result in a conflict which first must be resolved:
-
 
     #    D - E - F  <- ticket123 <- HEAD
     #   /
@@ -737,7 +744,7 @@ A merge commit is performed when histories have diverged. git will try to do a
     #   /         \
     #  A - B - C - G <- master <- HEAD
 
-A *rebase* takes all the changes that were committed on one branch and replays
+A _rebase_ takes all the changes that were committed on one branch and replays
 them on another branch. Rebasing makes for a cleaner history. If you examine the
 log of a rebased branch, it looks like a linear history: it appears that all the
 work happened in series, even when it originally happened in parallel.
@@ -772,6 +779,7 @@ gives diffs in addition to commits).
     git log ticket123 -p --not master
 
 ## Rebase a selected range of commits
+
 Generally speaking, to take some commits on a branch and rebase them onto the
 tip of a different branch `git rebase --onto` can be used. For example,
 
@@ -789,6 +797,7 @@ from the `client` since it diverged from the `server` branch. So, this rebases
     git rebase --onto master server client
 
 # Resolving conflicts
+
 Whenever a `git rebase` is made, there is a risk of conflicting modifications.
 Normally, you would go through conflicts one-by-one, fix them, do `git add` or
 `git rm`, and finally `git rebase --continue`.
@@ -803,8 +812,8 @@ Note that the direction is reversed on `rebase` when compared to `merge` (where
 `ours` really means our changes). On `rebase`, `ours` refers to the anonymous
 rebase branch that the rebase is built on.
 
-
 # Tags
+
 Show tags:
 
     git tag
@@ -851,8 +860,8 @@ Show any tags that are attached to current commit:
 
     git tag -l --points-at HEAD
 
-
 # Typical workflow
+
 Clone:
 
     git clone <repo-path> repo
@@ -916,23 +925,22 @@ upstream repo:
     $ git checkout master
     $ git rebase upstream/master
 
-
 # Cleaning
- To remove all the untracked files in your working directory run:
+
+To remove all the untracked files in your working directory run:
 
      # removes files and also any subdirectories that become empty as a result.
      git clean -f -d --dry-run
 
-
 # Patching
+
 Divide a large changeset into smaller commits. Git will now ask you, for each
 hunk, if you want to stage it for the next commit. Answer `n` to all hunks you
-don't want to be part of the commit and `y` to hunks that you want to
-include. Should a particular hunk contain both code that you want to include and
-code that you don't want to include, you can split it by selecting `s`. Git will
-then split the hunk into smaller hunks and ask what to do with each of
-them. Hunks for which you answered `n` will still be left as changes in
-non-staged files.
+don't want to be part of the commit and `y` to hunks that you want to include.
+Should a particular hunk contain both code that you want to include and code
+that you don't want to include, you can split it by selecting `s`. Git will then
+split the hunk into smaller hunks and ask what to do with each of them. Hunks
+for which you answered `n` will still be left as changes in non-staged files.
 
     git add --patch <file>
     git add --patch
@@ -967,19 +975,17 @@ using git mergetool).
 
     git am -3 < patchfile
 
-
 To apply a single commit (or set of commits) from a different branch to your
 local branch, `cherry-pick` can be used.
 
     # apply the commit to the local branch
     git cherry-pick c136985
 
-
 # Submodules
+
 Submodules allow you to keep a git repository as a subdirectory of another Git
 repository. This lets you clone another repository into your project and keep
 your commits separate.
-
 
 Add a remote repo as a submodule. This creates a `.gitmodules` file that stores
 all submodules in use. It provides the indirection to referenced repos and is
@@ -1011,13 +1017,12 @@ Bring in upstream (and optionally keep) changes in a particular submodule.
     git add <submodule-dir>
     git commit -m "updated submodule version"
 
-
 Fetch and merge upstream changes (from origin/master) for _all_ submodules.
 
     git submodule update --remote
 
-
 # Referring to commits
+
 Individual commits:
 
 - If you place a `^` (caret) at the end of a reference, Git resolves it to mean
@@ -1037,17 +1042,16 @@ Ranges of commits:
         # branch on your origin remote
         git log origin/master..HEAD
 
-
 # git archive
+
 Use `git archive` to create an archive/release from a given version of the
 repository:
 
     git archive --format=tar.gz --prefix=root/ <tree-ish> [<path>...]
     git archive --format=tar.gz --prefix=head/ HEAD .
 
-
-
 # Migrating a single file/directory (with history) to another repository
+
 To take a file (with entire commit history) and move that to a new repository,
 do something like:
 
@@ -1061,8 +1065,8 @@ do something like:
 Note that if the file was moved/renamed at some point the history will not
 expand beyond that point.
 
-
 # Internals
+
 The `.git` directory is where almost everything that Git stores and manipulates
 is located. If you want to back up or clone your repository, copying this single
 directory elsewhere gives you nearly everything you need.
@@ -1075,13 +1079,13 @@ directory elsewhere gives you nearly everything you need.
 - `objects` directory: stores all the content for your database
 - `refs` directory: stores pointers into commit objects in that data (branches,
   tags, remotes and more).
-   - `heads`: local branches: `git branch test` creates a reference under
-     `refs/heads/test`
-   - `tags`: local tags (pointers to commits). It's like a branch reference, but
-     it never moves - it always points to the same commit but gives it a
-     friendlier name (`refs/tags/v1.0`).
-   - `remotes`: stores the value you last pushed to/fetched from that remote for
-      each branch (e.g. `refs/remote/origin/`) Remote references differ from
-      branches (`refs/heads` references) mainly in that they're considered
-      read-only. You can git checkout to one, but Git won't point HEAD at one,
-      so you'll never update it with a commit command.
+  - `heads`: local branches: `git branch test` creates a reference under
+    `refs/heads/test`
+  - `tags`: local tags (pointers to commits). It's like a branch reference, but
+    it never moves - it always points to the same commit but gives it a
+    friendlier name (`refs/tags/v1.0`).
+  - `remotes`: stores the value you last pushed to/fetched from that remote for
+    each branch (e.g. `refs/remote/origin/`) Remote references differ from
+    branches (`refs/heads` references) mainly in that they're considered
+    read-only. You can git checkout to one, but Git won't point HEAD at one, so
+    you'll never update it with a commit command.
