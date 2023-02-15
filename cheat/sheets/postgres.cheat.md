@@ -5,6 +5,10 @@ To pass a password over command-line without being prompted run
     export PGUSER=postgres PGPASSWORD=password PGHOST=localhost PGDATABASE=mydb
     psql ...
 
+To turn off psql's pager (`\pset pager off`) you can set
+
+    export PAGER=
+
 To use postgres over SSL the following environment variables can be used:
 
     PGSSLMODE="verify-ca"
