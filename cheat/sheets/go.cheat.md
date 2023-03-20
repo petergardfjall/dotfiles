@@ -2665,7 +2665,16 @@ new io.Reader on every call) one can use the following hack:
         }
     }
 
-For more advanced argument matchers one can use `mock.MatchedBy`:
+For more advanced argument matchers one can use `mock.MatchedBy`. For example,
+to make sure that an argument implements an interface (such as
+`context.Context`):
+
+    var anyCtx = mock.MatchedBy(func(ctx context.Context) bool { return true })
+    ...
+    dbMock.On("Do", anyCtx).Return(sessionMock)
+
+or another example where we match an argument if it's JSON-equivalent to another
+argument:
 
     db := mocks.NewDatabase()
     db.On("Query", anyCtx, matchingQuery(expectedQuery)).Return(...)
