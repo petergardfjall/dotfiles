@@ -149,7 +149,8 @@ Basic arithmetic can be done with double parenthesis.
     a=$(( a + 4 ))     # => 11
 
 One can also used the built-in `let` function to do arithmetic when one needs to
-save it to a variable. NOTE though that the `let` function returns a non-zero exit if the result evaluates to `0`!
+save it to a variable. NOTE though that the `let` function returns a non-zero
+exit if the result evaluates to `0`!
 
     a=1
 
