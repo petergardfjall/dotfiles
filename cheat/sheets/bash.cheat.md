@@ -127,6 +127,13 @@ Echoing to `stderr` by copying `stderr` to `stdout`:
     echo -e "NORMAL \e[32m GREEN \e[0m NORMAL"
     echo -e "NORMAL \e[33m ORANGE \e[0m NORMAL"
 
+## Scripting: unicode characters
+
+    $ echo -e '\U269B'     # atom symbol
+    ⚛
+    $ echo -e '\U0001f602' # joy emoji \U+1F602
+    $ echo -e '\U0001f4c8' # chart with upwards trend: \U+1F4C9
+
 ## Arithmetic
 
 Basic arithmetic can be done with double parenthesis.
