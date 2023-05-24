@@ -9,3 +9,6 @@
 export NPM_PACKAGES="${HOME}/.npm-packages"
 export PATH=${PATH}:${NPM_PACKAGES}/bin
 #export MANPATH="${NPM_PACKAGES}/share/man:$(manpath)"
+
+# Appears needed for Emacs to find prettier when NodeJS is installed with a snap.
+export NODE_PATH="${HOME}/.npm-packages/lib/node_modules/"
