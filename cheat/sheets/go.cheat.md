@@ -1459,23 +1459,15 @@ code, the following pattern can be used.
     // completes when the function returns (rolling back on errors/panics or
     // commiting on success of fn).
     func InTx(tx *sql.Tx, fn TxFunc) (err error) {
-        // make sure that we always end the transaction:
-        // - rollback on error from the txFunc or a panic
-        // - commit otherwise
-        defer func() {
-            if r := recover(); r != nil {
-                tx.Rollback()
-                panic(r) // re-panic
-            }
-            if err != nil {
-                tx.Rollback()
-                return
-            }
-            err = tx.Commit()
-        }()
+        // Make sure that we always end the transaction if fn returns an
+        // error or panics. Note: Rollback is a no-op after successful commit.
+        defer tx.Rollback()
 
-        err = fn(tx)
-        return
+        if err := fn(tx); err != nil {
+            return err
+        }
+
+        return tx.Commit()
     }
 
     ...
@@ -1683,17 +1675,25 @@ An implementation might look something like:
 
     // note: nonTxnSession makes use of txnSession to commit each operation.
     func (s *nonTxnSession) InsertUser(u User) error {
-        return s.inTx(s.ctx, func(tx TxnSession) error {
+        return s.inSingleTxn(s.ctx, func(tx TxnSession) error {
             return tx.InsertUser(root)
         })
     }
 
-    func (s *nonTxnSession) inTx(ctx context.Context, fn func(TxnSession) error) error {
+    func (s *nonTxnSession) inSingleTxn(ctx context.Context, fn func(TxnSession) error) error {
         tx, err := s.Begin(ctx) // start a TxnSession
         if err != nil {
-            return fmt.Errort("begin transaction: %w", err)
+            return fmt.Errorf("begin transaction: %v", err)
         }
-        return database.InTxn(tx, fn) // commits/rolls back TxnSession
+        // Always end transaction on error return or panic from fn.
+        // Note: on successful commit Rollback is a no-op.
+        defer txn.Rollback()
+
+        if err := fn(txn); err != nil {
+            return err
+        }
+
+        return txn.Commit()
     }
 
 Usage of the above API would look something like:
