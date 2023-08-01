@@ -420,3 +420,51 @@ To get some size metrics for a column `col` in table `tab`:
            pg_size_pretty(SUM(pg_column_size(col)) / pg_relation_size('tab'))
               AS table_fraction
            FROM tab;
+
+## Scripting with PL/pgSQL procedural language
+
+Sometimes it is useful to write SQL-based scripts. A good example is when doing
+schema migrations. A convoluted example (a real migration would likely populate
+a field with one or more `UPDATE` or `INSERT` statements):
+
+    DO
+    $$
+    DECLARE
+        -- Note: declare variables.
+        it record;
+        cancelled_count int;
+        running_count int;
+        done_time timestamptz := '0001-01-01 00:00:00+00';
+    BEGIN
+        FOR it IN SELECT id, created_at FROM jobs;
+        LOOP
+            -- Note: outputs a log statement.
+            RAISE INFO job % created at %', it.id, it.created_at;
+
+            -- Note: select a value into a variable.
+            SELECT COUNT(*) INTO cancelled_count FROM task_statuses
+                   WHERE job_id=it.id AND state='Cancelled';
+
+            SELECT COUNT(*) INTO running_count FROM task_statuses
+                   WHERE job_id=it.id AND state='Running';
+
+            IF running_count > 0 THEN
+               RAISE INFO 'job % still has running tasks', it.id;
+            ELSIF cancelled_count > 0 THEN
+               done_time := (SELECT MAX(done_at) FROM task_statuses WHERE job_id=it.id);
+               RAISE INFO 'job % appears to have been cancelled', it.id;
+            ELSE
+               done_time := (SELECT MAX(done_at) FROM task_statuses WHERE job_id=it.id);
+               job_state := 'Done';
+               RAISE INFO 'job % is done', it.id;
+            END IF;
+
+            RAISE INFO 'completion time: %', done_time;
+        END LOOP;
+    END;
+    $$;
+
+While developing it is often useful to output values. This can be done with the
+`RAISE` statement (`raise level format;`).
+
+    RAISE INFO 'the row id was %', it.id;
