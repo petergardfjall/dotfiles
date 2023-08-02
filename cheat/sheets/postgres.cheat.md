@@ -362,29 +362,29 @@ is eligble for consumption by another worker.
 
 Dumping a local database:
 
-    pg_dump --no-owner --host localhost --username=admin db > db.dump
+    # Note: --clean produces clean (drop) statements prior to each create
+    # statement. This prevents the need to DROP and re-CREATE the database.
+    pg_dump --no-owner --clean --host localhost --username=admin db > db.dump
 
     # or dumping all databases
     export PGPASSWORD=password  # avoid repeating password for every db
-    pg_dumpall --no-owner --no-role-passwords --host=localhost --username=postgres > db.dump
+    pg_dumpall --no-owner --no-role-passwords --clean --host=localhost --username=postgres > db.dump
 
 Dump with SSL credentials:
 
     pg_dump "sslmode=verify-ca sslrootcert=server-ca.pem \
              sslcert=client-cert.pem sslkey=client-key.pem \
              hostaddr=<IP/host> port=5432 \
-             user=postgres dbname=db" --no-owner > db.dump
+             user=postgres dbname=db" --no-owner --clean > db.dump
 
     pg_dumpall -d "sslmode=verify-ca sslrootcert=server-ca.pem \
              sslcert=client-cert.pem sslkey=client-key.pem \
              hostaddr=<IP/host> port=5432 \
-             user=postgres dbname=postgres" --no-owner --no-role-passwords > all.dump
+             user=postgres dbname=postgres" --no-owner --no-role-passwords --clean > all.dump
 
-Restore/recreate database from dump:
+Restore database from dump (if created with `--clean`):
 
-    echo "DROP DATABASE db" | psql --host localhost --username=admin
-    echo "CREATE DATABASE db" | psql --host localhost --username=admin
-    cat db.dump |  psql --host localhost --username=admin db
+    psql --host localhost --username=admin -f db.dump db
 
 ## System
 
