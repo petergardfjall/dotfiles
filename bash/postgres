@@ -1,10 +1,20 @@
 #
-# 'pg-local mydatabase' sets up environment varaiables for accessing a local
-# development database with 'psql'.
+# 'psql-local [mydatabase]' accesses a local development database with 'psql'.
 #
-function pg-local() {
-	 export PGUSER=postgres PGPASSWORD=password PGHOST=localhost PGDATABASE=${1}
+function psql-local() {
+    export PGUSER=postgres PGPASSWORD=password PGHOST=localhost PGDATABASE=${1}
+    psql
 }
 
+#
+# 'psql-kind [mydatabase]' access a local development database with 'psql'
+# inside kind.
+#
+function psql-kind() {
+    export PGUSER=postgres PGPASSWORD=password PGHOST=postgres PGDATABASE=${1}
+    telepresence --namespace=local --run psql
+}
+
+
 # equivalent to always running with "\psql pager off"
-export PAGER=
+export PSQL_PAGER=
