@@ -264,6 +264,18 @@ or execute commands when the shell exits:
 
     trap "{ kill ${MY_PID}; }" EXIT
 
+One can also use a function for the handler code:
+
+    function cleanup_handler {
+        if [ "${preserve_dir}" = "false" ]; then
+            echo "signal received: cleaning up ${work_dir} ...";
+            rm -rf ${work_dir}
+        fi
+        exit 1
+    }
+
+    trap cleanup_handler SIGINT SIGTERM
+
 ### Line/byte processing
 
 Process first N lines:
