@@ -26,3 +26,9 @@ git config --global diff.submodule 'log'
 git config --global core.pager 'diffr --colors refine-added:none:background:23,91,43:nobold --colors added:none:background:3,53,33 --colors refine-removed:none:background:141,35,35:nobold --colors removed:none:background:59,15,25 | less'
 
 git config --global interactive.difffilter 'diffr --colors refine-added:none:background:23,91,43:nobold --colors added:none:background:3,53,33 --colors refine-removed:none:background:141,35,35:nobold --colors removed:none:background:59,15,25'
+
+#
+# Avoid 'fatal: detected dubious ownership in repository' message from git
+# for repos that are owned by root.
+#
+git config --global --add safe.directory /opt/emacs-src
