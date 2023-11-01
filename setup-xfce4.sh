@@ -66,3 +66,9 @@ xfconf-query --list > /dev/null 2>&1
 
 echo "setting up xfce keyboard shortcuts ..."
 ${scriptdir}/setup-xfce4-keyboard-shortcuts.sh
+
+echo "applying some general xfce settings ..."
+# Disable not zoom desktop on Alt+mousewheel.
+xfconf-query --set false --channel xfwm4 --property /general/zoom_desktop
+# Disable mousewheel workspace switching.
+xfconf-query --set false --channel xfwm4 --property /general/scroll_workspaces
