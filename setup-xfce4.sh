@@ -72,3 +72,5 @@ echo "applying some general xfce settings ..."
 xfconf-query --set false --channel xfwm4 --property /general/zoom_desktop
 # Disable mousewheel workspace switching.
 xfconf-query --set false --channel xfwm4 --property /general/scroll_workspaces
+# Disable roll-up of window with mousewheel on title bar.
+xfconf-query --set false --channel xfwm4 --property /general/mousewheel_rollup
