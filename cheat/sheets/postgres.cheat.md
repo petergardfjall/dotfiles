@@ -163,9 +163,21 @@ Examples:
         ALTER TABLE downloads ALTER COLUMN id TYPE TEXT;
         ALTER TABLE downloads ADD PRIMARY KEY (id);
 
+- add/drop foreign key constraint:
+
+        ALTER TABLE the_table ADD CONSTRAINT constraint_name FOREIGN KEY (col1, col2);
+        ALTER TABLE the_table DROP CONSTRAINT IF EXISTS constraint_name;
+
+- add/drop unique constraint (note that for `UNIQUE` constraints `NULL` values
+  count as distinct):
+
+        ALTER TABLE the_table ADD CONSTRAINT constraint_name UNIQUE (col1, col2);
+        ALTER TABLE the_table DROP CONSTRAINT IF EXISTS constraint_name;
+
 - create index
 
         CREATE INDEX downloads_url_idx ON downloads(url);
+        CREATE INDEX download_url_idx ON downloads USING HASH (url);
 
 - a more complex modification that uses PL/pgSQL (a procedural language)
   normally used to create functions and triggers.
