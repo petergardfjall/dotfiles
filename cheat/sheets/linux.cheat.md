@@ -548,3 +548,21 @@ in `/etc/systemd/logind.conf`
 
 Note that changing this setting breaks terminal multiplexers such as tmux and
 GNU Screen.
+
+# Monitoring files for changes
+
+Some programs rely on `inotify` to monitor the file system for file changes.
+Sometimes you may see errors like:
+
+    failed to create fsnotify watcher: too many open files
+
+Typically this can be alleviated by bumping `fs.inotify` settings in
+`/etc/sysctl.conf`:
+
+    fs.inotify.max_queued_events=16384
+    fs.inotify.max_user_instances=65536
+    fs.inotify.max_user_watches=1048576
+
+After changing run for the changes to take effect:
+
+    sudo sysctl --system
