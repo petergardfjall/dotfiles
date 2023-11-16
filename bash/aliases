@@ -23,6 +23,6 @@ alias proftime='/usr/bin/time -f "\n\t%E\treal time (s)\n\t%U\tuser time (s)\n\t
 
 alias screen="screen -c ~/dotfiles/screen/screenrc"
 
-alias suspend="xfce-session-logout -s"
+alias suspend="xfce4-session-logout -s"
 
 alias t="xfce4-terminal"
