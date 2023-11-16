@@ -14,3 +14,4 @@ alias gopls-env='echo export GOFLAGS="-tags=integration,db"'
 # /usr/bin/time is a more powerful variant of the bash 'time' command which can
 # also output profiling of the executed command.
 alias proftime='/usr/bin/time -f "\n\t%E\treal time (s)\n\t%U\tuser time (s)\n\t%S\tsystem time (s)\n\t%P\tpercent CPU\n\t%M\tmaximum resident memory (KB)"'
+alias suspend="xfce-session-logout -s"
