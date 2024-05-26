@@ -256,11 +256,13 @@ Outline-mode:
 Within an outline tree, one can also add lists to entry bodies.
 - *Unordered lists* start with `-`, `+` or `*`
 - *Ordered lists* start with `1.` or `1)`
+
 TODOs:
 - `C-c C-t`/`org-todo`: rotate the `TODO` state
 - `S-left`/`S-right`: select following/preceding `TODO` state
 - `S-up`/`org-priority-up`
 - `S-down`/`org-priority-down`
+
 Table editor:
 - `C-c |`: create an org table
 - `C-c C-c`/`org-table-realign`: re-align table at point
@@ -277,6 +279,7 @@ Table editor:
 - `S-<cursors>`: move cell by swapping with adjacent cell
 - `C-c +`/`org-table-sum`: echo sum of numbers in column (`C-y` yanks)
 - note: the table editor can be enabled in other modes via `orgtbl-mode`
+
 Links:
 - link format: `[[LINK][DESCRIPTION]]` or `[[LINK]]`
 - schemes: `file`, `mailto`, `help`, `http(s)`, `shell`, etc.
@@ -287,13 +290,16 @@ Links:
   - When point is on a link, edit link.
   - Otherwise, prompt for previously stored link to be inserted.
 - `C-c C-o`/`org-open-at-point`: follow link.
+
 Capture:
 - `C-c o c`/`org-capture`: (note: custom global keybinding)
+
 Agenda view:
 - `C-c o a`/`org-agenda`: (note: custom global keybinding)
 - `S-f`: follow mode: agenda item under cursor highlighted in org buffer
 - `f`/`b`: move forward or backward one time unit (a week)
 - `q`: exit agenda view
+
 Scheduling and deadlines:
 -
 
