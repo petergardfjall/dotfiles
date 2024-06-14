@@ -251,18 +251,11 @@ Encrypt a clear-text secrets file:
     # use a pgp fingerprint to indicate which encryption key to use
     export SOPS_PGP_FP=''FBC7B9E2A4F9289AC0C1D4843D16CEE4A27381B4'
     # encrypt
-    helm secrets enc secrets.yaml
-
-Decrypt secrets file (creates a `secrets.yaml.dec`):
-
-    helm secrets dec secrets.yaml
-
-    # removes decrypted files: *.dec
-    helm secrets clean .
+    helm secrets encrypt secrets.yaml
 
 To view a secrets file in clear-text:
 
-    helm secrets view secrets.yaml
+    helm secrets decrypt secrets.yaml
 
 To edit a secrets file and have it encrypted on exit:
 
