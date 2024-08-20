@@ -660,6 +660,12 @@ Renaming branches:
     # replace the old remote branch with the new
     git push origin :old-name new-name
 
+Move `HEAD` (the tip) of a branch to a different commit:
+
+    git branch --force <branch-name> [<new-tip-commit>]
+    # For example, I want my-branch to point to the same commit as other-branch.
+    git branch --force my-branch other-branch
+
 ## Remote branches
 
 _Remote-tracking branches_ are references to the state of remote branches.
