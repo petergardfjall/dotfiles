@@ -5,3 +5,12 @@ PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[0
 
 # Set terminal title bar
 PROMPT_COMMAND='printf "\033]0;%s@%s:%s\007" "${USER}" "${HOSTNAME%%.*}" "$(echo ${PWD} | sed s#${HOME}#~#)"'
+
+# The terminal emulator in Emacs (`M-x term` or `M-x ansi-term`) does not
+# understand the non-standard escape codes produced by PROMPT_COMMAND (it will
+# result in them just being output as part of the prompt). Whenever Emacs starts
+# a sub-shell it will set the INSIDE_EMACS environment variable to something
+# like "29.4,term:0.96".
+if [ -n "${INSIDE_EMACS}" ]; then
+    unset PROMPT_COMMAND
+fi
