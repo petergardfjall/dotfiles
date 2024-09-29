@@ -4,11 +4,7 @@ alias copy="xsel --clipboard"
 
 alias du1="du -h --max-depth=1 | sort -h"
 
-alias emacs="TERM=xterm-24bit emacs"
-
-alias emacsnd="TERM=xterm-24bit emacs --no-desktop"
-
-alias gopls-env='echo export GOFLAGS="-tags=integration,db"'
+alias gopls-env='echo export GOFLAGS="-tags=integration,db,benchmark"'
 
 alias lst="ls -al --full-time"
 
