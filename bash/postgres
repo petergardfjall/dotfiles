@@ -1,4 +1,14 @@
 #
+# 'psql-kind [mydatabase]' accesses a local development database with 'psql' inside kind.
+#
+function psql-kind() {
+    # Make sure we're "inside" the cluster.
+    telepresence2 connect
+    export PGUSER=postgres PGPASSWORD=password PGHOST=postgres PGDATABASE=${1}
+    psql
+}
+
+#
 # 'psql-local [mydatabase]' accesses a local development database with 'psql'.
 #
 function psql-local() {
