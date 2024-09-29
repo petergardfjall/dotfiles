@@ -1,3 +1,7 @@
 if [ -f /opt/bin/terraform ]; then
     complete -C /opt/bin/terraform terraform
 fi
+
+if command -v telepresence > /dev/null; then
+    source <(telepresence completion bash)
+fi
