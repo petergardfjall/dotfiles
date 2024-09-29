@@ -20,7 +20,7 @@ function psql-local() {
 # 'psql-kind [mydatabase]' access a local development database with 'psql'
 # inside kind.
 #
-function psql-kind() {
+function psql-kind-v1() {
     export PGUSER=postgres PGPASSWORD=password PGHOST=postgres PGDATABASE=${1}
     telepresence --namespace=local --run psql
 }
