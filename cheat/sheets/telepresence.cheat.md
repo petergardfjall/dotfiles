@@ -11,18 +11,12 @@ deployment to recompile locally and run `telepresence` again).
 
 # Telepresence v2
 
-NOTE: Telepresence v2 doesn't swap out the pods of the deployment but keeps the
-existing pod running alongside the traffic agent. It just sends incoming traffic
-to the laptop service. However, for a service with job queue semantics there are
-no guarantees that a request will be handled by the laptop service. It might as
-well be handled by the still-running pod inside the cluster, which we are trying
-to replace. See https://github.com/telepresenceio/telepresence/issues/1646
-
 Telepresence v1 used a "swap-deployment" approach where a pod running a service
-was swapped for one running a telepresence proxy which ensured bidirectional
-traffic between the developer host and cluster services. Telepresence v2 instead
-makes use of a sidecar proxy ("traffic agent") that intercepts traffic into the
-pod and routes it to the developer host. The main components are:
+was entirely swapped out for one running a telepresence proxy which ensured
+bidirectional traffic between the developer host and cluster services.
+Telepresence v2 instead makes use of a sidecar proxy (`traffic-agent`) that
+intercepts network traffic to the pod and routes it to the developer host. The
+main components are:
 
 - `telepresence` daemon: runs on the developer laptop. Forwards traffic to/from
   cluster through the traffic-manager.
@@ -31,6 +25,14 @@ pod and routes it to the developer host. The main components are:
 - `traffic-agent`: a sidecar container that gets created for a service
   intercept. It routes incoming requests through the traffic-manager to the
   developer laptop.
+
+By default, a Telepresence v2 intercept does not swap out the pods of the
+deployment but keeps the existing container running alongside the injected
+traffic agent. For a service with job queue semantics there are no guarantees
+that a job will be handled by the laptop service, which can be confusing. To
+mimic telepresence v2 behavior and completely replace the original deployment
+(without the intercepted pod still running the old container) there is a
+`--replace` flag that can be passed to `telepresence intercept`.
 
 ## Telepresence v2: Run local commands "inside cluster"
 
@@ -42,7 +44,9 @@ daemon to allow DNS access to services with `<service>.<namespace>`.
     # First point kubectl to right cluster.
 
     # Install "traffic-manager" deployment in the "ambassador" namespace.
-    telepresence helm install
+    # Note: for pods with long-running init containers we bump the
+    # agent arrival timeout from 30s to 5m to avoid errors.
+    telepresence helm install --set timeouts.agentArrival=5m
 
     # Start local telepresence daemon and connect to cluster.
     telepresence connect
@@ -62,6 +66,9 @@ daemon to allow DNS access to services with `<service>.<namespace>`.
     # Remove the `traffic-manager` deployment.
     telepresence helm uninstall
 
+    # Stop all local (laptop-side) daemons.
+    telepresence quit --stop-daemons
+
 ## Telepresence v2: Replace workload pods with a local binary
 
 **NOTE**: for pod volume mounts to be available locally under
@@ -72,7 +79,8 @@ To intercept a service `telepresence intercept` can be used. It will inject a
 `traffic-agent` sidecar to created workload pods using a mutating webhook.
 
     # Create intercept and write pod environment variables to file.
-    telepresence intercept <service> --env-file <service>.env
+    telepresence intercept <service> --replace --port=<local>:<dest> --env-file <service>.env
+    telepresence intercept mysvc --replace --port=4096:grpc --env-file=mysvc.env
 
     # Build and run your local service binary with those environment variables:
     export $(cat <service>.env | xargs)
