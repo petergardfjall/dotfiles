@@ -416,27 +416,28 @@ A block without trailing semi colon is an expression.
 
     let mut i = 10;
     while i > 0 {
-        println!(i);
+        println!("{}", i);
         i -= 1;
     }
 
+    let mut i = 0;
     let result = loop {
-        counter += 1;
-        if counter == 10 {
-            break counter * 2;
+        i += 1;
+        if i == 10 {
+            break i * 2; // note: acts as a loop return
         }
-    }
+    };
+    assert_eq!(result, 20);
 
 `for .. in` works with iterators and ranges (idiomatic for "countdown looping").
 
-    let a = [10, 20, 30, 40, 50];
-
-    for element in &a {
-        println!("the value is: {}", element);
-    }
-
     for v in 0..10 {
         println!("{}", v);
+    }
+
+    let a = [10, 20, 30, 40, 50];
+    for element in &a {
+        println!("the value is: {}", element);
     }
 
 `match` is a `switch` on steroids. It must be exhaustive (cover all cases) and
