@@ -1960,6 +1960,7 @@ language.
 - https://doc.rust-lang.org/stable/rust-by-example
 - https://github.com/nikomatsakis/intorust/tree/master/docs/tutorial
 - https://github.com/nrc/r4cppp https://doc.rust-lang.org/std/
+- https://blessed.rs/crates
 
 # Quickstart
 
