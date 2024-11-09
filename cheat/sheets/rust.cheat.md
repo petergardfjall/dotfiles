@@ -1975,3 +1975,11 @@ project. To start a new project and initialize a git repository, run:
     cargo check
     # Build and run.
     cargo run
+
+    # Add a dependency.
+    cargo add clap@4.5
+
+    # Update dependencies in Cargo.lock.
+    cargo update                        # All.
+    cargo update clap                   # Specific dependencies.
+    cargo update clap --precise 4.5.20  # Specific version.
