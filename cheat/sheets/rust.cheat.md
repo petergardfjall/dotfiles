@@ -712,7 +712,8 @@ The `unwrap` method is similar but causes a panic on error. `expect` is yet
 another option, that allows you to choose panic message yourself.
 
 `Result<(), Box<dyn Error>>` is a return type that is capable of returning any
-error via a trait object `Box<dyn Error>`.
+error via a _trait object_ `Box<dyn Error>` (a trait object achieves
+polymorphism/dynamic dispatch).
 
     fn main() -> Result<(), Box<dyn Error>> {
         let content = read_file("foo.txt")?;
