@@ -1936,3 +1936,18 @@ language.
 - https://doc.rust-lang.org/stable/rust-by-example
 - https://github.com/nikomatsakis/intorust/tree/master/docs/tutorial
 - https://github.com/nrc/r4cppp https://doc.rust-lang.org/std/
+
+# Quickstart
+
+`cargo` is the build system and package manager used by almost every Rust
+project. To start a new project and initialize a git repository, run:
+
+    # To initialize a library: `cargo new --lib hello`
+    cargo new hello
+
+    # Build to produce a binary under target/debug.
+    cargo build
+    # Build to check for errors (without producing binary).
+    cargo check
+    # Build and run.
+    cargo run
