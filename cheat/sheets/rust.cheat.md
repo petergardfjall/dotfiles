@@ -567,6 +567,29 @@ time we're testing that value to see whether it matches a pattern.
         _ => println!("anything"),
     }
 
+Destructuring also works with function parameters:
+
+    struct Vector2D {
+        x: f64,
+        y: f64,
+    }
+
+    fn length(Vector2D { x, y }: &Vector2D) -> f64 {
+        (x * x + y * y).sqrt()
+    }
+
+    fn get_y(Vector2D { y, .. }: &Vector2D) -> f64 {
+        *y
+    }
+
+    fn main() {
+        let v = &Vector2D { x: 3.0, y: 4.0 };
+        let len = length(v);
+        assert_eq!(len, 5.0);
+        let y = get_y(v);
+        assert_eq!(y, 4.0);
+    }
+
 To match references, or destructure to a reference, one can use `&`, `ref` and
 `ref mut`. However, note that matching on references has been simplified as of
 RFC 2005 (https://github.com/rust-lang/rfcs/pull/2005), nevertheless, the old
