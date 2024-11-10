@@ -279,10 +279,12 @@ Many mathematical functions are defined as methods on primitive types.
 The following common collections are dynamic and stored on the heap.
 
 - String: `std::string::String`. A growable, mutable, owned, UTF-8 encoded
-  string type in the standard library. Rust has only one string type in the
-  _core_ language, which is the _string slice_ `str` that is usually seen in its
-  borrowed form `&str`. String literals, for example, are stored in the
-  program's binary and are therefore string slices.
+  string type in the standard library.
+
+  Note that a string literal such as `"hello"` is not of type `String`, it is of
+  type `&str` (called a _string slice_) and is stored in the program's binary.
+  The string slice is the only string type in the core language, usually seen in
+  its borrowed form `&str`.
 
         let mut s1 = String::new();
 
@@ -292,6 +294,17 @@ The following common collections are dynamic and stored on the heap.
         s1.push_str(&s2);
         s1.push_str(&s3);
         println!("{}", s1);
+
+  The borrow operator can coerce `String` into `&str`, just as `Vec<T>` can be
+  coerced into `&[T]`.
+
+        fn strlen(s: &str) -> usize {
+            s.len()
+        }
+
+        fn main() {
+            assert_eq!(11, strlen(&String::from("hello world")));
+        }
 
   The `format!()` macro is handy:
 
@@ -308,10 +321,11 @@ The following common collections are dynamic and stored on the heap.
         // note: takes ownership of self (doesn't just borrow via &self)
         fn add(self, s: &str) -> String
 
-  Strings do not support indexing due to Unicode's variable-length encoding of
-  chars. If you need to perform operations on individual Unicode scalar values,
-  the best way to do so is to use the `chars()` method, which allows you to
-  iterate over the characters.
+  Under the hood, `String` is basically a `Vec<u8>` and `&str` is `&[u8]`, but
+  those bytes must form valid UTF-8 text. Due to Unicode's variable-length
+  encoding of characters, `String`s do not support indexing. To do so you must
+  first use the `chars()` method, which allows you to iterate over the UTF-8
+  Unicode characters.
 
         for c in "hello world".chars() {
           println!("{}", c);
@@ -330,6 +344,15 @@ The following common collections are dynamic and stored on the heap.
         let mut chars: Vec<char> = "hello world".chars().collect();
         chars.sort();
         chars.dedup();
+        let s: String = chars.into_iter().collect();
+        println!("{}", s) // dehlorw
+
+  Many types implement the `ToString` trait and thus have a `to_string` method.
+
+        assert_eq!("1", 1.to_string());
+        assert_eq!("1.45", 1.45_f64.to_string());
+        assert_eq!("true", true.to_string());
+        assert_eq!("A", 'A'.to_string());
 
 - Vector: `std::vec::Vec<T>`.
 
@@ -498,9 +521,9 @@ There is also a `while let` which uses a similar pattern.
 # Destructuring
 
 Destructuring is done primarily through the `let` and `match` statements. The
-match statement is used when the structure being destructured can have different
-variants (such as an `enum`). A `let` expression pulls the variables out into
-the current scope, whereas `match` introduces a new scope.
+`match` statement is used when the structure being destructured can have
+different variants (such as an `enum`). A `let` expression pulls the variables
+out into the current scope, whereas `match` introduces a new scope.
 
 Match arms and `let` expressions can bind to parts of the values being matched.
 This allows us to extract/bind values out of `enum` variants and `struct`s.
