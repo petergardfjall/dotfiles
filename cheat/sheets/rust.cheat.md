@@ -272,7 +272,8 @@ Many mathematical functions are defined as methods on primitive types.
   using enums.
 
   One particularly common enum in Rust is `Option<T>`, which is used where
-  `null` checks would be used in many other languages.
+  `null` checks would be used in many other languages. Note that the question
+  mark operator works for `Option` just like for `Result`.
 
 # Standard library collections
 
@@ -714,6 +715,10 @@ For example:
         print!("{}", buf);
     }
 
+Files are automatically closed when they go out of scope. Errors detected on
+closing are ignored by the implementation of `Drop`. The `sync_all` method can
+be called if these errors need to be handled manually.
+
 Error propagation, for functions returning `Result<T,E>`, is made much more
 compact with the _question mark operator_ `?`, placed after a `Result` value. If
 the value of the `Result` is an `Ok`, the value inside the `Ok` will get
@@ -738,7 +743,18 @@ returned from this expression, and the program will continue. If the value is an
         }
     }
 
-A more functional approach to the former call is to use `unwrap_or_else`:
+The question mark operator is only syntactic sugar for a `match` statement:
+
+    // Question mark operator.
+    do_something_that_might_fail()?
+
+    // Equivalent match statement.
+    match do_something_that_might_fail() {
+        Ok(v) => v,
+        Err(e) => return Err(e),
+    }
+
+A more functional approach to the former example is to use `unwrap_or_else`:
 
     let content = read_file("foo.txt").unwrap_or_else(|err| panic!("failed to read file: {}", err));
 
@@ -747,9 +763,9 @@ A more functional approach to the former call is to use `unwrap_or_else`:
 The `unwrap` method is similar but causes a panic on error. `expect` is yet
 another option, that allows you to choose panic message yourself.
 
-`Result<(), Box<dyn Error>>` is a return type that is capable of returning any
-error via a _trait object_ `Box<dyn Error>` (a trait object achieves
-polymorphism/dynamic dispatch).
+All errors implement the `std::error::Error` trait, and so any error converts
+into a `Box<Error>`. `Result<(), Box<dyn Error>>` is a return type that is
+capable of returning any error.
 
     fn main() -> Result<(), Box<dyn Error>> {
         let content = read_file("foo.txt")?;
@@ -757,6 +773,79 @@ polymorphism/dynamic dispatch).
         print!("{}", content);
         Ok(())
     }
+
+`Box<dyn Error>` is a _trait object_, which is used in Rust to achieve
+polymorphism (a.k.a. dynamic dispatch).
+
+## Library errors
+
+Libraries should always use `std::Result` together with an error type
+implementing `std::error::Error` in their public APIs.
+
+Typing out `Result<T,MyError>` is tedious and many Rust modules define their own
+`Result` type. For example, `io::Result<T>` is short for `Result<T,io::Error>`.
+
+To make a library-specific error type you need to do a few things:
+
+- Define a custom error type: declare a `struct` or `enum` and implement
+  necessary traits (`Display`, `Debug`, `Error`).
+
+        type MyResult<T> = Result<T, MyError>;
+
+        #[derive(Debug)]
+        pub enum MyError {
+            NotFound { item: String },
+            InvalidArgument { detail: String },
+            Unknown,
+        }
+
+        impl std::error::Error for MyError {}
+
+        impl std::fmt::Display for MyError {
+            fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+                match &self {
+                    MyError::NotFound { item } => write!(f, "not found: {}", item),
+                    MyError::InvalidArgument { detail } => write!(f, "invalid argument: {}", detail),
+                    MyError::Unknown => write!(f, "unknown error"),
+                }
+            }
+        }
+
+- Convert errors that happen in your library code to your custom error type:
+
+  This can either be done by implementing the `From` trait
+
+        impl From<std::num::ParseIntError> for MyError {
+            fn from(err: std::num::ParseIntError) -> MyError {
+                MyError::InvalidArgument {
+                    detail: err.to_string(),
+                }
+            }
+        }
+
+        fn mylib_fn(arg: &str) -> MyResult<i64> {
+            let v = arg.parse::<i64>()?; // Note: error converted by From trait.
+            Ok(v)
+        }
+
+  or, alternatively, it can be done by converting errors with `map_err`:
+
+        fn mylib_fn(arg: &str) -> MyResult<i64> {
+            arg.parse::<i64>().map_err(|err| MyError::InvalidArgument {
+                detail: err.to_string(),
+            })
+        }
+
+  A call to our `MyResult`-returning function could look as follows:
+
+        fn main() {
+            let arg = std::env::args().nth(1).expect("err: no argument supplied");
+            match mylib_fn(&arg) {
+                Ok(val) => println!("valid value: {}", val),
+                // Note: the type is MyError.
+                Err(my_err) => eprintln!("encountered error: {}", my_err),
+            }
+        }
 
 # Ownership
 
