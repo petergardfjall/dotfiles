@@ -70,12 +70,6 @@ All primitive types use copy semantics and are stored on the stack.
         let bin = 0b1111_1111;
         let byte = b'A'; // only for u8
 
-  Numeric types are coerced and cast via `as`.
-
-        let decimal = 65.4321_f32;
-        // Explicit conversion
-        let integer = decimal as u8;
-
 - Floating-point types: `f32`, `f64`
 
         let x = 0.0;      // f64 (default on most architectures)
@@ -115,6 +109,25 @@ All primitive types use copy semantics and are stored on the stack.
 
         // slices can point to sections of an array
         let slice = &a[2..4];
+
+## Casting
+
+Numeric types are cast via `as`.
+
+    let mut sum = 0.0;
+    for i in 0..5 {
+        sum += i as f64;
+    }
+    println!("{}", sum)
+
+## Mathematical functions
+
+Many mathematical functions are defined as methods on primitive types.
+
+    assert_eq!(1, (-1_i64).abs());
+    assert_eq!(3, 2.max(3));
+    assert_eq!(3.0, (3.4_f32).floor());
+    assert_eq!(3.0, (9.0_f64).sqrt());
 
 # Custom types (structs, enums)
 
