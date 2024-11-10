@@ -1987,3 +1987,6 @@ project. To start a new project and initialize a git repository, run:
     # Search dependencies (textual search on crates.io).
     cargo search "command line"
     cargo info clap
+
+    # View offline documentation.
+    rustup --doc [--std|--book|--rust-by-example|--cargo]
