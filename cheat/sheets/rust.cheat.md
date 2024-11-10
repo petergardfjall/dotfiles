@@ -847,6 +847,9 @@ To make a library-specific error type you need to do a few things:
             }
         }
 
+A lot of the ceremony involved in defining library errors can be reduced by the
+macros provided by the `thiserror` library.
+
 # Ownership
 
 Ownership is Rust's most unique feature, and it enables Rust to make memory
