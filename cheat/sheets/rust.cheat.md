@@ -918,6 +918,11 @@ References allow you to refer to some value without taking ownership of it - the
 value it points to will not be dropped when the reference goes out of scope.
 Having references in Rust is known as _borrowing_.
 
+A C programmer pronounces `&` as "address of"; a Rust programmer pronounces it
+"borrow". Borrowing happens whenever you pass something by reference. Anything
+borrowed remains owned by the original owner and the reference must not outlive
+the value it points to.
+
 There are two types of borrows: shared/immutable and mutable:
 
 - _Shared borrows_ `&T`. References are immutable by default. It gives
@@ -2082,6 +2087,7 @@ language.
 
 # Documentation and references
 
+- https://tourofrust.com
 - https://doc.rust-lang.org/book/
 - https://doc.rust-lang.org/stable/rust-by-example
 - https://github.com/nikomatsakis/intorust/tree/master/docs/tutorial
