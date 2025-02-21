@@ -1783,7 +1783,24 @@ Usage of the above API would look something like:
 
 There are many logging frameworks out there. The standard library `log` may
 suffice for simple cases, but when different log levels, output formats and
-structured logging is needed, something like `zerolog` is better.
+structured logging is needed, the `slog` package is better.
+
+    func init() {
+      	level := slog.LevelInfo
+      	if os.Getenv("LOG_LEVEL") != "" {
+        		_ = level.UnmarshalText([]byte(strings.ToUpper(os.Getenv("LOG_LEVEL"))))
+      	}
+      	slog.SetDefault(slog.New(slog.NewTextHandler(os.Stderr, &slog.HandlerOptions{Level: level})))
+    }
+
+    func main() {
+      	slog.Debug("debug", "key", 1)
+      	slog.Info("info", "key", 2)
+      	slog.Warn("warn", "key", 3)
+      	slog.Error("error", "key", 4)
+    }
+
+Perhaps even more sophisticated is `zerolog`:
 
     import (
             "github.com/rs/zerolog"
