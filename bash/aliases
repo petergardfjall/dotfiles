@@ -26,3 +26,6 @@ alias screen="screen -c ~/dotfiles/screen/screenrc"
 alias suspend="xfce4-session-logout -s"
 
 alias t="xfce4-terminal"
+
+alias hidpi-on="~/dotfiles/xfce4-hidpi.sh on"
+alias hidpi-off="~/dotfiles/xfce4-hidpi.sh off"
