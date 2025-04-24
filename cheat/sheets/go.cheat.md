@@ -402,6 +402,8 @@ General:
 - `%#v`: a Go-syntax representation of the value.
 - `%T`: a Go-syntax representation of the _type_ of the value.
 - `%%`: a literal percent sign; consumes no value
+- `%10d`: pad from left with white space until 10 characters wide
+- `%010d`: pad from left with character zeros until 10 characters wide
 
 Boolean:
 
