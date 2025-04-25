@@ -205,6 +205,28 @@ references updated (very tedious when done manually).
 
 Note: it appears to only work when the project is on your `GOPATH`.
 
+## Godoc documentation
+
+In code comments, square brackets can be used to link to other code:
+
+    // Open returns an [io.Reader].
+
+Use a `Deprecated:` marker to discourage use of an identifier.
+
+    // Open opens a database session.
+    // Deprecated: use OpenSession.
+    func Open(name string) database.Session
+
+Web links should be added in footnote styles through square brackets:
+
+    // Package json implements encoding and decoding of JSON as defined in
+    // [RFC 7159]. For an introduction to this package, see the article
+    // “[JSON and Go].”
+    //
+    // [RFC 7159]: https://tools.ietf.org/html/rfc7159
+    // [JSON and Go]: https://golang.org/doc/articles/json_and_go.html
+    package json
+
 ## The init function
 
 Each source file can define one or more `init` functions to set up whatever
