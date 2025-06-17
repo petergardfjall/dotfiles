@@ -347,6 +347,16 @@ capture patterns.
         echo "capture group 2: ${image_path}"
     fi
 
+### Searching
+
+Tools like `grep` are of course useful.
+
+To extract only a regexp capture group for each matching line `rg` (ripgrep) can
+be used with flag `-o` (only matching) and `-r` (replace):
+
+    $ echo '[{"k1":"v1"},{"k2":"v2"}}' | rg '"k1":"([^"]+)"' -or '$1'
+    v1
+
 ### JSON processing with jq
 
 Passing variables to the expression can be done with `--arg` (since expression
