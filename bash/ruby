@@ -1,0 +1,3 @@
+if [ -e ~/.rbenv/bin/rbenv ]; then
+    source <(~/.rbenv/bin/rbenv init -)
+fi
