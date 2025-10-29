@@ -2,6 +2,36 @@
 
 This document contains an unsorted collection of linux-related admin tasks.
 
+## System information
+
+More of these commands are available in later sections but here is a brief list
+of useful commands.
+
+- Print all system information: `uname -a`
+- Print Linux kernel version: `uname -r`
+- Print distribution details: `cat /etc/lsb-release` or `lsb_release -a`
+- Hardware: `inxi -Fxz`, `lshw -short`
+  - CPU: `lscpu`, `sudo lshw -C cpu`, `cat /proc/cpuinfo`, `htop`
+  - Disk: `lsblk`, `df -h`, `sudo lshw -short -C disk`
+  - Memory: `sudo lshw -C memory`,
+  - Network: `sudo lshw -C network`, `ifconfig -a`, `ip link show`
+- Utilization:
+  - CPU: `htop`
+  - Memory: `htop`, `free -mh`
+  - Network:
+    - open tcp and udp listen ports: `sudo netstat -lnptu`
+    - show default gateway and routing tables: `ip route | column -t`
+      `route -n`, `netstat -r`
+    - show bandwidth usage by host: `sudo iftop`
+- Logs:
+  - `/var/log/syslog`, `/var/log/kern.log`, `/var/log/dmesg`
+  - system logs from previous boot: `journalctl -b -1`
+  - kernel logs output for previous boot: `journalctl -b -1`
+  - logs for a systemd unit: `journalctl -u docker.service`
+- Uptime/boots:
+  - `uptime`
+  - show when system has booted: `last reboot`
+
 ## User management
 
 Normal users:
@@ -566,3 +596,41 @@ Typically this can be alleviated by bumping `fs.inotify` settings in
 After changing run for the changes to take effect:
 
     sudo sysctl --system
+
+# Troubleshooting system crashes / kernel panics
+
+Check logs for errors/warnings:
+
+- Examine `/var/log/syslog` `/var/log/kern.log`, and `/var/log/dmesg` around the
+  time of the crash. For example:
+
+  ```
+  grep 2025-10-28T11:48 /var/log/syslog
+  ```
+
+- Examine `journalctl` output for the previous boot (`-b -1`):
+
+  ```
+  journalctl -b -1
+  journalctl -b -1 --since 2025-10-28T11:51:00
+  # kernel logs
+  journalctl -b -1 -k
+  ```
+
+- If the issue is reccurring the `last reboot` can show crash patterns related
+  to a certain kernel version:
+
+  ```bash
+  last reboot
+  ```
+
+Analyze crash dumps (if enabled):
+
+- Look in `/var/crash` or `/var/lib/systemd/coredump`. Might require `crash` or
+  `gdb`.
+
+Review hardware:
+
+- Stress the CPU: `sudo apt install stress`
+- Run memory tests (`memtest86+`) from the Grub boot menu.
+- Run disk checks (`smartctl`).
