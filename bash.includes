@@ -3,15 +3,13 @@
 #
 # source all files in ~/dotfiles/bash
 #
-for f in $(ls -B ~/dotfiles/bash/); do
-    [[ -f ~/dotfiles/bash/${f} ]] && source ~/dotfiles/bash/${f}
+for f in $(find ~/dotfiles/bash -maxdepth 1 -name '*.env'); do
+    [[ -f ${f} ]] && source ${f}
 done
 
 #
 # source all files in ~/dotfiles/bash/bash.local
 #
-for f in $(ls -B ~/dotfiles/bash/bash.local/); do
-    [[ -f ~/dotfiles/bash/bash.local/${f} ]] && source ~/dotfiles/bash/bash.local/${f}
+for f in $(find ~/dotfiles/bash/bash.local/ -maxdepth 1 -name '*.env'); do
+    [[ -f ${f} ]] && source ${f}
 done
-
-
