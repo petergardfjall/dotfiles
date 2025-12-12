@@ -85,11 +85,14 @@ aspects of the network stack.
     sudo systemctl restart systemd-resolved.service
     # should resolve correctly
     sudo systemd-resolve www.google.com
+
     # worth inspecting: which dns servers does it point to?
     # try 'dig @server www.google.com' to see if the dns server works.
+    systemd-analyze cat-config systemd/resolved.conf
     cat /etc/resolv.conf
     # probe local dns server -- should give similar results as
     #   dig @8.8.8.8 www.google.com
+    nslookup www.google.gom 127.0.0.53
     dig @127.0.0.53 www.google.com
     dig @192.168.0.1 www.google.com
     # if, for example, 127.0.0.53 doesn't produce results, one might need
@@ -136,7 +139,6 @@ To disable the interface:
 
     sudo ifdown eth0
 
-
 ### Ubuntu server: temporarily change IP address (lost on reboot)
 
 Temporarily set IP and subnet mask.
@@ -151,13 +153,13 @@ Modify default gateway.
     # verify
     route -n
 
-Add DNS nameserver.  Not recommended, but temporary setting that is overwritten
+Add DNS nameserver. Not recommended, but temporary setting that is overwritten
 on reboot.
 
     echo "nameserver 8.8.8.8" >> /etc/resolv.conf
 
-
 ### SOCKS proxy
+
 Sometimes it's not possible to reach certain servers from your machine (for
 example, due to firewall settings). In such cases, it can be possible to set up
 a SOCKS proxy on a remote host (reachable via `ssh`) and then configure your app
@@ -186,7 +188,6 @@ proxy available to other hosts use:
 
     ssh -D 0.0.0.0:1234 -CqN user@edge-server
 
-
 To set up a local socks5 proxy that supports basic authentication one can use
 `microsocks` (https://github.com/rofl0r/microsocks):
 
@@ -197,8 +198,8 @@ To set up a local socks5 proxy that supports basic authentication one can use
     # or utilize environment variables
     http_proxy=socks5://admin:password@192.168.0.105:1234 https_proxy=socks5://admin:password@192.168.0.105:1234 curl https://api.ipify.org?format=json
 
-
 ### SSH tunnel (local port forward)
+
 Used to forward connections via an SSH server ("jump node") to a destination
 server.
 
@@ -220,21 +221,21 @@ https://unix.stackexchange.com/a/118650.
 
     ssh -L sourcePort:forwardToHost:onPort connectToHost
 
-
 ### Reverse ssh tunnel (remote port forward)
-Used to forward connections *from* an SSH server via the *ssh client* to a
+
+Used to forward connections _from_ an SSH server via the _ssh client_ to a
 destination server.
 
-Allow `foo.com` to access ssh (port 22) on the client computer via local port
-2222.
+Allow `foo.com` to access ssh (port 22) on the client computer via local
+port 2222.
 
     ssh -R 2222:localhost:22 foo.com
 
 `-R` Specifies that the given port on the remote (server) host is to be
 forwarded to the given host and port on the local side.
 
-
 ### tinyproxy
+
 `tinyproxy` is a lightweight http/https proxy daemon. It can be started (in
 foreground, `-d`) like so:
 
