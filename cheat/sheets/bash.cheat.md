@@ -357,6 +357,21 @@ be used with flag `-o` (only matching) and `-r` (replace):
     $ echo '[{"k1":"v1"},{"k2":"v2"}}' | rg '"k1":"([^"]+)"' -or '$1'
     v1
 
+### Time
+
+Formatted output:
+
+    # Local time
+    date +"%Y-%m-%dT%H:%M:%S"
+
+    # UTC time
+    date +"%Y-%m-%dT%H:%M:%SZ" --utc
+
+Parse a time in milliseconds since epoch:
+
+    $ date -d @1766400001
+    mån 22 dec 2025 11:40:01 CET
+
 ### JSON processing with jq
 
 Passing variables to the expression can be done with `--arg` (since expression
