@@ -278,25 +278,29 @@ One can also use a function for the handler code:
 
 ### Line/byte processing
 
-Process first N lines:
+Process first N lines/bytes:
 
     cat file | head -N
     # bytes
     cat file | head --bytes=N
 
-Process last N lines:
+Process last N lines/bytes:
 
     cat file | tail -N
     # bytes
     cat file | tail --bytes=-N
 
-Process lines starting at N:
+Process lines/bytes starting at N:
 
     cat file | tail --lines=+N
     # bytes
     cat file | tail --bytes=+N
 
-Process lines [A,B]:
+Process N bytes starting at O:
+
+    dd skip=O count=N if=<file> bs=1 status=none
+
+Process lines/bytes [A,B]:
 
     cat file | tail --lines=+A | head -[B-A+1]
     # alternatively
