@@ -422,6 +422,11 @@ The commit history is best viewed with `git log`.
     # with custom format
     git log --pretty=format:"%h - %an, %ar : %s"
 
+    # show which commit deleted a file from the working tree.
+    git log -1 --oneline -- <file-name>
+    # to then show the last commit where the file was still present
+    git log --pretty=%P -1 <commit>
+
 Show a particular version/commit of a file:
 
     git show commit|tag|branch   # general info about an object

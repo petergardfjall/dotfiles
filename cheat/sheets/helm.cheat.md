@@ -46,16 +46,24 @@ One can search for charts via `helm search [pattern]`.
     # Find all releases in configured repos that match 'minio'.
     helm search repo minio -l
 
-Want to learn more about a chart?
+Want to learn more about a chart, like what values are available? Use
+`helm show chart|values <chart>`.
+
+    # Update cache.
+    helm repo update
 
     # Show chart definition.
-    helm inspect chart stable/mariadb
+    helm show chart stable/mariadb
+    # For a specific chart version.
+    helm show chart stable/mariadb --version 7.3.14
+
     # Show values file.
-    helm inspect values stable/mariadb
+    helm show values stable/mariadb
+
     # Show README file.
-    helm inspect readme stable/mariadb
+    helm show readme stable/mariadb
     # Show everything.
-    helm inspect all stable/mariadb
+    helm show all stable/mariadb
 
 Pull down a local copy of a helm chart (`minio-6.0.5.tgz`):
 

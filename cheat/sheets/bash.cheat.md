@@ -278,25 +278,29 @@ One can also use a function for the handler code:
 
 ### Line/byte processing
 
-Process first N lines:
+Process first N lines/bytes:
 
     cat file | head -N
     # bytes
     cat file | head --bytes=N
 
-Process last N lines:
+Process last N lines/bytes:
 
     cat file | tail -N
     # bytes
     cat file | tail --bytes=-N
 
-Process lines starting at N:
+Process lines/bytes starting at N:
 
     cat file | tail --lines=+N
     # bytes
     cat file | tail --bytes=+N
 
-Process lines [A,B]:
+Process N bytes starting at O:
+
+    dd skip=O count=N if=<file> bs=1 status=none
+
+Process lines/bytes [A,B]:
 
     cat file | tail --lines=+A | head -[B-A+1]
     # alternatively
@@ -346,6 +350,31 @@ capture patterns.
         echo "capture group 1: ${image_name}"
         echo "capture group 2: ${image_path}"
     fi
+
+### Searching
+
+Tools like `grep` are of course useful.
+
+To extract only a regexp capture group for each matching line `rg` (ripgrep) can
+be used with flag `-o` (only matching) and `-r` (replace):
+
+    $ echo '[{"k1":"v1"},{"k2":"v2"}}' | rg '"k1":"([^"]+)"' -or '$1'
+    v1
+
+### Time
+
+Formatted output:
+
+    # Local time
+    date +"%Y-%m-%dT%H:%M:%S"
+
+    # UTC time
+    date +"%Y-%m-%dT%H:%M:%SZ" --utc
+
+Parse a time in milliseconds since epoch:
+
+    $ date -d @1766400001
+    mån 22 dec 2025 11:40:01 CET
 
 ### JSON processing with jq
 

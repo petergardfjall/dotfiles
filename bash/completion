@@ -1,3 +1,0 @@
-if [ -f /opt/bin/terraform ]; then
-    complete -C /opt/bin/terraform terraform
-fi

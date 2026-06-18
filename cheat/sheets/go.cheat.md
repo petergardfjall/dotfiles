@@ -205,6 +205,28 @@ references updated (very tedious when done manually).
 
 Note: it appears to only work when the project is on your `GOPATH`.
 
+## Godoc documentation
+
+In code comments, square brackets can be used to link to other code:
+
+    // Open returns an [io.Reader].
+
+Use a `Deprecated:` marker to discourage use of an identifier.
+
+    // Open opens a database session.
+    // Deprecated: use OpenSession.
+    func Open(name string) database.Session
+
+Web links should be added in footnote styles through square brackets:
+
+    // Package json implements encoding and decoding of JSON as defined in
+    // [RFC 7159]. For an introduction to this package, see the article
+    // “[JSON and Go].”
+    //
+    // [RFC 7159]: https://tools.ietf.org/html/rfc7159
+    // [JSON and Go]: https://golang.org/doc/articles/json_and_go.html
+    package json
+
 ## The init function
 
 Each source file can define one or more `init` functions to set up whatever
@@ -402,6 +424,8 @@ General:
 - `%#v`: a Go-syntax representation of the value.
 - `%T`: a Go-syntax representation of the _type_ of the value.
 - `%%`: a literal percent sign; consumes no value
+- `%10d`: pad from left with white space until 10 characters wide
+- `%010d`: pad from left with character zeros until 10 characters wide
 
 Boolean:
 
@@ -1783,7 +1807,24 @@ Usage of the above API would look something like:
 
 There are many logging frameworks out there. The standard library `log` may
 suffice for simple cases, but when different log levels, output formats and
-structured logging is needed, something like `zerolog` is better.
+structured logging is needed, the `slog` package is better.
+
+    func init() {
+      	level := slog.LevelInfo
+      	if os.Getenv("LOG_LEVEL") != "" {
+        		_ = level.UnmarshalText([]byte(strings.ToUpper(os.Getenv("LOG_LEVEL"))))
+      	}
+      	slog.SetDefault(slog.New(slog.NewTextHandler(os.Stderr, &slog.HandlerOptions{Level: level})))
+    }
+
+    func main() {
+      	slog.Debug("debug", "key", 1)
+      	slog.Info("info", "key", 2)
+      	slog.Warn("warn", "key", 3)
+      	slog.Error("error", "key", 4)
+    }
+
+Perhaps even more sophisticated is `zerolog`:
 
     import (
             "github.com/rs/zerolog"
