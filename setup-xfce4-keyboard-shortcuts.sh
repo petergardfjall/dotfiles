@@ -49,12 +49,19 @@ Escape             | cancel_key
 <Primary><Alt>Up       | up_workspace_key
 <Primary><Alt>Down     | down_workspace_key
 #
-# Ctrl+Shift+arrow => move window to a different workspace
+# Ctrl+Shift+Alt+arrow => move window to a different workspace
 #
 <Primary><Shift><Alt>Right    | move_window_right_workspace_key
 <Primary><Shift><Alt>Left     | move_window_left_workspace_key
 <Primary><Shift><Alt>Up       | move_window_up_workspace_key
 <Primary><Shift><Alt>Down     | move_window_down_workspace_key
+#
+# Ctrl+Shift+Alt+ U/D/L/R => move window to display (monitor) up/down/left right
+#
+<Primary><Shift><Alt>u    | move_window_to_monitor_up_key
+<Primary><Shift><Alt>d    | move_window_to_monitor_down_key
+<Primary><Shift><Alt>l    | move_window_to_monitor_left_key
+<Primary><Shift><Alt>r    | move_window_to_monitor_right_key
 #
 # Ctrl+Shift+<keypad> => tile window in different directions
 #
