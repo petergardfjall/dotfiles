@@ -136,6 +136,7 @@ Examples:
 - add a column
 
         ALTER TABLE downloads ADD COLUMN end_time TIMESTAMPTZ;
+        ALTER TABLE downloads ADD COLUMN IF NOT EXISTS end_time TIMESTAMPTZ;
 
 - drop a column
 
@@ -416,10 +417,19 @@ A few useful system queries:
 ### active connections
 
         SELECT sum(numbackends) FROM pg_stat_database;
+        -- List connections against a particular database.
+        SELECT * FROM pg_stat_activity WHERE datname = 'dbname';
 
 ### show connection status
 
         select * from pg_stat_activity;
+
+### row count for a large table
+
+Instead of a `SELECT count(*)` which requires a full table scan, a very quick,
+but often close enough approximation is given by:
+
+    SELECT reltuples::bigint AS estimate FROM pg_class where relname = 'mytable';
 
 ### column size
 
