@@ -358,7 +358,7 @@ Tools like `grep` are of course useful.
 To extract only a regexp capture group for each matching line `rg` (ripgrep) can
 be used with flag `-o` (only matching) and `-r` (replace):
 
-    $ echo '[{"k1":"v1"},{"k2":"v2"}}' | rg '"k1":"([^"]+)"' -or '$1'
+    $ echo '[{"k1":"v1"},{"k2":"v2"}}' | rg '"k1":"([^"]+)"' -INor '$1'
     v1
 
 ### Time
